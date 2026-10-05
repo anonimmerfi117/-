@@ -2,107 +2,267 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Привычки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root {
-    --bg1: #1b1646;
-    --bg2: #2d1b69;
-    --card: rgba(255, 255, 255, 0.08);
-    --card-border: rgba(255, 255, 255, 0.12);
-    --accent: #7c6cff;
-    --accent2: #4f8cff;
-    --text: #f2f0ff;
-    --muted: #a9a3d6;
-    --ok: #5eead4;
+    --ink: #120e33;
+    --ink2: #231a5c;
+    --surface: rgba(255, 255, 255, 0.07);
+    --surface-strong: rgba(255, 255, 255, 0.11);
+    --line: rgba(255, 255, 255, 0.12);
+    --violet: #8b7bff;
+    --blue: #4d8dff;
+    --mint: #6ee7c8;
+    --flame: #ffb454;
+    --text: #f3f1ff;
+    --muted: #a8a2d8;
+    --grad: linear-gradient(135deg, #8b7bff 0%, #4d8dff 100%);
+    --font-body: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-display: "Unbounded", "Onest", system-ui, sans-serif;
+    --tabbar-h: 78px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--ink); }
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.45;
     color: var(--text);
-    background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    background:
+      radial-gradient(120% 60% at 100% -10%, rgba(77, 141, 255, 0.28), transparent 60%),
+      radial-gradient(90% 50% at -10% 0%, rgba(139, 123, 255, 0.30), transparent 55%),
+      linear-gradient(180deg, var(--ink2) 0%, var(--ink) 70%);
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
-  h1 { margin: 6px 0 2px; font-size: 26px; }
-  .sub { color: var(--muted); font-size: 14px; }
-  .visit { color: var(--muted); font-size: 12px; margin: 2px 0 18px; min-height: 16px; }
+  button { font-family: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
 
-  .summary { display: flex; gap: 10px; margin-bottom: 18px; }
+  .wrap {
+    max-width: 520px; margin: 0 auto;
+    padding: 24px 18px calc(var(--tabbar-h) + 36px + env(safe-area-inset-bottom));
+  }
+  [hidden] { display: none !important; }
+
+  /* ---------- Заголовки ---------- */
+  .head { margin-bottom: 22px; }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 28px; line-height: 1.1;
+    letter-spacing: -0.02em; margin: 0 0 6px;
+  }
+  .sub { color: var(--muted); font-size: 15px; text-transform: capitalize; }
+
+  /* ---------- Сводка ---------- */
+  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
   .stat {
-    flex: 1; padding: 12px; border-radius: 16px;
-    background: var(--card); border: 1px solid var(--card-border);
-    text-align: center;
+    padding: 14px 10px 12px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--line);
   }
-  .stat b { display: block; font-size: 22px; }
-  .stat span { font-size: 12px; color: var(--muted); }
+  .stat b {
+    display: block; font-family: var(--font-display); font-weight: 600;
+    font-size: 22px; letter-spacing: -0.02em; margin-bottom: 4px;
+  }
+  .stat span { display: block; font-size: 12px; line-height: 1.25; color: var(--muted); }
 
-  .add { display: flex; gap: 8px; margin-bottom: 18px; }
+  /* ---------- Добавление ---------- */
+  .add { display: flex; gap: 8px; margin-bottom: 20px; }
   .add input {
-    flex: 1; padding: 13px 14px; border-radius: 14px; font-size: 16px;
-    border: 1px solid var(--card-border); background: var(--card); color: var(--text);
-    outline: none;
+    flex: 1; min-width: 0; height: 52px; padding: 0 18px; border-radius: 26px;
+    font: inherit; font-size: 16px; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); outline: none;
+    transition: border-color .2s, background .2s;
   }
   .add input::placeholder { color: var(--muted); }
-  .add input:focus { border-color: var(--accent); }
+  .add input:focus { border-color: var(--violet); background: var(--surface-strong); }
   .add button {
-    padding: 0 18px; border: 0; border-radius: 14px; font-size: 22px; color: #fff;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    flex: none; width: 52px; height: 52px; border: 0; border-radius: 50%;
+    background: var(--grad); display: grid; place-items: center;
+    box-shadow: 0 8px 22px -8px rgba(105, 110, 255, 0.9);
+    transition: transform .15s;
   }
+  .add button:active { transform: scale(0.92); }
+  .add svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.4; fill: none; stroke-linecap: round; }
 
+  /* ---------- Привычка ---------- */
   .habit {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px; margin-bottom: 10px; border-radius: 18px;
-    background: var(--card); border: 1px solid var(--card-border);
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 14px 16px 16px; margin-bottom: 12px; border-radius: 26px;
+    background: var(--surface); border: 1px solid var(--line);
+    transition: background .25s, border-color .25s;
   }
-  .check {
-    flex: none; width: 34px; height: 34px; border-radius: 50%;
-    border: 2px solid var(--accent); background: transparent; color: #fff;
-    font-size: 18px; line-height: 1;
-  }
-  .check.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; }
-  .info { flex: 1; min-width: 0; }
-  .name { font-size: 16px; font-weight: 600; word-break: break-word; }
-  .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .dots { display: flex; gap: 5px; margin-top: 8px; }
-  .dot { width: 14px; height: 14px; border-radius: 4px; background: rgba(255,255,255,0.12); }
-  .dot.on { background: var(--ok); }
-  .del { flex: none; border: 0; background: none; color: var(--muted); font-size: 18px; padding: 6px; }
+  .habit.done { background: rgba(110, 231, 200, 0.08); border-color: rgba(110, 231, 200, 0.28); }
 
-  .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
-  .foot { text-align: center; color: var(--muted); font-size: 11px; margin-top: 22px; opacity: .8; }
+  .check {
+    position: relative; flex: none; width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.28); background: transparent; padding: 0;
+    display: grid; place-items: center;
+    transition: background .25s, border-color .25s, transform .15s;
+  }
+  .check:active { transform: scale(0.9); }
+  .check svg { width: 22px; height: 22px; fill: none; stroke: #0f0b2e; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .check svg path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .3s .08s ease-out; }
+  .check.on { background: var(--mint); border-color: var(--mint); }
+  .check.on svg path { stroke-dashoffset: 0; }
+  .check.pop::after {
+    content: ""; position: absolute; inset: -2px; border-radius: 50%;
+    border: 2px solid var(--mint); animation: ring .55s ease-out forwards;
+  }
+  @keyframes ring { from { transform: scale(1); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+
+  .info { flex: 1; min-width: 0; }
+  .name { font-size: 17px; font-weight: 600; line-height: 1.25; word-break: break-word; }
+  .meta { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-size: 13px; color: var(--muted); }
+  .meta svg { width: 14px; height: 14px; fill: currentColor; }
+  .meta.hot { color: var(--flame); }
+
+  .week { display: flex; gap: 6px; margin-top: 12px; }
+  .day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .day i { display: block; width: 22px; height: 22px; border-radius: 8px; background: rgba(255, 255, 255, 0.10); }
+  .day i.on { background: var(--mint); }
+  .day.today i { box-shadow: 0 0 0 2px var(--ink), 0 0 0 3.5px var(--violet); }
+  .day span { font-size: 10.5px; color: var(--muted); }
+  .day.today span { color: var(--text); font-weight: 600; }
+
+  .del {
+    flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%;
+    background: transparent; color: var(--muted); display: grid; place-items: center;
+  }
+  .del:active { background: var(--surface-strong); }
+  .del svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+  .empty {
+    text-align: center; color: var(--muted); padding: 34px 20px;
+    border: 1.5px dashed var(--line); border-radius: 26px; line-height: 1.5;
+  }
+  .empty b { display: block; color: var(--text); font-size: 17px; margin-bottom: 4px; font-weight: 600; }
+
+  /* ---------- Профиль ---------- */
+  .hero { text-align: center; padding: 8px 0 26px; }
+  .avatar-ring {
+    width: 124px; height: 124px; margin: 0 auto 18px; padding: 4px; border-radius: 50%;
+    background: conic-gradient(from 200deg, #8b7bff, #4d8dff, #6ee7c8, #8b7bff);
+    box-shadow: 0 18px 50px -14px rgba(105, 110, 255, 0.85);
+  }
+  .avatar {
+    width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
+    border: 4px solid var(--ink); background: var(--ink2);
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 600; font-size: 38px;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pname { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -0.02em; line-height: 1.15; margin: 0 8px 10px; word-break: break-word; }
+  .nick {
+    display: inline-block; padding: 6px 14px; border-radius: 20px;
+    background: var(--surface-strong); border: 1px solid var(--line);
+    font-size: 14px; font-weight: 500; color: #cfc9ff; word-break: break-all;
+  }
+  .nick.plain { background: none; border-color: transparent; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile { padding: 18px 16px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); }
+  .tile b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 30px; letter-spacing: -0.03em; line-height: 1; margin-bottom: 8px; }
+  .tile span { font-size: 13px; color: var(--muted); }
+  .note { margin: 18px 4px 0; font-size: 13px; line-height: 1.5; color: var(--muted); text-align: center; }
+  .note + .note { margin-top: 6px; opacity: .85; }
+
+  /* ---------- Нижние вкладки ---------- */
+  .tabs {
+    position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    width: calc(100% - 28px); max-width: 420px; height: var(--tabbar-h);
+    padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    border-radius: 32px; background: rgba(24, 17, 68, 0.78);
+    border: 1px solid var(--line);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+  }
+  .tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    border: 0; border-radius: 24px; background: transparent; color: var(--muted);
+    font-size: 13px; font-weight: 600; transition: background .25s, color .25s;
+  }
+  .tab svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tab[aria-selected="true"] { background: var(--grad); color: #fff; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Мои привычки</h1>
-  <div class="sub" id="today"></div>
-  <div class="visit" id="visit"></div>
 
-  <div class="summary">
-    <div class="stat"><b id="sDone">0</b><span>сегодня сделано</span></div>
-    <div class="stat"><b id="sBest">0</b><span>лучшая серия</span></div>
-    <div class="stat"><b id="sWeek">0%</b><span>за 7 дней</span></div>
-  </div>
+<main class="wrap">
 
-  <form class="add" id="form">
-    <input id="input" type="text" maxlength="60" placeholder="Новая привычка…" autocomplete="off">
-    <button type="submit" aria-label="Добавить">+</button>
-  </form>
+  <!-- ===== Вкладка «Профиль» ===== -->
+  <section id="tab-profile" hidden>
+    <div class="hero">
+      <div class="avatar-ring"><div class="avatar" id="avatar"></div></div>
+      <h1 class="pname" id="pname">Гость</h1>
+      <div class="nick" id="nick"></div>
+    </div>
 
-  <div id="list"><div class="empty">Загрузка…</div></div>
-  <div class="foot" id="foot"></div>
-</div>
+    <div class="grid">
+      <div class="tile"><b id="pVisits">0</b><span>заходов в приложение</span></div>
+      <div class="tile"><b id="pHabits">0</b><span>привычек ведётся</span></div>
+      <div class="tile"><b id="pBest">0</b><span>дней — лучшая серия</span></div>
+      <div class="tile"><b id="pMarks">0</b><span>отметок за всё время</span></div>
+    </div>
+
+    <p class="note" id="lastVisit"></p>
+    <p class="note" id="foot"></p>
+  </section>
+
+  <!-- ===== Вкладка «Привычки» ===== -->
+  <section id="tab-habits" hidden>
+    <header class="head">
+      <h1>Привычки</h1>
+      <div class="sub" id="today"></div>
+    </header>
+
+    <div class="summary">
+      <div class="stat"><b id="sDone">0</b><span>сегодня<br>выполнено</span></div>
+      <div class="stat"><b id="sBest">0</b><span>лучшая<br>серия, дней</span></div>
+      <div class="stat"><b id="sWeek">0%</b><span>выполнено<br>за 7 дней</span></div>
+    </div>
+
+    <form class="add" id="form">
+      <input id="input" type="text" maxlength="60" placeholder="Новая привычка" autocomplete="off" aria-label="Название привычки">
+      <button type="submit" aria-label="Добавить привычку">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </form>
+
+    <div id="list"></div>
+  </section>
+
+</main>
+
+<nav class="tabs" role="tablist" aria-label="Разделы">
+  <button class="tab" role="tab" data-tab="profile" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.6 3.7-5.5 7.5-5.5s6.9 1.9 7.5 5.5"/></svg>
+    <span>Профиль</span>
+  </button>
+  <button class="tab" role="tab" data-tab="habits" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.8 12.4l3 3 5.4-6"/></svg>
+    <span>Привычки</span>
+  </button>
+</nav>
 
 <script>
   const tg = window.Telegram && window.Telegram.WebApp;
   if (tg) {
     tg.ready(); tg.expand();
-    tg.setHeaderColor && tg.setHeaderColor('#1b1646');
-    tg.setBackgroundColor && tg.setBackgroundColor('#1b1646');
+    tg.setHeaderColor && tg.setHeaderColor('#120e33');
+    tg.setBackgroundColor && tg.setBackgroundColor('#120e33');
+    tg.setBottomBarColor && tg.setBottomBarColor('#120e33');
   }
 
   // ---------- Хранилище ----------
@@ -111,6 +271,7 @@
   const hasCloud = !!(tg && tg.CloudStorage && tg.initData && tg.isVersionAtLeast && tg.isVersionAtLeast('6.9'));
   const LOCAL_KEY = 'habits_v2';
   const OLD_LOCAL_KEY = 'habits_v1'; // версия приложения без облака
+  const TAB_KEY = 'habits_tab';
 
   const wrap = (fn) => new Promise(resolve => {
     let finished = false;
@@ -133,12 +294,15 @@
   const dayNum = (d) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY);
   const today = () => dayNum(new Date());
   const fmtDay = (n) => new Date(n * DAY).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const wd = (n) => new Date(n * DAY).toLocaleDateString('ru-RU', { weekday: 'short', timeZone: 'UTC' });
   const lastDays = (n) => { const t = today(), out = []; for (let i = n - 1; i >= 0; i--) out.push(t - i); return out; };
 
   // ---------- Состояние ----------
   let habits = [];                 // {id, name, created, done:{dayNum:true}}
   let meta = { v: 0, l: [] };      // v — число заходов, l — время последних заходов (сек)
   let syncOk = true;
+  let lastToggled = null;
+  let prevVisit = null;
 
   function pack(h) {
     let days = Object.keys(h.done).map(Number).sort((a, b) => a - b);
@@ -261,14 +425,14 @@
     return c;
   }
   const buzz = () => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); } catch (e) {} };
+  const bestOverall = () => habits.reduce((m, h) => Math.max(m, bestStreak(h)), 0);
 
-  // ---------- Отрисовка ----------
-  function renderFoot() {
-    document.getElementById('foot').textContent = !hasCloud
-      ? 'Данные хранятся только в этом браузере'
-      : (syncOk ? 'Привычки и история сохраняются в вашем аккаунте Telegram' : 'Не удалось связаться с облаком Telegram — данные сохранены на устройстве');
-  }
+  // ---------- Иконки ----------
+  const ICON_CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const ICON_FLAME = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 2.2c.5 3.4 3 4.9 4.6 7.4 1.5 2.3 1.4 5.5-.5 7.6-1.7 1.9-4.2 2.6-6.3 1.9-2.5-.8-4.1-3.1-3.9-5.7.1-1.3.7-2.4 1.5-3.3.1 1.2.7 2.1 1.7 2.4-.5-3.2.5-6.2 2.9-10.3z"/></svg>';
+  const ICON_CLOSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
+  // ---------- Отрисовка: привычки ----------
   function render() {
     const t = today();
     const week = lastDays(7);
@@ -277,41 +441,103 @@
 
     const done = habits.filter(h => h.done[t]).length;
     document.getElementById('sDone').textContent = habits.length ? done + '/' + habits.length : '0';
-    document.getElementById('sBest').textContent = habits.reduce((m, h) => Math.max(m, bestStreak(h)), 0);
+    document.getElementById('sBest').textContent = bestOverall();
     const possible = habits.length * 7;
     const got = habits.reduce((s, h) => s + week.filter(k => h.done[k]).length, 0);
     document.getElementById('sWeek').textContent = possible ? Math.round(got / possible * 100) + '%' : '0%';
 
     const list = document.getElementById('list');
     if (!habits.length) {
-      list.innerHTML = '<div class="empty">Пока пусто.<br>Добавьте первую привычку выше 👆</div>';
-      return;
+      list.innerHTML = '<div class="empty"><b>Пока нет привычек</b>Введите название в строке выше и нажмите «+».</div>';
+    } else {
+      list.innerHTML = '';
+      habits.forEach(h => {
+        const s = currentStreak(h);
+        const on = !!h.done[t];
+        const el = document.createElement('div');
+        el.className = 'habit' + (on ? ' done' : '');
+        el.innerHTML = `
+          <button class="check${on ? ' on' : ''}${lastToggled === h.id && on ? ' pop' : ''}" data-act="toggle" data-id="${h.id}"
+                  aria-label="Отметить выполнение" aria-pressed="${on}">${ICON_CHECK}</button>
+          <div class="info">
+            <div class="name"></div>
+            <div class="meta${s > 0 ? ' hot' : ''}">${s > 0 ? ICON_FLAME + s + ' ' + plural(s, 'день', 'дня', 'дней') + ' подряд' : 'Серия не начата'}</div>
+            <div class="week">${week.map(k => `<div class="day${k === t ? ' today' : ''}"><i class="${h.done[k] ? 'on' : ''}"></i><span>${wd(k)}</span></div>`).join('')}</div>
+          </div>
+          <button class="del" data-act="del" data-id="${h.id}" aria-label="Удалить привычку">${ICON_CLOSE}</button>`;
+        el.querySelector('.name').textContent = h.name; // textContent — защита от вставки HTML
+        list.appendChild(el);
+      });
     }
-    list.innerHTML = '';
-    habits.forEach(h => {
-      const s = currentStreak(h);
-      const el = document.createElement('div');
-      el.className = 'habit';
-      el.innerHTML = `
-        <button class="check ${h.done[t] ? 'on' : ''}" data-act="toggle" data-id="${h.id}">${h.done[t] ? '✓' : ''}</button>
-        <div class="info">
-          <div class="name"></div>
-          <div class="meta">Серия: ${s} ${plural(s, 'день', 'дня', 'дней')} · с ${fmtDay(h.created)}</div>
-          <div class="dots">${week.map(k => `<div class="dot ${h.done[k] ? 'on' : ''}"></div>`).join('')}</div>
-        </div>
-        <button class="del" data-act="del" data-id="${h.id}" aria-label="Удалить">✕</button>`;
-      el.querySelector('.name').textContent = h.name; // textContent — защита от вставки HTML
-      list.appendChild(el);
-    });
+    lastToggled = null;
+    renderProfileStats();
   }
 
-  function renderVisit(prev) {
-    const el = document.getElementById('visit');
-    if (prev === null) { el.textContent = 'Добро пожаловать! Это ваш первый заход.'; return; }
-    const when = new Date(prev * 1000).toLocaleString('ru-RU',
-      { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-    el.textContent = `Заход №${meta.v} · прошлый раз: ${when}`;
+  // ---------- Отрисовка: профиль ----------
+  function renderProfileHeader() {
+    const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    const nameEl = document.getElementById('pname');
+    const nickEl = document.getElementById('nick');
+    const av = document.getElementById('avatar');
+
+    if (!u) {
+      nameEl.textContent = 'Гость';
+      nickEl.textContent = 'Откройте приложение в Telegram, чтобы увидеть свой профиль';
+      nickEl.className = 'nick plain';
+      av.textContent = 'Г';
+      return;
+    }
+    const full = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || 'Без имени';
+    nameEl.textContent = full;
+    if (u.username) { nickEl.textContent = '@' + u.username; nickEl.className = 'nick'; }
+    else { nickEl.textContent = 'Ник не указан в Telegram'; nickEl.className = 'nick plain'; }
+
+    const ini = ((u.first_name || '')[0] || '') + ((u.last_name || '')[0] || '') || (u.username || '•')[0];
+    av.textContent = ini.toUpperCase();   // пока грузится фото — показываем инициалы
+    if (u.photo_url) {
+      const img = new Image();
+      img.alt = '';
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => { av.textContent = ''; av.appendChild(img); };
+      img.src = u.photo_url;
+    }
   }
+
+  function renderProfileStats() {
+    document.getElementById('pVisits').textContent = meta.v || 0;
+    document.getElementById('pHabits').textContent = habits.length;
+    document.getElementById('pBest').textContent = bestOverall();
+    document.getElementById('pMarks').textContent = habits.reduce((s, h) => s + Object.keys(h.done).length, 0);
+  }
+
+  function renderVisit() {
+    const el = document.getElementById('lastVisit');
+    if (prevVisit === null) { el.textContent = 'Это ваш первый заход. Добро пожаловать!'; return; }
+    const when = new Date(prevVisit * 1000).toLocaleString('ru-RU',
+      { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+    el.textContent = 'Предыдущий заход: ' + when;
+  }
+
+  function renderFoot() {
+    document.getElementById('foot').textContent = !hasCloud
+      ? 'Данные хранятся только в этом браузере.'
+      : (syncOk ? 'Привычки и история сохраняются в вашем аккаунте Telegram.'
+                : 'Не удалось связаться с облаком Telegram. Данные сохранены на этом устройстве.');
+  }
+
+  // ---------- Вкладки ----------
+  function showTab(name) {
+    if (name !== 'profile' && name !== 'habits') name = 'habits';
+    document.getElementById('tab-profile').hidden = name !== 'profile';
+    document.getElementById('tab-habits').hidden = name !== 'habits';
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+    try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  document.querySelector('.tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('.tab');
+    if (b) { showTab(b.dataset.tab); buzz(); }
+  });
 
   // ---------- Действия ----------
   document.getElementById('form').addEventListener('submit', (e) => {
@@ -337,6 +563,7 @@
     if (btn.dataset.act === 'toggle') {
       const t = today();
       if (h.done[t]) delete h.done[t]; else h.done[t] = true;
+      lastToggled = h.id;
       render(); buzz();
       persistHabit(h);
     } else if (btn.dataset.act === 'del') {
@@ -348,13 +575,19 @@
 
   // ---------- Запуск ----------
   (async function start() {
+    let tab = 'habits';
+    try { tab = localStorage.getItem(TAB_KEY) || 'habits'; } catch (e) {}
+    showTab(tab);
+    renderProfileHeader();
+    render();
+
     await load();
     const now = Math.floor(Date.now() / 1000);
-    const prev = meta.l && meta.l.length ? meta.l[meta.l.length - 1] : null;
+    prevVisit = meta.l && meta.l.length ? meta.l[meta.l.length - 1] : null;
     meta.v = (meta.v || 0) + 1;
     meta.l = (meta.l || []).concat(now).slice(-20);
     render();
-    renderVisit(prev);
+    renderVisit();
     renderFoot();
     persistMeta();
   })();
