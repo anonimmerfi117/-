@@ -28,11 +28,10 @@
   }
   .wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
   h1 { margin: 6px 0 2px; font-size: 26px; }
-  .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .visit { color: var(--muted); font-size: 12px; margin: 2px 0 18px; min-height: 16px; }
 
-  .summary {
-    display: flex; gap: 10px; margin-bottom: 18px;
-  }
+  .summary { display: flex; gap: 10px; margin-bottom: 18px; }
   .stat {
     flex: 1; padding: 12px; border-radius: 16px;
     background: var(--card); border: 1px solid var(--card-border);
@@ -74,12 +73,14 @@
   .del { flex: none; border: 0; background: none; color: var(--muted); font-size: 18px; padding: 6px; }
 
   .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+  .foot { text-align: center; color: var(--muted); font-size: 11px; margin-top: 22px; opacity: .8; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Мои привычки</h1>
   <div class="sub" id="today"></div>
+  <div class="visit" id="visit"></div>
 
   <div class="summary">
     <div class="stat"><b id="sDone">0</b><span>сегодня сделано</span></div>
@@ -92,54 +93,166 @@
     <button type="submit" aria-label="Добавить">+</button>
   </form>
 
-  <div id="list"></div>
+  <div id="list"><div class="empty">Загрузка…</div></div>
+  <div class="foot" id="foot"></div>
 </div>
 
 <script>
   const tg = window.Telegram && window.Telegram.WebApp;
-  if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#1b1646'); tg.setBackgroundColor && tg.setBackgroundColor('#1b1646'); }
-
-  const KEY = 'habits_v1';
-  let habits = [];
-  try { habits = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { habits = []; }
-
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(habits)); } catch (e) {} };
-  const dayKey = (d) => d.toLocaleDateString('sv'); // YYYY-MM-DD по местному времени
-  const todayKey = () => dayKey(new Date());
-  const buzz = () => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); } catch (e) {} };
-
-  function lastDays(n) {
-    const out = [];
-    for (let i = n - 1; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      out.push(dayKey(d));
-    }
-    return out;
+  if (tg) {
+    tg.ready(); tg.expand();
+    tg.setHeaderColor && tg.setHeaderColor('#1b1646');
+    tg.setBackgroundColor && tg.setBackgroundColor('#1b1646');
   }
 
-  // текущая серия: подряд идущие дни до сегодня (если сегодня ещё не отмечено — считаем со вчера)
+  // ---------- Хранилище ----------
+  // Внутри Telegram данные лежат в облаке Telegram (привязаны к вашему аккаунту,
+  // доступны с любого устройства). Вне Telegram — запасной вариант: память браузера.
+  const hasCloud = !!(tg && tg.CloudStorage && tg.initData && tg.isVersionAtLeast && tg.isVersionAtLeast('6.9'));
+  const LOCAL_KEY = 'habits_v2';
+  const OLD_LOCAL_KEY = 'habits_v1'; // версия приложения без облака
+
+  const wrap = (fn) => new Promise(resolve => {
+    let finished = false;
+    const timer = setTimeout(() => { if (!finished) { finished = true; resolve(null); } }, 7000);
+    try {
+      fn((err, val) => {
+        if (finished) return;
+        finished = true; clearTimeout(timer);
+        resolve(err ? null : (val === undefined ? true : val));
+      });
+    } catch (e) { if (!finished) { finished = true; clearTimeout(timer); resolve(null); } }
+  });
+  const cKeys   = ()      => wrap(cb => tg.CloudStorage.getKeys(cb));
+  const cGet    = (keys)  => wrap(cb => tg.CloudStorage.getItems(keys, cb));
+  const cSet    = (k, v)  => wrap(cb => tg.CloudStorage.setItem(k, v, cb));
+  const cRemove = (k)     => wrap(cb => tg.CloudStorage.removeItem(k, cb));
+
+  // ---------- Даты (день = целое число, дней с 1970 года по местному календарю) ----------
+  const DAY = 86400000;
+  const dayNum = (d) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY);
+  const today = () => dayNum(new Date());
+  const fmtDay = (n) => new Date(n * DAY).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const lastDays = (n) => { const t = today(), out = []; for (let i = n - 1; i >= 0; i--) out.push(t - i); return out; };
+
+  // ---------- Состояние ----------
+  let habits = [];                 // {id, name, created, done:{dayNum:true}}
+  let meta = { v: 0, l: [] };      // v — число заходов, l — время последних заходов (сек)
+  let syncOk = true;
+
+  function pack(h) {
+    let days = Object.keys(h.done).map(Number).sort((a, b) => a - b);
+    let s;
+    for (;;) { // значение в облаке ограничено ~4 КБ; при переполнении отбрасываем самые старые дни
+      s = JSON.stringify({ n: h.name, c: h.created, d: days.map(x => x.toString(36)).join(',') });
+      if (s.length <= 3900 || !days.length) break;
+      days = days.slice(Math.ceil(days.length * 0.1));
+    }
+    return s;
+  }
+  function unpack(id, s) {
+    try {
+      const o = JSON.parse(s);
+      const done = {};
+      String(o.d || '').split(',').filter(Boolean).forEach(x => { done[parseInt(x, 36)] = true; });
+      return { id, name: String(o.n || ''), created: Number(o.c) || today(), done };
+    } catch (e) { return null; }
+  }
+
+  function localSave() {
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify({ habits, meta })); } catch (e) {}
+  }
+  function localLoad() {
+    try {
+      const o = JSON.parse(localStorage.getItem(LOCAL_KEY));
+      if (o && Array.isArray(o.habits)) return o;
+    } catch (e) {}
+    return null;
+  }
+  function oldLocalLoad() { // данные первой версии приложения
+    try {
+      const arr = JSON.parse(localStorage.getItem(OLD_LOCAL_KEY));
+      if (!Array.isArray(arr) || !arr.length) return null;
+      return arr.map(h => {
+        const done = {};
+        Object.keys(h.done || {}).forEach(k => {
+          const p = k.split('-').map(Number);
+          if (p.length === 3) done[Math.floor(Date.UTC(p[0], p[1] - 1, p[2]) / DAY)] = true;
+        });
+        const first = Object.keys(done).map(Number).sort((a, b) => a - b)[0];
+        return { id: h.id, name: h.name, created: first || today(), done };
+      });
+    } catch (e) { return null; }
+  }
+
+  async function persistHabit(h) {
+    localSave();
+    if (!hasCloud) return;
+    const ok = await cSet('h_' + h.id, pack(h));
+    if (!ok) { syncOk = false; renderFoot(); }
+  }
+  async function persistRemove(id) {
+    localSave();
+    if (!hasCloud) return;
+    const ok = await cRemove('h_' + id);
+    if (!ok) { syncOk = false; renderFoot(); }
+  }
+  async function persistMeta() {
+    localSave();
+    if (!hasCloud) return;
+    const ok = await cSet('meta', JSON.stringify(meta));
+    if (!ok) { syncOk = false; renderFoot(); }
+  }
+
+  async function load() {
+    if (hasCloud) {
+      const keys = await cKeys();
+      if (keys) {
+        const hk = keys.filter(k => k.startsWith('h_'));
+        const all = hk.concat(keys.includes('meta') ? ['meta'] : []);
+        const vals = all.length ? await cGet(all) : {};
+        if (vals) {
+          habits = hk.map(k => unpack(k.slice(2), vals[k])).filter(h => h && h.name);
+          habits.sort((a, b) => (a.id < b.id ? -1 : 1));
+          try { if (vals.meta) meta = Object.assign({ v: 0, l: [] }, JSON.parse(vals.meta)); } catch (e) {}
+
+          // Первый запуск в облачной версии: переносим то, что было создано раньше
+          if (!habits.length && !meta.m) {
+            const old = (localLoad() || {}).habits || oldLocalLoad();
+            if (old && old.length) {
+              habits = old;
+              for (const h of habits) await cSet('h_' + h.id, pack(h));
+            }
+            meta.m = 1;
+          }
+          return;
+        }
+      }
+      syncOk = false; // облако не ответило — работаем с копией на устройстве
+    }
+    const loc = localLoad();
+    if (loc) { habits = loc.habits; meta = Object.assign({ v: 0, l: [] }, loc.meta || {}); }
+    else { habits = oldLocalLoad() || []; }
+  }
+
+  // ---------- Серии ----------
   function currentStreak(h) {
-    let d = new Date();
-    if (!h.done[dayKey(d)]) d.setDate(d.getDate() - 1);
+    let d = today();
+    if (!h.done[d]) d--;
     let n = 0;
-    while (h.done[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+    while (h.done[d]) { n++; d--; }
     return n;
   }
-
   function bestStreak(h) {
-    const days = Object.keys(h.done).sort();
+    const days = Object.keys(h.done).map(Number).sort((a, b) => a - b);
     let best = 0, cur = 0, prev = null;
-    for (const k of days) {
-      if (prev) {
-        const diff = (new Date(k) - new Date(prev)) / 86400000;
-        cur = diff === 1 ? cur + 1 : 1;
-      } else cur = 1;
+    for (const d of days) {
+      cur = (prev !== null && d - prev === 1) ? cur + 1 : 1;
       best = Math.max(best, cur);
-      prev = k;
+      prev = d;
     }
     return best;
   }
-
   function plural(n, a, b, c) {
     const m = n % 100, m1 = n % 10;
     if (m > 10 && m < 20) return c;
@@ -147,9 +260,17 @@
     if (m1 >= 2 && m1 <= 4) return b;
     return c;
   }
+  const buzz = () => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); } catch (e) {} };
+
+  // ---------- Отрисовка ----------
+  function renderFoot() {
+    document.getElementById('foot').textContent = !hasCloud
+      ? 'Данные хранятся только в этом браузере'
+      : (syncOk ? 'Привычки и история сохраняются в вашем аккаунте Telegram' : 'Не удалось связаться с облаком Telegram — данные сохранены на устройстве');
+  }
 
   function render() {
-    const t = todayKey();
+    const t = today();
     const week = lastDays(7);
     document.getElementById('today').textContent =
       new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -175,7 +296,7 @@
         <button class="check ${h.done[t] ? 'on' : ''}" data-act="toggle" data-id="${h.id}">${h.done[t] ? '✓' : ''}</button>
         <div class="info">
           <div class="name"></div>
-          <div class="meta">Серия: ${s} ${plural(s, 'день', 'дня', 'дней')}</div>
+          <div class="meta">Серия: ${s} ${plural(s, 'день', 'дня', 'дней')} · с ${fmtDay(h.created)}</div>
           <div class="dots">${week.map(k => `<div class="dot ${h.done[k] ? 'on' : ''}"></div>`).join('')}</div>
         </div>
         <button class="del" data-act="del" data-id="${h.id}" aria-label="Удалить">✕</button>`;
@@ -184,14 +305,28 @@
     });
   }
 
+  function renderVisit(prev) {
+    const el = document.getElementById('visit');
+    if (prev === null) { el.textContent = 'Добро пожаловать! Это ваш первый заход.'; return; }
+    const when = new Date(prev * 1000).toLocaleString('ru-RU',
+      { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    el.textContent = `Заход №${meta.v} · прошлый раз: ${when}`;
+  }
+
+  // ---------- Действия ----------
   document.getElementById('form').addEventListener('submit', (e) => {
     e.preventDefault();
     const input = document.getElementById('input');
     const name = input.value.trim();
     if (!name) return;
-    habits.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, done: {} });
+    const h = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      name, created: today(), done: {}
+    };
+    habits.push(h);
     input.value = '';
-    save(); render(); buzz();
+    render(); buzz();
+    persistHabit(h);
   });
 
   document.getElementById('list').addEventListener('click', (e) => {
@@ -200,17 +335,29 @@
     const h = habits.find(x => x.id === btn.dataset.id);
     if (!h) return;
     if (btn.dataset.act === 'toggle') {
-      const t = todayKey();
+      const t = today();
       if (h.done[t]) delete h.done[t]; else h.done[t] = true;
-      save(); render(); buzz();
+      render(); buzz();
+      persistHabit(h);
     } else if (btn.dataset.act === 'del') {
-      const doDelete = () => { habits = habits.filter(x => x.id !== h.id); save(); render(); };
+      const doDelete = () => { habits = habits.filter(x => x.id !== h.id); render(); persistRemove(h.id); };
       if (tg && tg.showConfirm) tg.showConfirm('Удалить «' + h.name + '» вместе с историей?', ok => ok && doDelete());
       else if (confirm('Удалить «' + h.name + '»?')) doDelete();
     }
   });
 
-  render();
+  // ---------- Запуск ----------
+  (async function start() {
+    await load();
+    const now = Math.floor(Date.now() / 1000);
+    const prev = meta.l && meta.l.length ? meta.l[meta.l.length - 1] : null;
+    meta.v = (meta.v || 0) + 1;
+    meta.l = (meta.l || []).concat(now).slice(-20);
+    render();
+    renderVisit(prev);
+    renderFoot();
+    persistMeta();
+  })();
 </script>
 </body>
 </html>
