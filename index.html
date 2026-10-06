@@ -350,9 +350,9 @@
 
   .chess-status { min-height: 26px; margin: 0 2px 12px; font-size: 17px; font-weight: 600; }
   .chess-status.bad { color: var(--danger); }
-  .player-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px; min-height: 34px; font-size: 13.5px; color: var(--muted); }
+  .player-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin: 0 4px; min-height: 34px; font-size: 13.5px; color: var(--muted); }
   .player-row b { color: var(--text); font-weight: 600; margin-right: 6px; }
-  .cap { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; font-family: var(--font-sym); font-size: 17px; line-height: 1; }
+  .cap { margin-left: auto; display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; font-family: var(--font-sym); font-size: 17px; line-height: 1; }
   .cap small { margin-left: 6px; font-family: var(--font-body); font-size: 12.5px; font-weight: 600; color: var(--muted); }
 
   .board {
@@ -361,7 +361,7 @@
     box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6); user-select: none; -webkit-user-select: none;
   }
   .sq {
-    position: relative; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: 0; min-width: 0; min-height: 0; overflow: hidden;
+    position: relative; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: 0; min-width: 0; min-height: 0; transition: background-color .2s;
     background: var(--sq-light); font-family: var(--font-sym); line-height: 1; -webkit-appearance: none; appearance: none;
   }
   .sq.dk { background: var(--sq-dark); }
@@ -372,6 +372,32 @@
   .pc .e { fill: var(--ps); stroke: none; }
   .cap .pc, .cap .pc.w, .cap .pc.b { width: 19px; height: 19px; margin-left: -4px; }
   .promo-row .pc { width: 72%; height: 72%; }
+  .sq.moving { z-index: 6; }
+  .pc.ghost { position: absolute; inset: 0; margin: auto; z-index: 0; }
+  .sq.last.fresh { animation: lastIn .7s ease-out; }
+  @keyframes lastIn { from { box-shadow: inset 0 0 0 3px rgba(245, 197, 66, 0); } to { box-shadow: inset 0 0 0 3px #f5c542; } }
+  .sq.sel .pc { animation: lift .22s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes lift { from { transform: none; } to { transform: translateY(-5%) scale(1.09); } }
+  .chess-status.swap { animation: swapIn .4s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  .setup:not([hidden]), #growChess:not([hidden]), #growHome:not([hidden]) { animation: rise .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .clock { margin-left: 10px; padding: 3px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; letter-spacing: .02em; transition: background-color .3s, color .3s, border-color .3s, transform .3s; }
+  .clock.on { background: var(--grad); border-color: transparent; color: #fff; transform: scale(1.05); }
+  .clock.low { color: var(--danger); border-color: var(--danger); }
+  .clock.on.low { background: var(--danger); color: #fff; animation: clockPulse 1s ease-in-out infinite; }
+  @keyframes clockPulse { 50% { opacity: .72; } }
+  .setup .desc.bad { color: var(--danger); }
+  .sq.tgt::after { animation: pop .22s ease-out; }
+  .sq.capt::after { animation: pop .22s ease-out; }
+  @keyframes pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .chess-status { transition: color .25s; }
+  .chess-status.think { color: var(--muted); }
+  .dots { display: inline-flex; gap: 4px; margin-left: 9px; vertical-align: middle; }
+  .dots b { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .25; animation: dotp 1.2s infinite ease-in-out; }
+  .dots b:nth-child(2) { animation-delay: .2s; }
+  .dots b:nth-child(3) { animation-delay: .4s; }
+  @keyframes dotp { 0%, 80%, 100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1.15); } }
   .sq.last { box-shadow: inset 0 0 0 3px #f5c542; }
   .sq.sel { box-shadow: inset 0 0 0 3px var(--mint); }
   .sq.tgt::after { content: ""; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: rgba(18, 14, 51, 0.38); }
@@ -614,9 +640,9 @@
 
       <div class="chess-status" id="chessStatus" role="status" aria-live="polite"></div>
 
-      <div class="player-row"><span><b>Бот</b><span id="botInfo"></span></span><div class="cap" id="capTop"></div></div>
+      <div class="player-row"><span><b>Бот</b><span id="botInfo"></span></span><span class="clock" id="clockTop" hidden>0:00</span><div class="cap" id="capTop"></div></div>
       <div class="board" id="board" aria-label="Шахматная доска"></div>
-      <div class="player-row"><span><b>Вы</b><span id="youInfo"></span></span><div class="cap" id="capBottom"></div></div>
+      <div class="player-row"><span><b>Вы</b><span id="youInfo"></span></span><span class="clock" id="clockBottom" hidden>0:00</span><div class="cap" id="capBottom"></div></div>
 
       <div class="chess-actions" id="chessActions">
         <button class="btn" id="chessUndo" type="button">Отменить ход</button>
@@ -630,6 +656,13 @@
         <p class="desc" id="lvlDesc"></p>
         <div class="lbl">Ваш цвет</div>
         <div class="chips" id="clrChips" role="radiogroup" aria-label="Ваш цвет"></div>
+        <div class="lbl">Время партии</div>
+        <div class="chips" id="timeChips" role="radiogroup" aria-label="Время партии"></div>
+        <div class="custom" id="customTimeWrap" hidden>
+          <input id="customTime" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" placeholder="Минут" autocomplete="off" aria-label="Своё время в минутах">
+          <span>минут каждому игроку (от 1 до 180)</span>
+        </div>
+        <p class="desc" id="timeHint"></p>
         <button class="btn primary wide" id="chessStart" type="button">Начать партию</button>
         <button class="btn wide" id="setupCancel" type="button" hidden>Отмена</button>
       </div>
@@ -1128,7 +1161,8 @@
         const list = [];
         for (const m of moves) {
           pos.make(m);
-          const sc = -negamax(pos, d - 1, -Infinity, full ? Infinity : -bestScore, 1, ctx);
+          const bnd = full === true || bestScore === -Infinity ? Infinity : -(bestScore - (full || 0));
+          const sc = -negamax(pos, d - 1, -Infinity, bnd, 1, ctx);
           pos.unmake();
           if (ctx.abort) break;
           list.push({ m, score: sc });
@@ -1142,18 +1176,72 @@
       return result;
     }
   
-    // Бот: 1 — лёгкий, 2 — средний, 3 — сложный
-    function think(pos, level) {
-      if (level === 1) {
-        const r = rootSearch(pos, 1, 400, true);
-        if (!r) return null;
-        const list = r.list.slice().sort((a, b) => b.score - a.score);
-        if (Math.random() < 0.22) return list[Math.floor(Math.random() * list.length)].m;
-        const top = list.filter(x => x.score >= list[0].score - 90);
-        return top[Math.floor(Math.random() * top.length)].m;
+    // Небольшая «книга» дебютов: после каких ходов что можно ответить
+    const BOOK = {
+      '': ['e2e4', 'e2e4', 'd2d4', 'g1f3', 'c2c4'],
+      'e2e4': ['e7e5', 'e7e5', 'c7c5', 'e7e6', 'c7c6'],
+      'd2d4': ['d7d5', 'd7d5', 'g8f6'],
+      'g1f3': ['d7d5', 'g8f6'],
+      'c2c4': ['e7e5', 'g8f6'],
+      'e2e4 e7e5': ['g1f3'],
+      'e2e4 e7e5 g1f3': ['b8c6'],
+      'e2e4 e7e5 g1f3 b8c6': ['f1b5', 'f1c4', 'd2d4'],
+      'e2e4 e7e5 g1f3 b8c6 f1b5': ['a7a6'],
+      'e2e4 e7e5 g1f3 b8c6 f1c4': ['g8f6', 'f8c5'],
+      'e2e4 e7e5 g1f3 b8c6 d2d4': ['e5d4'],
+      'e2e4 c7c5': ['g1f3'],
+      'e2e4 c7c5 g1f3': ['d7d6', 'b8c6'],
+      'e2e4 e7e6': ['d2d4'],
+      'e2e4 e7e6 d2d4': ['d7d5'],
+      'e2e4 c7c6': ['d2d4'],
+      'e2e4 c7c6 d2d4': ['d7d5'],
+      'd2d4 d7d5': ['c2c4', 'g1f3'],
+      'd2d4 d7d5 c2c4': ['e7e6', 'c7c6'],
+      'd2d4 d7d5 c2c4 e7e6': ['b1c3', 'g1f3'],
+      'd2d4 d7d5 g1f3': ['g8f6'],
+      'd2d4 g8f6': ['c2c4', 'g1f3'],
+      'g1f3 d7d5': ['d2d4', 'c2c4'],
+      'g1f3 g8f6': ['c2c4', 'g2g3'],
+      'c2c4 e7e5': ['b1c3'],
+      'c2c4 g8f6': ['b1c3']
+    };
+
+    // Бот: 1 — лёгкий, 2 — средний, 3 — сложный.
+    // opts: { history: ['e2e4', ...] } — сыгранные ходы; opts.info заполняется для расчёта «времени на размышление».
+    // Бот выбирает не всегда единственный лучший ход, а один из почти равных — как делает человек.
+    function think(pos, level, opts) {
+      opts = opts || {};
+      const hist = opts.history || [];
+      const info = opts.info || (opts.info = {});
+      info.book = false;
+      if (level >= 2 && hist.length < 10 && Math.random() < 0.9) {
+        const opts2 = BOOK[hist.join(' ')];
+        if (opts2) {
+          const mv = parse(pos, opts2[Math.floor(Math.random() * opts2.length)]);
+          if (mv) { info.book = true; info.legal = pos.legal().length; return mv; }
+        }
       }
-      const r = level === 2 ? rootSearch(pos, 3, 800, false) : rootSearch(pos, 6, 1800, false);
-      return r ? r.m : null;
+      const cfg = level === 1 ? { d: 1, ms: 400, full: true, margin: 90 }
+                : level === 2 ? { d: 3, ms: 700, full: 70, margin: 28 }
+                :               { d: 6, ms: 1400, full: 40, margin: 14 };
+      const r = rootSearch(pos, cfg.d, cfg.ms, cfg.full);
+      if (!r) return null;
+      const list = r.list.slice().sort((a, b) => b.score - a.score);
+      info.legal = list.length; info.score = list[0].score; info.depth = r.depth || 0;
+      if (list.length === 1 || Math.abs(list[0].score) > MATE - 100) return list[0].m;
+      if (level === 1) {
+        if (Math.random() < 0.22) return list[Math.floor(Math.random() * list.length)].m;
+      } else if (level === 2 && Math.random() < 0.05) {
+        const alt = list.filter(x => x.score >= list[0].score - 120);
+        return alt[Math.floor(Math.random() * alt.length)].m;
+      }
+      const margin = cfg.margin + (hist.length < 12 ? 20 : 0);
+      const pool = list.filter(x => x.score >= list[0].score - margin);
+      // лучшие ходы выбираются чаще, но не всегда
+      let tot = 0; const w = pool.map((x, k) => { const v = 1 / (1 + k * 0.9); tot += v; return v; });
+      let t = Math.random() * tot;
+      for (let k = 0; k < pool.length; k++) { t -= w[k]; if (t <= 0) return pool[k].m; }
+      return pool[0].m;
     }
   
     const PROMO = { 2: 'n', 3: 'b', 4: 'r', 5: 'q' };
@@ -1411,7 +1499,7 @@
           meta = `<div class="meta${s > 0 ? ' hot' : ''}">${s > 0 ? ICON_FLAME + s + ' ' + plural(s, 'день', 'дня', 'дней') + ' подряд' : 'Серия не начата'}</div>`;
           prog = sp.legacy
             ? `<div class="prog">${got} из 7 за последние 7 дней</div>`
-            : `<div class="prog">${got} из ${sp.len} · ${left > 0 ? 'осталось ' + daysLabel(left) : 'сегодня последний день'}</div>`;
+            : `<div class="prog">${got} из ${sp.len} · ${left > 0 ? (left % 10 === 1 && left % 100 !== 11 ? 'остался ' : 'осталось ') + daysLabel(left) : 'сегодня последний день'}</div>`;
         }
         el.innerHTML = `${btn}
           <div class="info">
@@ -1637,7 +1725,7 @@
   const TOUR = [
     {
       title: 'Добро пожаловать!',
-      text: 'Здесь вы будете выстраивать полезные привычки: день за днём, шаг за шагом. Покажем, как всё устроено, это займёт минуту.',
+      text: 'Здесь вы будете выстраивать полезные привычки: день за днём, шаг за шагом. Покажем, как всё устроено: это займёт минуту.',
       art: `<div class="a0"><span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span><div class="core">${SVG_CHECK}</div></div>`
     },
     {
@@ -1653,13 +1741,13 @@
     },
     {
       title: 'Отмечайте каждый день',
-      text: 'Сделали дело, нажмите на кружок слева. Дни подряд складываются в серию, старайтесь её не прерывать.',
+      text: 'Сделали дело — нажмите на кружок слева. Дни подряд складываются в серию, и её лучше не прерывать.',
       art: `<div class="a3"><div class="m-card"><div class="m-check">${SVG_CHECK}</div><div class="m-info"><b>Пить воду</b><div class="m-flame">${ICON_FLAME}серия растёт</div><div class="m-days"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="live"></i><i></i><i></i></div></div></div></div>`
     },
     {
       title: 'Следите за прогрессом',
       text: 'В «Профиле» собрана ваша статистика. Там же можно выбрать светлую или тёмную тему.',
-      art: `<div class="a4"><div class="m-av"><div>${SVG_USER}</div></div><div class="m-tiles"><div><b>12</b><span>отметок</span></div><div><b>5</b><span>дней серия</span></div><div><b>85%</b><span>за срок</span></div></div></div>`
+      art: `<div class="a4"><div class="m-av"><div>${SVG_USER}</div></div><div class="m-tiles"><div><b>12</b><span>отметок</span></div><div><b>5</b><span>дней в серии</span></div><div><b>85%</b><span>за срок</span></div></div></div>`
     },
     {
       title: 'Развивайтесь',
@@ -1731,29 +1819,33 @@
   const PIECE_PTS = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0 };
   const LEVELS = [
     { id: 1, name: 'Лёгкий', desc: 'Иногда ошибается. Подходит, чтобы освоиться в игре.' },
-    { id: 2, name: 'Средний', desc: 'Просчитывает несколько ходов вперёд и не зевает фигуры.' },
+    { id: 2, name: 'Средний', desc: 'Просчитывает несколько ходов вперёд и не подставляет фигуры.' },
     { id: 3, name: 'Сложный', desc: 'Думает дольше и играет внимательно. Победить будет непросто.' }
   ];
   const WHY_TEXT = {
     stalemate: 'Пат. Ничья.',
     material: 'Ничья: не хватает фигур для мата.',
     fifty: 'Ничья по правилу 50 ходов.',
-    repetition: 'Ничья: позиция повторилась трижды.'
+    repetition: 'Ничья: позиция повторилась трижды.',
+    timeins: 'Время вышло, но у соперника не хватает фигур для мата. Ничья.'
   };
   const SETUP_KEY = 'habits_chess_setup';
 
   const game = {
     active: false, pos: Chess.Pos.fromFEN(Chess.START), player: 1, level: 2,
     moves: [], seen: {}, last: null, caps: [], legal: [], check: false,
-    sel: -1, targets: [], busy: false, result: null, fin: false, resigned: false, token: 0
+    sel: -1, targets: [], busy: false, result: null, fin: false, resigned: false, token: 0,
+    tc: 0, tms: { p: 0, b: 0 }, ts: 0, flag: null
   };
   let cstats = { w: 0, l: 0, d: 0 };
   let setupLevel = 2, setupColor = 'white', setupOpen = false;
+  let setupTime = 10, setupTimeCustom = false, setupTimeVal = '';
+  const TIME_PRESETS = [5, 10, 15, 20, 30];
   let growView = 'home';
   let promoCands = null;
 
   const PIECE_SVG = {
-    1: '<path d="M22.5 8.5a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 0 1 0-10.4zM16.5 37c0-8 4-11 6-16h0c2 5 6 8 6 16zM12.5 37h20v4h-20z"/>',
+    1: '<path d="M22.5 8.5A5.5 5.5 0 0 1 25.7 18.4c1.8 2.6 4.8 5.7 4.8 11.1V34H33v7H12v-7h2.5v-4.5c0-5.4 3-8.5 4.8-11.1A5.5 5.5 0 0 1 22.5 8.5z"/>',
     2: '<path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/><path class="d" d="M24 15c-2 .5-4 2-5 4"/><circle class="e" cx="26.5" cy="14.5" r="1.5"/>',
     3: '<path d="M22.5 5a3 3 0 0 1 1.800 5.400c5 3.800 6 9 4 13.600c-.8 1.800-1.800 3.200-1.800 4.5l3 1.5h-14l3-1.5c0-1.300-1-2.700-1.800-4.5c-2-4.600-1-9.800 4-13.600A3 3 0 0 1 22.5 5z"/><path d="M12.5 41c0-5 4-7.5 10-7.5s10 2.5 10 7.5z"/><path class="d" d="M22.5 15v7M19.5 18.5h6"/>',
     4: '<path d="M12 41v-4h3l1-14h-3V9h5v4h4V9h5v4h4V9h5v14h-3l1 14h3v4z"/><path class="d" d="M16 23h13"/>',
@@ -1776,7 +1868,63 @@
     if (hasCloud) { const r = await cGet([k]); if (r && typeof r[k] === 'string' && r[k]) return r[k]; }
     try { return localStorage.getItem('hk_' + k); } catch (e) { return null; }
   }
-  const saveGame = () => kvSet('chess', JSON.stringify({ c: game.player, l: game.level, m: game.moves, r: game.resigned ? 1 : 0, f: game.fin ? 1 : 0 }));
+  const saveGame = () => kvSet('chess', JSON.stringify({ c: game.player, l: game.level, m: game.moves, r: game.resigned ? 1 : 0, f: game.fin ? 1 : 0,
+    tc: game.tc, tp: Math.round(game.tms.p), tb: Math.round(game.tms.b), fl: game.flag || '' }));
+
+  // ----- шахматные часы -----
+  const sideKey = () => (game.pos.side === game.player ? 'p' : 'b');
+  const clockRunning = () => game.active && game.tc > 0 && !game.result && !game.resigned && !game.flag;
+  function settleClock() { // записываем, сколько времени потратил тот, чей сейчас ход
+    const now = Date.now();
+    if (clockRunning()) { const k = sideKey(); game.tms[k] = Math.max(0, game.tms[k] - (now - game.ts)); }
+    game.ts = now;
+  }
+  function clockLeft(k) {
+    let v = game.tms[k];
+    if (clockRunning() && sideKey() === k) v -= Date.now() - game.ts;
+    return Math.max(0, v);
+  }
+  function fmtClock(ms) {
+    const t = Math.ceil(ms / 1000), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60;
+    return h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
+  }
+  function updateClocks() {
+    const top = document.getElementById('clockTop'), bot = document.getElementById('clockBottom');
+    const show = game.active && game.tc > 0;
+    top.hidden = bot.hidden = !show;
+    if (!show) return;
+    for (const [el, k] of [[top, 'b'], [bot, 'p']]) {
+      const v = clockLeft(k), txt = fmtClock(v);
+      if (el.textContent !== txt) el.textContent = txt;
+      el.classList.toggle('on', clockRunning() && sideKey() === k);
+      el.classList.toggle('low', v < 30000 && v < game.tc * 0.2);
+    }
+  }
+  // может ли сторона поставить мат (для ничьей при потере времени соперником)
+  function canMate(color) {
+    let minors = 0;
+    for (let sq = 0; sq < 128; sq++) {
+      if (sq & 0x88) continue;
+      const p = game.pos.b[sq];
+      if (!p || (p > 0) !== (color > 0)) continue;
+      const t = Math.abs(p);
+      if (t === 1 || t === 4 || t === 5) return true;
+      if (t === 2 || t === 3) minors++;
+    }
+    return minors >= 2;
+  }
+  function flagGame(k) {
+    settleClock();
+    game.tms[k] = 0; game.flag = k;
+    game.busy = false; game.token++;     // отменяем отложенный ход бота
+    refreshStatus(); finishIfOver(); saveGame(); renderChess();
+  }
+  setInterval(() => {
+    if (clockRunning() && clockLeft(sideKey()) <= 0) { flagGame(sideKey()); return; }
+    updateClocks();
+  }, 250);
+  document.addEventListener('visibilitychange', () => { if (document.hidden && game.active) { settleClock(); saveGame(); } });
+  window.addEventListener('pagehide', () => { if (game.active) { settleClock(); saveGame(); } });
   const saveStats = () => kvSet('cstat', JSON.stringify(cstats));
 
   function applyMove(m) {
@@ -1793,8 +1941,13 @@
     const st = Chess.status(game.pos, game.seen);
     game.legal = st.over ? [] : st.moves;
     game.check = !!st.check;
-    game.result = game.resigned ? { over: true, winner: -game.player, why: 'resign' } : (st.over ? st : null);
-    if (game.resigned) game.legal = [];
+    let timeRes = null;
+    if (game.flag) {
+      const win = game.flag === 'p' ? -game.player : game.player;
+      timeRes = canMate(win) ? { over: true, winner: win, why: 'time' } : { over: true, winner: 0, why: 'timeins' };
+    }
+    game.result = game.resigned ? { over: true, winner: -game.player, why: 'resign' } : (timeRes || (st.over ? st : null));
+    if (game.resigned || game.flag) game.legal = [];
     game.sel = -1; game.targets = [];
   }
   function rebuildGame(list) {
@@ -1817,18 +1970,29 @@
     saveStats();
   }
 
-  function newGame(color, level) {
+  function newGame(color, level, minutes) {
     game.token++;
     game.active = true; game.player = color; game.level = level;
-    game.resigned = false; game.fin = false; game.busy = false;
+    game.resigned = false; game.fin = false; game.busy = false; game.flag = null;
+    game.tc = (minutes | 0) * 60000; game.tms = { p: game.tc, b: game.tc }; game.ts = Date.now();
     rebuildGame([]);
     saveGame();
     setupOpen = false;
     renderChess();
     maybeBot();
   }
-  function playMove(m) {
+  function playMove(m, byBot) {
+    // что и откуда двигается — для плавной анимации (и ладья при рокировке)
+    const mp = game.pos.b[m.f];
+    const anim = [{ f: m.f, t: m.t }];
+    if (Math.abs(mp) === 6 && Math.abs(m.t - m.f) === 2) {
+      anim.push(m.t > m.f ? { f: m.f + 3, t: m.f + 1 } : { f: m.f - 4, t: m.f - 1 });
+    }
+    game.anim = anim; game.animBot = !!byBot; game.animCap = game.pos.b[m.t] || 0;
+    settleClock();
+    const wasCap = !!game.pos.b[m.t];
     applyMove(m);
+    game.lastWasCap = wasCap;
     refreshStatus();
     finishIfOver();
     saveGame();
@@ -1840,23 +2004,55 @@
     game.busy = true;
     const tok = game.token;
     renderChess();
-    setTimeout(() => { // небольшая пауза, чтобы доска успела перерисоваться до расчёта
+    setTimeout(() => { // пауза: доска успевает дорисовать ход игрока, затем бот «думает»
       if (tok !== game.token) return;
-      const m = Chess.think(game.pos, game.level);
-      game.busy = false;
-      if (m) playMove(m); else { refreshStatus(); renderChess(); }
-    }, 380);
+      const t0 = Date.now();
+      const info = {};
+      const lastCap = !!game.lastWasCap;
+      let lvl = game.level;
+      if (game.tc > 0) { const left = clockLeft('b'); if (left < 5000) lvl = 1; else if (left < 15000) lvl = Math.min(lvl, 2); }
+      const m = Chess.think(game.pos, lvl, { history: game.moves.slice(), info });
+      const spent = Date.now() - t0;
+      const wait = Math.max(0, botDelay(info, m, lastCap) - spent);
+      setTimeout(() => {
+        if (tok !== game.token || game.result) return;
+        game.busy = false;
+        if (m) { playMove(m, true); buzz(); } else { refreshStatus(); renderChess(); }
+      }, wait);
+    }, 420);
+  }
+  // Сколько бот «размышляет» перед ходом: зависит от уровня, сложности позиции и случайности, как у человека
+  function botDelay(info, m, recapture) {
+    const R = { 1: [800, 1700], 2: [1100, 2500], 3: [1400, 3200] }[game.level] || [1100, 2500];
+    let d = R[0] + Math.random() * (R[1] - R[0]);
+    const ply = game.moves.length;
+    if (info.book || ply < 6) d *= 0.55;
+    if (info.legal === 1) d = 500 + Math.random() * 300;
+    else {
+      if (recapture) d *= 0.7;
+      if (game.check) d *= 0.85;
+      if (info.legal > 34) d *= 1.15;
+      if (ply > 12 && game.level > 1 && Math.random() < 0.1) d += 1200 + Math.random() * 1200; // иногда задумывается
+    }
+    if (game.tc > 0) {
+      const left = clockLeft('b');
+      d = Math.min(d, Math.max(250, left * 0.06));
+      if (left < 20000) d = Math.min(d, 600);
+    }
+    return Math.min(d, 4800);
   }
   function undoMove() {
     if (!game.active || game.busy || game.result) return;
     const k = game.pos.side === game.player ? 2 : 1;
     if (game.moves.length < k) return;
+    settleClock();
     rebuildGame(game.moves.slice(0, -k));
     saveGame(); renderChess(); buzz();
   }
   function resignGame() {
     if (!game.active || game.busy || game.result) return;
     askConfirm('Сдаться и засчитать поражение?', () => {
+      settleClock();
       game.resigned = true;
       refreshStatus(); finishIfOver(); saveGame(); renderChess();
     });
@@ -1872,7 +2068,7 @@
       document.getElementById('promo').hidden = false;
       return;
     }
-    playMove(cands[0]);
+    playMove(cands[0], false);
   }
   document.getElementById('promoRow').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-p]');
@@ -1880,7 +2076,7 @@
     const m = promoCands.find(x => x.p === +b.dataset.p);
     promoCands = null;
     document.getElementById('promo').hidden = true;
-    if (m) playMove(m);
+    if (m) playMove(m, false);
   });
   document.getElementById('promo').addEventListener('click', (e) => {
     if (e.target.id === 'promo') { promoCands = null; document.getElementById('promo').hidden = true; }
@@ -1906,6 +2102,7 @@
     const board = document.getElementById('board');
     const pos = game.pos;
     const flip = game.player === -1;
+    const anim = game.anim;
     const last = game.last || [];
     const checkSq = game.active && game.check ? pos.ks[pos.side === 1 ? 0 : 1] : -1;
     let html = '';
@@ -1916,7 +2113,7 @@
       const p = pos.b[sq];
       const cls = ['sq'];
       if ((r + c) % 2 === 1) cls.push('dk');
-      if (last.includes(sq)) cls.push('last');
+      if (last.includes(sq)) cls.push('last'); if (last.includes(sq) && anim) cls.push('fresh');
       if (sq === game.sel) cls.push('sel');
       if (game.targets.includes(sq)) cls.push(p ? 'capt' : 'tgt');
       if (sq === checkSq) cls.push('chk');
@@ -1924,20 +2121,58 @@
       const file = (i >> 3) === 7 ? `<span class="co f">${'abcdefgh'[c]}</span>` : '';
       html += `<button type="button" class="${cls.join(' ')}" data-sq="${sq}" aria-label="${sqLabel(sq, p)}">${rank}${file}${p ? pieceHTML(p) : ''}</button>`;
     }
+    game.anim = null;
+    if (!anim && html === lastBoardHtml) return; // ничего не изменилось — не трогаем доску (не прерываем анимацию)
+    lastBoardHtml = html;
     board.innerHTML = html;
     const w = board.clientWidth;
     if (w) board.style.fontSize = Math.floor(w / 8 * 1.02) + 'px';
+    if (anim && w) animatePieces(board, anim, game.animBot, game.animCap);
+  }
+  let lastBoardHtml = '';
+  function animatePieces(board, anim, bot, capPiece) {
+    for (const a of anim) {
+      const to = board.querySelector(`.sq[data-sq="${a.t}"]`), from = board.querySelector(`.sq[data-sq="${a.f}"]`);
+      const pc = to && to.querySelector('.pc');
+      if (!pc || !from) continue;
+      const rt = to.getBoundingClientRect(), rf = from.getBoundingClientRect();
+      const dx = rf.left - rt.left, dy = rf.top - rt.top;
+      const dist = Math.max(Math.abs((a.t & 7) - (a.f & 7)), Math.abs((a.t >> 4) - (a.f >> 4)));
+      const dur = Math.round((240 + 60 * dist) * (bot ? 1.5 : 1.1)); // чем дальше ход, тем дольше скольжение
+      to.classList.add('moving');
+      const done = () => to.classList.remove('moving');
+      if (pc.animate) {
+        const mv = pc.animate([{ translate: `${dx}px ${dy}px` }, { translate: '0px 0px' }], { duration: dur, easing: 'cubic-bezier(.45, 0, .15, 1)' });
+        pc.animate([{ scale: 1 }, { scale: 1.14, offset: 0.4 }, { scale: 1 }], { duration: dur, easing: 'ease-in-out' });
+        mv.onfinish = done; mv.oncancel = done;
+        setTimeout(done, dur + 150);
+      } else {
+        pc.style.transition = 'none'; pc.style.transform = `translate(${dx}px, ${dy}px)`;
+        pc.getBoundingClientRect();
+        pc.style.transition = `transform ${dur}ms cubic-bezier(.45, 0, .15, 1)`; pc.style.transform = 'translate(0, 0)';
+        setTimeout(() => { done(); pc.style.transition = ''; pc.style.transform = ''; }, dur + 80);
+      }
+      if (capPiece && a === anim[0]) { // побитая фигура мягко растворяется, когда подъезжает бьющая
+        to.insertAdjacentHTML('beforeend', pieceHTML(capPiece).replace('class="pc', 'class="pc ghost'));
+        const g = to.querySelector('.pc.ghost');
+        if (g && g.animate) {
+          const ga = g.animate([{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.55 }], { duration: 340, delay: Math.round(dur * 0.55), fill: 'both', easing: 'ease-in' });
+          ga.onfinish = () => g.remove();
+        } else if (g) setTimeout(() => g.remove(), dur);
+      }
+    }
   }
 
   function chessStatus() {
     if (!game.active) return { t: 'Выберите уровень и цвет, затем начните партию.' };
     if (game.result) {
       const r = game.result;
+      if (r.why === 'time') return r.winner === game.player ? { t: 'У бота закончилось время. Вы победили!' } : { t: 'Ваше время вышло. Победил бот.', bad: true };
       if (r.why === 'resign') return { t: 'Вы сдались. Победил бот.', bad: true };
       if (r.why === 'mate') return r.winner === game.player ? { t: 'Мат! Вы победили.' } : { t: 'Мат. Победил бот.', bad: true };
       return { t: WHY_TEXT[r.why] || 'Ничья.' };
     }
-    if (game.busy || game.pos.side !== game.player) return { t: 'Бот думает…' };
+    if (game.busy || game.pos.side !== game.player) return { t: 'Бот думает', think: true };
     return { t: game.check ? 'Шах! Ваш ход.' : 'Ваш ход.' };
   }
 
@@ -1948,8 +2183,14 @@
   function renderChess() {
     const st = chessStatus();
     const stEl = document.getElementById('chessStatus');
-    stEl.textContent = st.t;
+    const stKey = st.t + (st.think ? '|t' : '');
+    if (stEl.dataset.k !== stKey) {
+      stEl.dataset.k = stKey;
+      stEl.classList.remove('swap'); void stEl.offsetWidth; stEl.classList.add('swap');
+      if (st.think) stEl.innerHTML = st.t + '<i class="dots"><b></b><b></b><b></b></i>'; else stEl.textContent = st.t;
+    }
     stEl.classList.toggle('bad', !!st.bad);
+    stEl.classList.toggle('think', !!st.think);
 
     const lvl = LEVELS.find(l => l.id === game.level) || LEVELS[1];
     document.getElementById('botInfo').textContent = game.active ? lvl.name : '';
@@ -1962,6 +2203,7 @@
     document.getElementById('capTop').innerHTML = capturedHTML(theirs, game.player) + (adv < 0 ? `<small>+${-adv}</small>` : '');
 
     renderBoard();
+    updateClocks();
 
     const playing = game.active && !game.result;
     const k = game.pos.side === game.player ? 2 : 1;
@@ -1987,8 +2229,24 @@
     document.getElementById('lvlDesc').textContent = (LEVELS.find(l => l.id === setupLevel) || LEVELS[1]).desc;
     document.getElementById('clrChips').innerHTML = [['white', 'Белые'], ['black', 'Чёрные'], ['random', 'Случайно']].map(([id, name]) =>
       `<button type="button" class="chip" role="radio" aria-checked="${setupColor === id}" data-clr="${id}">${name}</button>`).join('');
+    renderTimeChips();
   }
-  function saveSetup() { try { localStorage.setItem(SETUP_KEY, JSON.stringify({ l: setupLevel, c: setupColor })); } catch (e) {} }
+  function renderTimeChips() {
+    const chips = TIME_PRESETS.map(n => `<button type="button" class="chip" role="radio" aria-checked="${!setupTimeCustom && setupTime === n}" data-time="${n}">${n} мин</button>`);
+    chips.push(`<button type="button" class="chip" role="radio" aria-checked="${setupTimeCustom}" data-time="custom">Своё время</button>`);
+    chips.push(`<button type="button" class="chip" role="radio" aria-checked="${!setupTimeCustom && setupTime === 0}" data-time="0">Без времени</button>`);
+    document.getElementById('timeChips').innerHTML = chips.join('');
+    document.getElementById('customTimeWrap').hidden = !setupTimeCustom;
+    const hint = document.getElementById('timeHint');
+    if (!hint.classList.contains('bad')) hint.textContent = setupTimeCustom ? '' : (setupTime ? 'Часы идут у каждого игрока, когда его ход. Если время закончится, засчитывается поражение.' : 'Играть можно без ограничения времени.');
+  }
+  function setTimeHint(t, bad) { const h = document.getElementById('timeHint'); h.textContent = t; h.classList.toggle('bad', !!bad); }
+  function readCustomTime() {
+    const raw = document.getElementById('customTime').value.trim();
+    const n = /^\d{1,3}$/.test(raw) ? parseInt(raw, 10) : 0;
+    return n >= 1 && n <= 180 ? n : 0;
+  }
+  function saveSetup() { try { localStorage.setItem(SETUP_KEY, JSON.stringify({ l: setupLevel, c: setupColor, t: setupTime, tc: setupTimeCustom ? 1 : 0, tv: document.getElementById('customTime').value })); } catch (e) {} }
 
   function renderChessBadge() {
     const el = document.getElementById('chessBadge');
@@ -2021,9 +2279,25 @@
     const b = e.target.closest('[data-clr]');
     if (b) { setupColor = b.dataset.clr; saveSetup(); renderSetup(); buzz(); }
   });
+  document.getElementById('timeChips').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-time]');
+    if (!b) return;
+    setTimeHint('', false);
+    if (b.dataset.time === 'custom') { setupTimeCustom = true; renderTimeChips(); document.getElementById('customTime').focus(); }
+    else { setupTimeCustom = false; setupTime = +b.dataset.time; renderTimeChips(); }
+    saveSetup(); buzz();
+  });
+  const customTimeEl = document.getElementById('customTime');
+  customTimeEl.addEventListener('input', () => { customTimeEl.value = customTimeEl.value.replace(/\D/g, ''); setTimeHint('', false); saveSetup(); });
+  customTimeEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('chessStart').click(); } });
   document.getElementById('chessStart').addEventListener('click', () => {
+    let minutes = setupTime;
+    if (setupTimeCustom) {
+      minutes = readCustomTime();
+      if (!minutes) { setTimeHint('Введите время от 1 до 180 минут.', true); customTimeEl.focus(); return; }
+    }
     const color = setupColor === 'white' ? 1 : setupColor === 'black' ? -1 : (Math.random() < 0.5 ? 1 : -1);
-    newGame(color, setupLevel);
+    newGame(color, setupLevel, minutes);
     buzz();
   });
   window.addEventListener('resize', () => {
@@ -2035,6 +2309,8 @@
       const o = JSON.parse(localStorage.getItem(SETUP_KEY));
       if (o && [1, 2, 3].includes(o.l)) setupLevel = o.l;
       if (o && ['white', 'black', 'random'].includes(o.c)) setupColor = o.c;
+      if (o && Number.isInteger(o.t) && (o.t === 0 || (o.t >= 1 && o.t <= 180))) setupTime = o.t;
+      if (o && o.tc) { setupTimeCustom = true; document.getElementById('customTime').value = String(o.tv || '').replace(/\D/g, '').slice(0, 3); }
     } catch (e) {}
     try {
       const s = JSON.parse(await kvGet('cstat'));
@@ -2049,6 +2325,10 @@
         game.level = [1, 2, 3].includes(g.l) ? g.l : 2;
         game.resigned = !!g.r;
         game.fin = !!g.f;
+        game.tc = Math.max(0, g.tc | 0);
+        game.tms = { p: Math.max(0, g.tp | 0), b: Math.max(0, g.tb | 0) };
+        game.flag = g.fl === 'p' || g.fl === 'b' ? g.fl : null;
+        game.ts = Date.now();   // пока приложение закрыто, часы стоят
         rebuildGame(g.m);
         finishIfOver();
       }
