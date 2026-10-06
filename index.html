@@ -353,22 +353,25 @@
   .player-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px; min-height: 34px; font-size: 13.5px; color: var(--muted); }
   .player-row b { color: var(--text); font-weight: 600; margin-right: 6px; }
   .cap { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; font-family: var(--font-sym); font-size: 17px; line-height: 1; }
-  .cap .pc { margin-left: -3px; }
   .cap small { margin-left: 6px; font-family: var(--font-body); font-size: 12.5px; font-weight: 600; color: var(--muted); }
 
   .board {
-    display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1 / 1; width: 100%;
+    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); aspect-ratio: 1 / 1; width: 100%;
     border-radius: 16px; overflow: hidden; border: 1px solid var(--line);
     box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6); user-select: none; -webkit-user-select: none;
   }
   .sq {
-    position: relative; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: 0;
+    position: relative; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: 0; min-width: 0; min-height: 0; overflow: hidden;
     background: var(--sq-light); font-family: var(--font-sym); line-height: 1; -webkit-appearance: none; appearance: none;
   }
   .sq.dk { background: var(--sq-dark); }
-  .pc { position: relative; z-index: 1; }
-  .pc.w { color: #fff; -webkit-text-stroke: 1.2px #1a1440; text-shadow: 0 0 2px #1a1440, 0 1px 3px rgba(0, 0, 0, 0.45); }
-  .pc.b { color: #1b1440; text-shadow: 0 0 1px rgba(255, 255, 255, 0.55); }
+  .pc { position: relative; z-index: 1; display: block; width: 88%; height: 88%; overflow: visible; fill: var(--pf); stroke: var(--ps); stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round; pointer-events: none; filter: drop-shadow(0 1.5px 1.5px rgba(10, 6, 40, 0.35)); }
+  .pc.w { --pf: #ffffff; --ps: #1a1440; }
+  .pc.b { --pf: #241a5c; --ps: #efeaff; }
+  .pc .d { fill: none; }
+  .pc .e { fill: var(--ps); stroke: none; }
+  .cap .pc, .cap .pc.w, .cap .pc.b { width: 19px; height: 19px; margin-left: -4px; }
+  .promo-row .pc { width: 72%; height: 72%; }
   .sq.last { box-shadow: inset 0 0 0 3px #f5c542; }
   .sq.sel { box-shadow: inset 0 0 0 3px var(--mint); }
   .sq.tgt::after { content: ""; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: rgba(18, 14, 51, 0.38); }
@@ -1749,7 +1752,15 @@
   let growView = 'home';
   let promoCands = null;
 
-  const pieceHTML = (p) => `<span class="pc ${p > 0 ? 'w' : 'b'}">${GLYPH[Math.abs(p)]}︎</span>`;
+  const PIECE_SVG = {
+    1: '<path d="M22.5 8.5a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 0 1 0-10.4zM16.5 37c0-8 4-11 6-16h0c2 5 6 8 6 16zM12.5 37h20v4h-20z"/>',
+    2: '<path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/><path class="d" d="M24 15c-2 .5-4 2-5 4"/><circle class="e" cx="26.5" cy="14.5" r="1.5"/>',
+    3: '<path d="M22.5 5a3 3 0 0 1 1.800 5.400c5 3.800 6 9 4 13.600c-.8 1.800-1.800 3.200-1.800 4.5l3 1.5h-14l3-1.5c0-1.300-1-2.700-1.800-4.5c-2-4.600-1-9.800 4-13.600A3 3 0 0 1 22.5 5z"/><path d="M12.5 41c0-5 4-7.5 10-7.5s10 2.5 10 7.5z"/><path class="d" d="M22.5 15v7M19.5 18.5h6"/>',
+    4: '<path d="M12 41v-4h3l1-14h-3V9h5v4h4V9h5v4h4V9h5v14h-3l1 14h3v4z"/><path class="d" d="M16 23h13"/>',
+    5: '<path d="M9.5 15l5 20h16l5-20l-7 9l-2-12l-4 12l-4-12l-2 12z"/><circle cx="9.5" cy="13.5" r="2.200"/><circle cx="16.5" cy="10" r="2.200"/><circle cx="22.5" cy="8.5" r="2.200"/><circle cx="28.5" cy="10" r="2.200"/><circle cx="35.5" cy="13.5" r="2.200"/><path d="M11.5 41v-5h22v5z"/>',
+    6: '<path d="M20.5 3h4v3.5H28v4h-3.5V14h-4v-3.5H17v-4h3.5z"/><path d="M22.5 14c-9 0-12.5 8-9 14.5L12 35h21l-1.5-6.5C35 22 31.5 14 22.5 14z"/><path d="M11.5 41v-6h22v6z"/>'
+  };
+  const pieceHTML = (p) => `<svg class="pc ${p > 0 ? 'w' : 'b'}" viewBox="0 0 45 45" aria-hidden="true">${PIECE_SVG[Math.abs(p)]}</svg>`;
   const sqLabel = (sq, p) => 'abcdefgh'[sq & 7] + (8 - (sq >> 4)) + (p ? ', ' + (p > 0 ? 'белые' : 'чёрные') + ': ' + PIECE_RU[Math.abs(p)] : '');
   const askConfirm = (msg, cb) => {
     if (tg && tg.showConfirm) tg.showConfirm(msg, ok => ok && cb());
