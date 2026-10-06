@@ -8,8 +8,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+  (function () {
+    try {
+      var m = localStorage.getItem('habits_theme');
+      var tg = window.Telegram && window.Telegram.WebApp;
+      var eff = (m === 'light' || m === 'dark') ? m
+        : (tg && tg.colorScheme ? (tg.colorScheme === 'light' ? 'light' : 'dark')
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+      document.documentElement.setAttribute('data-theme', eff);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+  })();
+</script>
 <style>
   :root {
+    color-scheme: dark;
     --ink: #120e33;
     --ink2: #231a5c;
     --surface: rgba(255, 255, 255, 0.07);
@@ -22,9 +35,54 @@
     --text: #f3f1ff;
     --muted: #a8a2d8;
     --grad: linear-gradient(135deg, #8b7bff 0%, #4d8dff 100%);
+    --glow-a: rgba(77, 141, 255, 0.28);
+    --glow-b: rgba(139, 123, 255, 0.30);
+    --tabbar-bg: rgba(24, 17, 68, 0.78);
+    --tabbar-shadow: rgba(0, 0, 0, 0.55);
+    --check-border: rgba(255, 255, 255, 0.28);
+    --on-mint: #0f0b2e;
+    --cell: rgba(255, 255, 255, 0.10);
+    --done-bg: rgba(110, 231, 200, 0.08);
+    --done-line: rgba(110, 231, 200, 0.28);
+    --nick-text: #cfc9ff;
+    --danger: #ff9db1;
+    --card-shadow: none;
+    --sq-light: #c9c1ff;
+    --sq-dark: #7b6ce0;
+    --overlay: rgba(10, 7, 32, 0.72);
     --font-body: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --font-display: "Unbounded", "Onest", system-ui, sans-serif;
+    --font-sym: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", system-ui, sans-serif;
     --tabbar-h: 78px;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ink: #f3f1ff;
+    --ink2: #e2dcff;
+    --surface: rgba(255, 255, 255, 0.74);
+    --surface-strong: #ffffff;
+    --line: rgba(70, 52, 160, 0.16);
+    --violet: #6d5bf5;
+    --blue: #3f7cf5;
+    --mint: #24c9a4;
+    --flame: #c46a00;
+    --text: #1b1548;
+    --muted: #645e98;
+    --glow-a: rgba(77, 141, 255, 0.22);
+    --glow-b: rgba(139, 123, 255, 0.30);
+    --tabbar-bg: rgba(255, 255, 255, 0.84);
+    --tabbar-shadow: rgba(60, 44, 140, 0.28);
+    --check-border: rgba(70, 52, 160, 0.34);
+    --on-mint: #05362b;
+    --cell: rgba(70, 52, 160, 0.10);
+    --done-bg: rgba(36, 201, 164, 0.12);
+    --done-line: rgba(36, 201, 164, 0.50);
+    --nick-text: #4b3fb3;
+    --danger: #d6336c;
+    --card-shadow: 0 8px 22px -14px rgba(60, 44, 140, 0.45);
+    --sq-light: #ece8ff;
+    --sq-dark: #a79df0;
+    --overlay: rgba(243, 241, 255, 0.82);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--ink); }
@@ -36,8 +94,8 @@
     line-height: 1.45;
     color: var(--text);
     background:
-      radial-gradient(120% 60% at 100% -10%, rgba(77, 141, 255, 0.28), transparent 60%),
-      radial-gradient(90% 50% at -10% 0%, rgba(139, 123, 255, 0.30), transparent 55%),
+      radial-gradient(120% 60% at 100% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(90% 50% at -10% 0%, var(--glow-b), transparent 55%),
       linear-gradient(180deg, var(--ink2) 0%, var(--ink) 70%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -58,7 +116,7 @@
     font-weight: 700; font-size: 28px; line-height: 1.1;
     letter-spacing: -0.02em; margin: 0 0 6px;
   }
-  .sub { color: var(--muted); font-size: 15px; text-transform: capitalize; }
+  .sub { color: var(--muted); font-size: 15px; }
 
   /* ---------- Сводка ---------- */
   .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
@@ -98,16 +156,16 @@
     background: var(--surface); border: 1px solid var(--line);
     transition: background .25s, border-color .25s;
   }
-  .habit.done { background: rgba(110, 231, 200, 0.08); border-color: rgba(110, 231, 200, 0.28); }
+  .habit.done { background: var(--done-bg); border-color: var(--done-line); }
 
   .check {
     position: relative; flex: none; width: 44px; height: 44px; border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.28); background: transparent; padding: 0;
+    border: 2px solid var(--check-border); background: transparent; padding: 0;
     display: grid; place-items: center;
     transition: background .25s, border-color .25s, transform .15s;
   }
   .check:active { transform: scale(0.9); }
-  .check svg { width: 22px; height: 22px; fill: none; stroke: #0f0b2e; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .check svg { width: 22px; height: 22px; fill: none; stroke: var(--on-mint); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
   .check svg path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .3s .08s ease-out; }
   .check.on { background: var(--mint); border-color: var(--mint); }
   .check.on svg path { stroke-dashoffset: 0; }
@@ -123,13 +181,47 @@
   .meta svg { width: 14px; height: 14px; fill: currentColor; }
   .meta.hot { color: var(--flame); }
 
-  .week { display: flex; gap: 6px; margin-top: 12px; }
+  .prog { margin-top: 3px; font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+  .days { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
   .day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .day i { display: block; width: 22px; height: 22px; border-radius: 8px; background: rgba(255, 255, 255, 0.10); }
+  .day i { display: block; width: 20px; height: 20px; border-radius: 7px; background: var(--cell); }
+  .days.small { display: grid; gap: 4px; }
+  .days.small .day i { width: 14px; height: 14px; border-radius: 5px; }
   .day i.on { background: var(--mint); }
+  .day.future i { opacity: .4; }
   .day.today i { box-shadow: 0 0 0 2px var(--ink), 0 0 0 3.5px var(--violet); }
   .day span { font-size: 10.5px; color: var(--muted); }
   .day.today span { color: var(--text); font-weight: 600; }
+  .bar { height: 8px; margin-top: 12px; border-radius: 4px; background: var(--cell); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--violet), var(--mint)); }
+
+  .habit.ended { background: rgba(139, 123, 255, 0.10); border-color: rgba(139, 123, 255, 0.32); }
+  .check.restart { border-color: var(--violet); }
+  .check.restart svg { stroke: var(--violet); stroke-width: 2.4; }
+  .check.restart svg path { stroke-dasharray: none; stroke-dashoffset: 0; }
+
+  /* ---------- Выбор срока ---------- */
+  .term { margin: -8px 0 22px; }
+  .term-label { display: block; margin: 0 4px 8px; font-size: 13px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    height: 38px; padding: 0 15px; border-radius: 19px;
+    border: 1px solid var(--line); background: var(--surface);
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .chip[aria-checked="true"] { background: var(--grad); border-color: transparent; color: #fff; }
+  .custom { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .custom input {
+    width: 96px; height: 46px; padding: 0 16px; border-radius: 23px;
+    font: inherit; font-size: 16px; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); outline: none;
+  }
+  .custom input:focus { border-color: var(--violet); background: var(--surface-strong); }
+  .custom input::placeholder { color: var(--muted); }
+  .custom span { font-size: 13px; color: var(--muted); }
+  .hint { margin: 8px 4px 0; font-size: 13px; color: var(--danger); }
+  .hint:empty { display: none; }
 
   .del {
     flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%;
@@ -162,7 +254,7 @@
   .nick {
     display: inline-block; padding: 6px 14px; border-radius: 20px;
     background: var(--surface-strong); border: 1px solid var(--line);
-    font-size: 14px; font-weight: 500; color: #cfc9ff; word-break: break-all;
+    font-size: 14px; font-weight: 500; color: var(--nick-text); word-break: break-all;
   }
   .nick.plain { background: none; border-color: transparent; color: var(--muted); }
 
@@ -178,11 +270,11 @@
     position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
     bottom: calc(12px + env(safe-area-inset-bottom));
     width: calc(100% - 28px); max-width: 420px; height: var(--tabbar-h);
-    padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    border-radius: 32px; background: rgba(24, 17, 68, 0.78);
+    padding: 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    border-radius: 32px; background: var(--tabbar-bg);
     border: 1px solid var(--line);
     -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
-    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 16px 40px -12px var(--tabbar-shadow);
   }
   .tab {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
@@ -191,6 +283,214 @@
   }
   .tab svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   .tab[aria-selected="true"] { background: var(--grad); color: #fff; }
+
+  /* ---------- Общие элементы ---------- */
+  .stat, .habit, .tile, .card, .row-btn, .game-card { box-shadow: var(--card-shadow); }
+  body.no-scroll { overflow: hidden; }
+  .head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  .head-row h1 { margin: 0; }
+  .round-btn {
+    flex: none; position: relative; width: 44px; height: 44px; padding: 0; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    display: grid; place-items: center;
+  }
+  .round-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .round-btn.new { border-color: var(--violet); color: var(--violet); }
+  .round-btn.new::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid var(--violet); animation: halo 1.8s ease-out infinite;
+  }
+  @keyframes halo { from { transform: scale(0.9); opacity: .9; } to { transform: scale(1.3); opacity: 0; } }
+  .btn {
+    height: 48px; padding: 0 20px; border-radius: 24px; border: 1px solid var(--line);
+    background: var(--surface); font-size: 15px; font-weight: 600; transition: transform .15s, opacity .2s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: .42; }
+  .btn.primary { background: var(--grad); border-color: transparent; color: #fff; box-shadow: 0 10px 24px -10px rgba(105, 110, 255, 0.9); }
+  .link-btn {
+    margin-top: 14px; height: 42px; padding: 0 18px; border-radius: 21px;
+    border: 1px solid var(--violet); background: transparent; color: var(--violet); font-weight: 600; font-size: 14px;
+  }
+
+  .card { margin-top: 14px; padding: 16px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); }
+  .card-title { margin: 0 2px 12px; font-size: 15px; font-weight: 600; }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 20px; background: var(--cell); }
+  .seg-b {
+    height: 46px; border: 0; border-radius: 16px; background: transparent; color: var(--muted);
+    font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: background .2s, color .2s;
+  }
+  .seg-b svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .seg-b[aria-checked="true"] { background: var(--grad); color: #fff; }
+  .row-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 14px; padding: 14px 16px;
+    border-radius: 24px; border: 1px solid var(--line); background: var(--surface); text-align: left;
+  }
+  .row-btn .ic { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; }
+  .row-btn .ic svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .row-btn b { display: block; font-size: 16px; font-weight: 600; }
+  .row-btn span { font-size: 13px; color: var(--muted); }
+
+  /* ---------- Развитие ---------- */
+  .game-card {
+    display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; border-radius: 28px;
+    border: 1px solid var(--line); background: var(--surface); text-align: left; transition: transform .15s;
+  }
+  .game-card:active { transform: scale(0.98); }
+  .game-art {
+    flex: none; width: 72px; height: 72px; border-radius: 22px; background: var(--grad); display: grid; place-items: center;
+    color: #fff; font-size: 44px; line-height: 1; font-family: var(--font-sym); text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+  .game-info { flex: 1; min-width: 0; }
+  .game-info b { display: block; font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 3px; }
+  .game-info span { display: block; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .game-info em { display: block; margin-top: 6px; font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--violet); }
+  .game-card > svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .chess-status { min-height: 26px; margin: 0 2px 12px; font-size: 17px; font-weight: 600; }
+  .chess-status.bad { color: var(--danger); }
+  .player-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px; min-height: 34px; font-size: 13.5px; color: var(--muted); }
+  .player-row b { color: var(--text); font-weight: 600; margin-right: 6px; }
+  .cap { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; font-family: var(--font-sym); font-size: 17px; line-height: 1; }
+  .cap .pc { margin-left: -3px; }
+  .cap small { margin-left: 6px; font-family: var(--font-body); font-size: 12.5px; font-weight: 600; color: var(--muted); }
+
+  .board {
+    display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1 / 1; width: 100%;
+    border-radius: 16px; overflow: hidden; border: 1px solid var(--line);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6); user-select: none; -webkit-user-select: none;
+  }
+  .sq {
+    position: relative; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: 0;
+    background: var(--sq-light); font-family: var(--font-sym); line-height: 1; -webkit-appearance: none; appearance: none;
+  }
+  .sq.dk { background: var(--sq-dark); }
+  .pc { position: relative; z-index: 1; }
+  .pc.w { color: #fff; -webkit-text-stroke: 1.2px #1a1440; text-shadow: 0 0 2px #1a1440, 0 1px 3px rgba(0, 0, 0, 0.45); }
+  .pc.b { color: #1b1440; text-shadow: 0 0 1px rgba(255, 255, 255, 0.55); }
+  .sq.last { box-shadow: inset 0 0 0 3px #f5c542; }
+  .sq.sel { box-shadow: inset 0 0 0 3px var(--mint); }
+  .sq.tgt::after { content: ""; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: rgba(18, 14, 51, 0.38); }
+  .sq.capt::after { content: ""; position: absolute; inset: 7%; border-radius: 50%; border: 4px solid rgba(18, 14, 51, 0.38); }
+  .sq.chk { box-shadow: inset 0 0 20px 6px rgba(255, 70, 100, 0.95); }
+  .co { position: absolute; z-index: 2; font-family: var(--font-body); font-size: 9.5px; font-weight: 700; color: var(--sq-dark); pointer-events: none; }
+  .sq.dk .co { color: var(--sq-light); }
+  .co.r { left: 3px; top: 2px; }
+  .co.f { right: 3px; bottom: 1px; }
+
+  .chess-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .chess-actions .btn { padding: 0 6px; font-size: 14px; }
+  .setup { margin-top: 14px; padding: 16px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); }
+  .setup .lbl { margin: 16px 2px 8px; font-size: 13px; color: var(--muted); }
+  .setup .lbl:first-child { margin-top: 0; }
+  .setup .desc { margin: 10px 2px 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+  .setup .btn.wide { width: 100%; margin-top: 18px; }
+  .setup .btn.wide + .btn.wide { margin-top: 10px; }
+  .chess-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+
+  .promo {
+    position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 20px;
+    background: var(--overlay); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .promo-box { width: min(340px, 100%); padding: 20px; border-radius: 28px; background: var(--ink2); border: 1px solid var(--line); text-align: center; }
+  .promo-box h3 { margin: 0 0 14px; font-size: 17px; font-weight: 600; }
+  .promo-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .promo-row button { aspect-ratio: 1; padding: 0; border-radius: 18px; border: 1px solid var(--line); background: var(--sq-light); font-family: var(--font-sym); font-size: 38px; line-height: 1; display: grid; place-items: center; }
+
+  /* ---------- Обучение ---------- */
+  .tour {
+    position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow-y: auto;
+    padding: calc(14px + env(safe-area-inset-top)) 22px calc(20px + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(120% 60% at 100% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(90% 50% at -10% 0%, var(--glow-b), transparent 55%),
+      linear-gradient(180deg, var(--ink2) 0%, var(--ink) 80%);
+  }
+  .tour-skip { align-self: flex-end; height: 40px; padding: 0 14px; border: 0; background: transparent; color: var(--muted); font-size: 15px; font-weight: 600; }
+  .tour-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; width: 100%; max-width: 420px; margin: 0 auto; padding: 8px 0 18px; }
+  .art-wrap { height: 236px; width: 100%; display: grid; place-items: center; margin-bottom: 24px; }
+  .tour-stage h2 { margin: 0 0 12px; font-family: var(--font-display); font-weight: 700; font-size: 25px; line-height: 1.15; letter-spacing: -0.02em; }
+  .tour-stage p { margin: 0; max-width: 34ch; font-size: 16.5px; line-height: 1.5; color: var(--muted); }
+  .tour-stage.in > * { animation: tourIn .5s ease-out both; }
+  .tour-stage.in h2 { animation-delay: .06s; }
+  .tour-stage.in p { animation-delay: .12s; }
+  @keyframes tourIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .tour-foot { width: 100%; max-width: 420px; margin: 0 auto; }
+  .tour-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+  .tour-dots i { width: 8px; height: 8px; border-radius: 4px; background: var(--cell); transition: width .3s, background .3s; }
+  .tour-dots i.on { width: 26px; background: var(--grad); }
+  .tour-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+  .tour-actions .btn { height: 54px; font-size: 16px; }
+  .tour-actions .btn.invisible { visibility: hidden; }
+
+  /* иллюстрации обучения */
+  .a0 { position: relative; width: 190px; height: 190px; display: grid; place-items: center; }
+  .a0 .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--violet); opacity: 0; animation: pulse 3.2s ease-out infinite; }
+  .a0 .r2 { animation-delay: 1.05s; }
+  .a0 .r3 { animation-delay: 2.1s; }
+  @keyframes pulse { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.05); opacity: 0; } }
+  .a0 .core { width: 104px; height: 104px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; box-shadow: 0 20px 50px -14px rgba(105, 110, 255, 0.9); }
+  .a0 .core svg { width: 54px; height: 54px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 26; animation: draw 3.2s ease-in-out infinite; }
+  @keyframes draw { 0% { stroke-dashoffset: 26; } 30%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 26; } }
+
+  .a1 { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 330px; }
+  .a1 .m-input { flex: 1; height: 56px; padding: 0 20px; border-radius: 28px; border: 1px solid var(--violet); background: var(--surface-strong); display: flex; align-items: center; font-size: 17px; font-weight: 500; }
+  .a1 .typed { display: inline-block; animation: typeIn 4.2s steps(9) infinite; }
+  @keyframes typeIn { 0% { clip-path: inset(0 100% 0 0); } 45%, 100% { clip-path: inset(0 0 0 0); } }
+  .a1 .caret { width: 2px; height: 22px; margin-left: 2px; background: var(--violet); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .a1 .m-plus { flex: none; width: 56px; height: 56px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; box-shadow: 0 10px 24px -10px rgba(105, 110, 255, 0.9); animation: tap 4.2s infinite; }
+  .a1 .m-plus svg { width: 26px; height: 26px; stroke: #fff; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+  @keyframes tap { 0%, 55% { transform: scale(1); } 62% { transform: scale(.86); } 72%, 100% { transform: scale(1); } }
+
+  .a2 { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 320px; }
+  .a2 .mc { min-width: 92px; height: 42px; padding: 0 14px; border-radius: 21px; display: grid; place-items: center; font-size: 15px; font-weight: 600; background: var(--surface); border: 1px solid var(--line); color: var(--muted); animation: hl 4.2s infinite; }
+  @keyframes hl {
+    0%, 12% { background: var(--violet); color: #fff; border-color: transparent; transform: scale(1.08); }
+    16%, 100% { background: var(--surface); color: var(--muted); border-color: var(--line); transform: none; }
+  }
+
+  .a3 .m-card { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 330px; padding: 16px; border-radius: 26px; background: var(--surface); border: 1px solid var(--line); text-align: left; }
+  .a3 .m-check { position: relative; flex: none; width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--check-border); display: grid; place-items: center; animation: fillc 4.2s infinite; }
+  .a3 .m-check svg { width: 24px; height: 24px; fill: none; stroke: var(--on-mint); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; animation: drawc 4.2s infinite; }
+  .a3 .m-check::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--mint); opacity: 0; animation: ringc 4.2s infinite; }
+  @keyframes fillc { 0%, 28% { background: transparent; border-color: var(--check-border); } 32%, 92% { background: var(--mint); border-color: var(--mint); } 100% { background: transparent; border-color: var(--check-border); } }
+  @keyframes drawc { 0%, 30% { stroke-dashoffset: 24; } 40%, 92% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 24; } }
+  @keyframes ringc { 0%, 30% { transform: scale(1); opacity: 0; } 32% { opacity: .9; } 50%, 100% { transform: scale(1.9); opacity: 0; } }
+  .a3 .m-info b { display: block; font-size: 17px; font-weight: 600; }
+  .a3 .m-flame { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-size: 13px; color: var(--flame); }
+  .a3 .m-flame svg { width: 14px; height: 14px; fill: currentColor; }
+  .a3 .m-days { display: flex; gap: 5px; margin-top: 10px; }
+  .a3 .m-days i { width: 20px; height: 20px; border-radius: 7px; background: var(--cell); }
+  .a3 .m-days i.on { background: var(--mint); }
+  .a3 .m-days i.live { animation: dayfill 4.2s infinite; }
+  @keyframes dayfill { 0%, 34% { background: var(--cell); } 40%, 92% { background: var(--mint); } 100% { background: var(--cell); } }
+
+  .a4 { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .a4 .m-av { width: 104px; height: 104px; padding: 4px; border-radius: 50%; background: conic-gradient(from 0deg, #8b7bff, #4d8dff, #6ee7c8, #8b7bff); animation: spin 8s linear infinite; }
+  .a4 .m-av div { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--ink); background: var(--ink2); display: grid; place-items: center; animation: spin 8s linear infinite reverse; }
+  .a4 .m-av svg { width: 44px; height: 44px; fill: none; stroke: var(--text); stroke-width: 1.8; stroke-linecap: round; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .a4 .m-tiles { display: flex; gap: 8px; }
+  .a4 .m-tiles div { min-width: 86px; padding: 12px 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); text-align: center; animation: bob 3s ease-in-out infinite; }
+  .a4 .m-tiles div:nth-child(2) { animation-delay: .4s; }
+  .a4 .m-tiles div:nth-child(3) { animation-delay: .8s; }
+  .a4 .m-tiles b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+  .a4 .m-tiles span { font-size: 11.5px; color: var(--muted); }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+
+  .a5 { position: relative; width: 224px; height: 224px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 20px; overflow: hidden; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.6); }
+  .a5 i { background: var(--sq-light); }
+  .a5 i.dk { background: var(--sq-dark); }
+  .a5 .kn { position: absolute; left: 0; top: 0; width: 56px; height: 56px; display: grid; place-items: center; font-family: var(--font-sym); font-size: 42px; line-height: 1; color: #fff; text-shadow: 0 0 2px #1a1440, 0 0 2px #1a1440; animation: hop 6s ease-in-out infinite; }
+  @keyframes hop {
+    0%, 18% { transform: translate(0, 168px); }
+    25%, 43% { transform: translate(56px, 56px); }
+    50%, 68% { transform: translate(168px, 0); }
+    75%, 93% { transform: translate(112px, 112px); }
+    100% { transform: translate(0, 168px); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
@@ -210,11 +510,31 @@
     </div>
 
     <div class="grid">
-      <div class="tile"><b id="pVisits">0</b><span>заходов в приложение</span></div>
-      <div class="tile"><b id="pHabits">0</b><span>привычек ведётся</span></div>
-      <div class="tile"><b id="pBest">0</b><span>дней — лучшая серия</span></div>
-      <div class="tile"><b id="pMarks">0</b><span>отметок за всё время</span></div>
+      <div class="tile"><b id="pVisits">0</b><span>заходы в приложение</span></div>
+      <div class="tile"><b id="pHabits">0</b><span>привычки в работе</span></div>
+      <div class="tile"><b id="pBest">0</b><span>лучшая серия, дней</span></div>
+      <div class="tile"><b id="pMarks">0</b><span>отметки за всё время</span></div>
     </div>
+
+    <div class="card">
+      <h2 class="card-title">Тема оформления</h2>
+      <div class="seg" id="themeSeg" role="radiogroup" aria-label="Тема оформления">
+        <button type="button" class="seg-b" role="radio" aria-checked="false" data-theme-mode="auto">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>Авто
+        </button>
+        <button type="button" class="seg-b" role="radio" aria-checked="false" data-theme-mode="light">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>Светлая
+        </button>
+        <button type="button" class="seg-b" role="radio" aria-checked="false" data-theme-mode="dark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>Тёмная
+        </button>
+      </div>
+    </div>
+
+    <button class="row-btn" id="openTour" type="button">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.4 5.2 5.6.7-4.1 3.9 1.1 5.6L12 16.2 7 18.9l1.1-5.6L4 9.4l5.6-.7z"/></svg></span>
+      <span><b>Как пользоваться</b><span>Короткое обучение за минуту</span></span>
+    </button>
 
     <p class="note" id="lastVisit"></p>
     <p class="note" id="foot"></p>
@@ -223,14 +543,19 @@
   <!-- ===== Вкладка «Привычки» ===== -->
   <section id="tab-habits" hidden>
     <header class="head">
-      <h1>Привычки</h1>
+      <div class="head-row">
+        <h1>Привычки</h1>
+        <button class="round-btn" id="helpBtn" type="button" aria-label="Как пользоваться приложением">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><path d="M12 17h.01"/></svg>
+        </button>
+      </div>
       <div class="sub" id="today"></div>
     </header>
 
     <div class="summary">
       <div class="stat"><b id="sDone">0</b><span>сегодня<br>выполнено</span></div>
       <div class="stat"><b id="sBest">0</b><span>лучшая<br>серия, дней</span></div>
-      <div class="stat"><b id="sWeek">0%</b><span>выполнено<br>за 7 дней</span></div>
+      <div class="stat"><b id="sWeek">0%</b><span>выполнение<br>за срок</span></div>
     </div>
 
     <form class="add" id="form">
@@ -240,7 +565,79 @@
       </button>
     </form>
 
+    <div class="term">
+      <span class="term-label" id="termLabel">Срок привычки</span>
+      <div class="chips" id="chips" role="radiogroup" aria-labelledby="termLabel"></div>
+      <div class="custom" id="customWrap" hidden>
+        <input id="customDays" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" placeholder="Дней" autocomplete="off" aria-label="Свой срок в днях">
+        <span>дней, от 1 до 365</span>
+      </div>
+      <div class="hint" id="termHint" role="alert"></div>
+    </div>
+
     <div id="list"></div>
+  </section>
+
+  <!-- ===== Вкладка «Развитие» ===== -->
+  <section id="tab-grow" hidden>
+
+    <div id="growHome">
+      <header class="head">
+        <h1>Развитие</h1>
+        <div class="sub">Тренируйте голову между делами</div>
+      </header>
+      <button class="game-card" id="openChess" type="button">
+        <div class="game-art" aria-hidden="true">&#9822;&#xFE0E;</div>
+        <div class="game-info">
+          <b>Шахматы</b>
+          <span>Партия против бота, три уровня сложности</span>
+          <em id="chessBadge"></em>
+        </div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <p class="note">Скоро здесь появятся новые игры и упражнения.</p>
+    </div>
+
+    <div id="growChess" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" id="chessBack" type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Шахматы</h1>
+          <span style="width:44px"></span>
+        </div>
+      </header>
+
+      <div class="chess-status" id="chessStatus" role="status" aria-live="polite"></div>
+
+      <div class="player-row"><span><b>Бот</b><span id="botInfo"></span></span><div class="cap" id="capTop"></div></div>
+      <div class="board" id="board" aria-label="Шахматная доска"></div>
+      <div class="player-row"><span><b>Вы</b><span id="youInfo"></span></span><div class="cap" id="capBottom"></div></div>
+
+      <div class="chess-actions" id="chessActions">
+        <button class="btn" id="chessUndo" type="button">Отменить ход</button>
+        <button class="btn" id="chessResign" type="button">Сдаться</button>
+        <button class="btn primary" id="chessNew" type="button">Новая партия</button>
+      </div>
+
+      <div class="setup" id="chessSetup" hidden>
+        <div class="lbl">Уровень бота</div>
+        <div class="chips" id="lvlChips" role="radiogroup" aria-label="Уровень бота"></div>
+        <p class="desc" id="lvlDesc"></p>
+        <div class="lbl">Ваш цвет</div>
+        <div class="chips" id="clrChips" role="radiogroup" aria-label="Ваш цвет"></div>
+        <button class="btn primary wide" id="chessStart" type="button">Начать партию</button>
+        <button class="btn wide" id="setupCancel" type="button" hidden>Отмена</button>
+      </div>
+
+      <div class="chess-stats">
+        <div class="stat"><b id="cWin">0</b><span>побед</span></div>
+        <div class="stat"><b id="cDraw">0</b><span>ничьих</span></div>
+        <div class="stat"><b id="cLose">0</b><span>поражений</span></div>
+      </div>
+    </div>
+
   </section>
 
 </main>
@@ -254,16 +651,527 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.8 12.4l3 3 5.4-6"/></svg>
     <span>Привычки</span>
   </button>
+  <button class="tab" role="tab" data-tab="grow" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+    <span>Развитие</span>
+  </button>
 </nav>
+
+<!-- Обучение -->
+<div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-label="Обучение">
+  <button class="tour-skip" id="tourSkip" type="button">Пропустить</button>
+  <div class="tour-stage" id="tourStage"></div>
+  <div class="tour-foot">
+    <div class="tour-dots" id="tourDots"></div>
+    <div class="tour-actions">
+      <button class="btn" id="tourBack" type="button">Назад</button>
+      <button class="btn primary" id="tourNext" type="button">Далее</button>
+    </div>
+  </div>
+</div>
+
+<!-- Выбор фигуры при превращении пешки -->
+<div class="promo" id="promo" hidden>
+  <div class="promo-box" role="dialog" aria-label="Превращение пешки">
+    <h3>Во что превратить пешку?</h3>
+    <div class="promo-row" id="promoRow"></div>
+  </div>
+</div>
 
 <script>
   const tg = window.Telegram && window.Telegram.WebApp;
-  if (tg) {
-    tg.ready(); tg.expand();
-    tg.setHeaderColor && tg.setHeaderColor('#120e33');
-    tg.setBackgroundColor && tg.setBackgroundColor('#120e33');
-    tg.setBottomBarColor && tg.setBottomBarColor('#120e33');
-  }
+  if (tg) { tg.ready(); tg.expand(); }
+
+  /*ENGINE_START*/
+  const Chess = (() => {
+    // Фигуры: 1 пешка, 2 конь, 3 слон, 4 ладья, 5 ферзь, 6 король. Белые — положительные числа, чёрные — отрицательные.
+    // Доска 0x88: клетка = ряд*16 + колонка, ряд 0 — это 8-я горизонталь.
+    const P = 1, N = 2, B = 3, R = 4, Q = 5, K = 6;
+    const START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    const KN = [-33, -31, -18, -14, 14, 18, 31, 33];
+    const KG = [-17, -16, -15, -1, 1, 15, 16, 17];
+    const BD = [-17, -15, 15, 17];
+    const RD = [-16, -1, 1, 16];
+    const VAL = [0, 100, 320, 330, 500, 900, 0];
+    const CASTMASK = new Uint8Array(128).fill(15);
+    CASTMASK[116] = 12; CASTMASK[119] = 14; CASTMASK[112] = 13;
+    CASTMASK[4] = 3; CASTMASK[7] = 11; CASTMASK[0] = 7;
+  
+    const sqName = (s) => 'abcdefgh'[s & 7] + (8 - (s >> 4));
+    const nameSq = (n) => (8 - parseInt(n[1], 10)) * 16 + 'abcdefgh'.indexOf(n[0]);
+  
+    const PAWN_T = [
+       0,  0,  0,  0,  0,  0,  0,  0,
+      50, 50, 50, 50, 50, 50, 50, 50,
+      10, 10, 20, 30, 30, 20, 10, 10,
+       5,  5, 10, 25, 25, 10,  5,  5,
+       0,  0,  0, 20, 20,  0,  0,  0,
+       5, -5,-10,  0,  0,-10, -5,  5,
+       5, 10, 10,-20,-20, 10, 10,  5,
+       0,  0,  0,  0,  0,  0,  0,  0];
+    const KNIGHT_T = [
+      -50,-40,-30,-30,-30,-30,-40,-50,
+      -40,-20,  0,  0,  0,  0,-20,-40,
+      -30,  0, 10, 15, 15, 10,  0,-30,
+      -30,  5, 15, 20, 20, 15,  5,-30,
+      -30,  0, 15, 20, 20, 15,  0,-30,
+      -30,  5, 10, 15, 15, 10,  5,-30,
+      -40,-20,  0,  5,  5,  0,-20,-40,
+      -50,-40,-30,-30,-30,-30,-40,-50];
+    const BISHOP_T = [
+      -20,-10,-10,-10,-10,-10,-10,-20,
+      -10,  0,  0,  0,  0,  0,  0,-10,
+      -10,  0,  5, 10, 10,  5,  0,-10,
+      -10,  5,  5, 10, 10,  5,  5,-10,
+      -10,  0, 10, 10, 10, 10,  0,-10,
+      -10, 10, 10, 10, 10, 10, 10,-10,
+      -10,  5,  0,  0,  0,  0,  5,-10,
+      -20,-10,-10,-10,-10,-10,-10,-20];
+    const ROOK_T = [
+        0,  0,  0,  0,  0,  0,  0,  0,
+        5, 10, 10, 10, 10, 10, 10,  5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+        0,  0,  0,  5,  5,  0,  0,  0];
+    const QUEEN_T = [
+      -20,-10,-10, -5, -5,-10,-10,-20,
+      -10,  0,  0,  0,  0,  0,  0,-10,
+      -10,  0,  5,  5,  5,  5,  0,-10,
+       -5,  0,  5,  5,  5,  5,  0, -5,
+        0,  0,  5,  5,  5,  5,  0, -5,
+      -10,  5,  5,  5,  5,  5,  0,-10,
+      -10,  0,  5,  0,  0,  0,  0,-10,
+      -20,-10,-10, -5, -5,-10,-10,-20];
+    const KING_T = [
+      -30,-40,-40,-50,-50,-40,-40,-30,
+      -30,-40,-40,-50,-50,-40,-40,-30,
+      -30,-40,-40,-50,-50,-40,-40,-30,
+      -30,-40,-40,-50,-50,-40,-40,-30,
+      -20,-30,-30,-40,-40,-30,-30,-20,
+      -10,-20,-20,-20,-20,-20,-20,-10,
+       20, 20,  0,  0,  0,  0, 20, 20,
+       20, 30, 10,  0,  0, 10, 30, 20];
+    const KING_END_T = [
+      -50,-40,-30,-20,-20,-30,-40,-50,
+      -30,-20,-10,  0,  0,-10,-20,-30,
+      -30,-10, 20, 30, 30, 20,-10,-30,
+      -30,-10, 30, 40, 40, 30,-10,-30,
+      -30,-10, 30, 40, 40, 30,-10,-30,
+      -30,-10, 20, 30, 30, 20,-10,-30,
+      -30,-30,  0,  0,  0,  0,-30,-30,
+      -50,-30,-30,-30,-30,-30,-30,-50];
+    const PST = [null, PAWN_T, KNIGHT_T, BISHOP_T, ROOK_T, QUEEN_T];
+  
+    class Pos {
+      constructor() {
+        this.b = new Int8Array(128);
+        this.side = 1; this.cast = 0; this.ep = -1; this.half = 0; this.full = 1;
+        this.ks = [-1, -1];
+        this.stack = [];
+      }
+  
+      static fromFEN(fen) {
+        const p = new Pos();
+        const parts = fen.trim().split(/\s+/);
+        let r = 0, c = 0;
+        for (const ch of parts[0]) {
+          if (ch === '/') { r++; c = 0; }
+          else if (ch >= '1' && ch <= '8') c += +ch;
+          else {
+            const t = 'pnbrqk'.indexOf(ch.toLowerCase()) + 1;
+            const col = ch === ch.toUpperCase() ? 1 : -1;
+            const sq = r * 16 + c;
+            p.b[sq] = t * col;
+            if (t === K) p.ks[col === 1 ? 0 : 1] = sq;
+            c++;
+          }
+        }
+        p.side = parts[1] === 'b' ? -1 : 1;
+        const cs = parts[2] || '-';
+        if (cs !== '-') for (const ch of cs) p.cast |= ({ K: 1, Q: 2, k: 4, q: 8 })[ch] || 0;
+        p.ep = parts[3] && parts[3] !== '-' ? nameSq(parts[3]) : -1;
+        p.half = +parts[4] || 0;
+        p.full = +parts[5] || 1;
+        return p;
+      }
+  
+      isAttacked(sq, by) {
+        const b = this.b;
+        const pd = by === 1 ? 16 : -16;
+        let t = sq + pd - 1;
+        if (!(t & 0x88) && b[t] === by * P) return true;
+        t = sq + pd + 1;
+        if (!(t & 0x88) && b[t] === by * P) return true;
+        for (let i = 0; i < 8; i++) {
+          t = sq + KN[i];
+          if (!(t & 0x88) && b[t] === by * N) return true;
+          t = sq + KG[i];
+          if (!(t & 0x88) && b[t] === by * K) return true;
+        }
+        for (let i = 0; i < 4; i++) {
+          let d = BD[i];
+          t = sq + d;
+          while (!(t & 0x88)) {
+            const p = b[t];
+            if (p) { if (p === by * B || p === by * Q) return true; break; }
+            t += d;
+          }
+          d = RD[i];
+          t = sq + d;
+          while (!(t & 0x88)) {
+            const p = b[t];
+            if (p) { if (p === by * R || p === by * Q) return true; break; }
+            t += d;
+          }
+        }
+        return false;
+      }
+  
+      inCheck(side) {
+        if (side === undefined) side = this.side;
+        return this.isAttacked(this.ks[side === 1 ? 0 : 1], -side);
+      }
+  
+      // После make(): оставила ли сторона, только что сходившая, своего короля под боем?
+      leftInCheck() {
+        const mover = -this.side;
+        return this.isAttacked(this.ks[mover === 1 ? 0 : 1], this.side);
+      }
+  
+      gen(noisy) {
+        const out = [], b = this.b, side = this.side;
+        for (let s = 0; s < 128; s++) {
+          if (s & 0x88) { s += 7; continue; }
+          const p = b[s];
+          if (!p || (p > 0) !== (side > 0)) continue;
+          const pt = p > 0 ? p : -p;
+          if (pt === P) {
+            const dir = side === 1 ? -16 : 16;
+            const startRow = side === 1 ? 6 : 1, promoRow = side === 1 ? 0 : 7;
+            let t = s + dir;
+            if (!b[t]) {
+              if ((t >> 4) === promoRow) {
+                for (const pr of [Q, R, B, N]) out.push({ f: s, t, p: pr, c: 0, fl: 0 });
+              } else if (!noisy) {
+                out.push({ f: s, t, p: 0, c: 0, fl: 0 });
+                const t2 = t + dir;
+                if ((s >> 4) === startRow && !b[t2]) out.push({ f: s, t: t2, p: 0, c: 0, fl: 4 });
+              }
+            }
+            for (let dx = -1; dx <= 1; dx += 2) {
+              t = s + dir + dx;
+              if (t & 0x88) continue;
+              const q = b[t];
+              if (q && (q > 0) !== (side > 0)) {
+                const cp = q > 0 ? q : -q;
+                if ((t >> 4) === promoRow) {
+                  for (const pr of [Q, R, B, N]) out.push({ f: s, t, p: pr, c: cp, fl: 0 });
+                } else out.push({ f: s, t, p: 0, c: cp, fl: 0 });
+              } else if (!q && t === this.ep) {
+                out.push({ f: s, t, p: 0, c: P, fl: 1 });
+              }
+            }
+          } else if (pt === N || pt === K) {
+            const offs = pt === N ? KN : KG;
+            for (let i = 0; i < 8; i++) {
+              const t = s + offs[i];
+              if (t & 0x88) continue;
+              const q = b[t];
+              if (!q) { if (!noisy) out.push({ f: s, t, p: 0, c: 0, fl: 0 }); }
+              else if ((q > 0) !== (side > 0)) out.push({ f: s, t, p: 0, c: q > 0 ? q : -q, fl: 0 });
+            }
+          } else {
+            const dirs = pt === B ? BD : pt === R ? RD : BD.concat(RD);
+            for (let i = 0; i < dirs.length; i++) {
+              const d = dirs[i];
+              let t = s + d;
+              while (!(t & 0x88)) {
+                const q = b[t];
+                if (!q) { if (!noisy) out.push({ f: s, t, p: 0, c: 0, fl: 0 }); }
+                else {
+                  if ((q > 0) !== (side > 0)) out.push({ f: s, t, p: 0, c: q > 0 ? q : -q, fl: 0 });
+                  break;
+                }
+                t += d;
+              }
+            }
+          }
+        }
+        if (!noisy) this.genCastling(out);
+        return out;
+      }
+  
+      genCastling(out) {
+        const side = this.side, b = this.b, by = -side;
+        if (side === 1) {
+          if (b[116] !== K) return;
+          if ((this.cast & 1) && b[119] === R && !b[117] && !b[118] && !this.isAttacked(116, by) && !this.isAttacked(117, by))
+            out.push({ f: 116, t: 118, p: 0, c: 0, fl: 2 });
+          if ((this.cast & 2) && b[112] === R && !b[113] && !b[114] && !b[115] && !this.isAttacked(116, by) && !this.isAttacked(115, by))
+            out.push({ f: 116, t: 114, p: 0, c: 0, fl: 2 });
+        } else {
+          if (b[4] !== -K) return;
+          if ((this.cast & 4) && b[7] === -R && !b[5] && !b[6] && !this.isAttacked(4, by) && !this.isAttacked(5, by))
+            out.push({ f: 4, t: 6, p: 0, c: 0, fl: 2 });
+          if ((this.cast & 8) && b[0] === -R && !b[1] && !b[2] && !b[3] && !this.isAttacked(4, by) && !this.isAttacked(3, by))
+            out.push({ f: 4, t: 2, p: 0, c: 0, fl: 2 });
+        }
+      }
+  
+      make(m) {
+        const b = this.b, side = this.side;
+        const piece = b[m.f];
+        const u = { m, cast: this.cast, ep: this.ep, half: this.half, cap: 0, capSq: m.t };
+        if (m.fl & 1) {
+          u.capSq = m.t + (side === 1 ? 16 : -16);
+          u.cap = b[u.capSq];
+          b[u.capSq] = 0;
+        } else u.cap = b[m.t];
+        b[m.t] = m.p ? side * m.p : piece;
+        b[m.f] = 0;
+        const apt = piece > 0 ? piece : -piece;
+        if (apt === K) {
+          this.ks[side === 1 ? 0 : 1] = m.t;
+          if (m.fl & 2) {
+            if (m.t > m.f) { b[m.f + 1] = b[m.f + 3]; b[m.f + 3] = 0; }
+            else { b[m.f - 1] = b[m.f - 4]; b[m.f - 4] = 0; }
+          }
+        }
+        this.cast &= CASTMASK[m.f] & CASTMASK[m.t];
+        this.ep = (m.fl & 4) ? (m.f + m.t) >> 1 : -1;
+        this.half = (apt === P || u.cap) ? 0 : this.half + 1;
+        if (side === -1) this.full++;
+        this.side = -side;
+        this.stack.push(u);
+      }
+  
+      unmake() {
+        const u = this.stack.pop(), m = u.m, b = this.b;
+        this.side = -this.side;
+        const side = this.side;
+        if (side === -1) this.full--;
+        const moved = m.p ? side * P : b[m.t];
+        b[m.f] = moved;
+        b[m.t] = 0;
+        if (m.fl & 1) b[u.capSq] = u.cap; else b[m.t] = u.cap;
+        const apt = moved > 0 ? moved : -moved;
+        if (apt === K) {
+          this.ks[side === 1 ? 0 : 1] = m.f;
+          if (m.fl & 2) {
+            if (m.t > m.f) { b[m.f + 3] = b[m.f + 1]; b[m.f + 1] = 0; }
+            else { b[m.f - 4] = b[m.f - 1]; b[m.f - 1] = 0; }
+          }
+        }
+        this.cast = u.cast; this.ep = u.ep; this.half = u.half;
+      }
+  
+      legal() {
+        const out = [];
+        for (const m of this.gen(false)) {
+          this.make(m);
+          if (!this.leftInCheck()) out.push(m);
+          this.unmake();
+        }
+        return out;
+      }
+  
+      perft(d) {
+        if (d === 0) return 1;
+        let n = 0;
+        for (const m of this.gen(false)) {
+          this.make(m);
+          if (!this.leftInCheck()) n += this.perft(d - 1);
+          this.unmake();
+        }
+        return n;
+      }
+  
+      // Ключ позиции для поиска повторений (взятие на проходе учитывается, только если оно возможно)
+      key() {
+        let s = '';
+        for (let i = 0; i < 64; i++) s += String.fromCharCode(this.b[(i >> 3) * 16 + (i & 7)] + 8 + 65);
+        let ep = -1;
+        if (this.ep >= 0) {
+          const dir = this.side === 1 ? 16 : -16;
+          for (let dx = -1; dx <= 1; dx += 2) {
+            const q = this.ep + dir + dx;
+            if (!(q & 0x88) && this.b[q] === this.side * P) ep = this.ep;
+          }
+        }
+        return s + this.side + this.cast + ep;
+      }
+  
+      insufficient() {
+        let minors = 0, other = false;
+        for (let s = 0; s < 128; s++) {
+          if (s & 0x88) { s += 7; continue; }
+          const p = Math.abs(this.b[s]);
+          if (p === N || p === B) minors++;
+          else if (p === P || p === R || p === Q) other = true;
+        }
+        return !other && minors <= 1;
+      }
+    }
+  
+    // ---------- Оценка позиции ----------
+    function evaluate(pos) {
+      const b = pos.b, ks = pos.ks;
+      let score = 0, mat = 0;
+      for (let s = 0; s < 128; s++) {
+        if (s & 0x88) { s += 7; continue; }
+        const p = b[s];
+        if (!p) continue;
+        const pt = p > 0 ? p : -p;
+        const row = s >> 4, col = s & 7;
+        if (pt !== K && pt !== P) mat += VAL[pt];
+        if (p > 0) score += VAL[pt] + (pt === K ? 0 : PST[pt][row * 8 + col]);
+        else score -= VAL[pt] + (pt === K ? 0 : PST[pt][(7 - row) * 8 + col]);
+      }
+      const endg = mat <= 2600;
+      const kt = endg ? KING_END_T : KING_T;
+      score += kt[(ks[0] >> 4) * 8 + (ks[0] & 7)] - kt[(7 - (ks[1] >> 4)) * 8 + (ks[1] & 7)];
+      if (endg && (score > 250 || score < -250)) { // добивание: гоним короля слабой стороны к краю и подтягиваем своего
+        const win = score > 0 ? 0 : 1;
+        const wk = ks[win], lk = ks[1 - win];
+        const lr = lk >> 4, lc = lk & 7;
+        const cd = Math.abs(lr - 3.5) + Math.abs(lc - 3.5);
+        const kd = Math.abs((wk >> 4) - lr) + Math.abs((wk & 7) - lc);
+        const bonus = Math.round(cd * 10 + (14 - kd) * 4);
+        score += win === 0 ? bonus : -bonus;
+      }
+      return pos.side * score;
+    }
+  
+    // ---------- Поиск ----------
+    const MATE = 100000;
+  
+    function order(pos, moves, pv) {
+      const b = pos.b;
+      for (let i = 0; i < moves.length; i++) {
+        const m = moves[i];
+        let s = 0;
+        if (pv && m.f === pv.f && m.t === pv.t && m.p === pv.p) s = 1e6;
+        else {
+          if (m.c) s = 10000 + 10 * VAL[m.c] - VAL[Math.abs(b[m.f])] / 10;
+          if (m.p) s += 9000 + VAL[m.p];
+        }
+        m.s = s;
+      }
+      moves.sort((x, y) => y.s - x.s);
+    }
+  
+    function quiesce(pos, alpha, beta, qd, ctx) {
+      ctx.nodes++;
+      const stand = evaluate(pos);
+      if (stand >= beta) return stand;
+      if (qd >= 6) return stand;
+      if (stand > alpha) alpha = stand;
+      const moves = pos.gen(true);
+      order(pos, moves, null);
+      for (const m of moves) {
+        pos.make(m);
+        if (pos.leftInCheck()) { pos.unmake(); continue; }
+        const sc = -quiesce(pos, -beta, -alpha, qd + 1, ctx);
+        pos.unmake();
+        if (sc >= beta) return sc;
+        if (sc > alpha) alpha = sc;
+      }
+      return alpha;
+    }
+  
+    function negamax(pos, depth, alpha, beta, ply, ctx) {
+      if ((++ctx.nodes & 1023) === 0 && Date.now() > ctx.deadline) ctx.abort = true;
+      if (ctx.abort) return 0;
+      if (depth <= 0) return quiesce(pos, alpha, beta, 0, ctx);
+      const moves = pos.gen(false);
+      order(pos, moves, null);
+      let legal = 0, best = -Infinity;
+      for (const m of moves) {
+        pos.make(m);
+        if (pos.leftInCheck()) { pos.unmake(); continue; }
+        legal++;
+        const sc = -negamax(pos, depth - 1, -beta, -alpha, ply + 1, ctx);
+        pos.unmake();
+        if (ctx.abort) return 0;
+        if (sc > best) best = sc;
+        if (sc > alpha) alpha = sc;
+        if (alpha >= beta) break;
+      }
+      if (!legal) return pos.inCheck() ? -MATE + ply : 0;
+      return best;
+    }
+  
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+  
+    // full = true: точная оценка каждого хода (нужна лёгкому уровню для «человеческих» ошибок)
+    function rootSearch(pos, maxDepth, ms, full) {
+      const ctx = { nodes: 0, abort: false, deadline: Date.now() + ms };
+      const moves = shuffle(pos.legal());
+      if (!moves.length) return null;
+      let result = { m: moves[0], score: 0, list: [] };
+      let pv = null;
+      for (let d = 1; d <= maxDepth; d++) {
+        order(pos, moves, pv);
+        let bestScore = -Infinity, bestM = null;
+        const list = [];
+        for (const m of moves) {
+          pos.make(m);
+          const sc = -negamax(pos, d - 1, -Infinity, full ? Infinity : -bestScore, 1, ctx);
+          pos.unmake();
+          if (ctx.abort) break;
+          list.push({ m, score: sc });
+          if (sc > bestScore) { bestScore = sc; bestM = m; }
+        }
+        if (ctx.abort) break;
+        result = { m: bestM, score: bestScore, list, depth: d, nodes: ctx.nodes };
+        pv = bestM;
+        if (bestScore > MATE - 100 || bestScore < -MATE + 100) break;
+      }
+      return result;
+    }
+  
+    // Бот: 1 — лёгкий, 2 — средний, 3 — сложный
+    function think(pos, level) {
+      if (level === 1) {
+        const r = rootSearch(pos, 1, 400, true);
+        if (!r) return null;
+        const list = r.list.slice().sort((a, b) => b.score - a.score);
+        if (Math.random() < 0.22) return list[Math.floor(Math.random() * list.length)].m;
+        const top = list.filter(x => x.score >= list[0].score - 90);
+        return top[Math.floor(Math.random() * top.length)].m;
+      }
+      const r = level === 2 ? rootSearch(pos, 3, 800, false) : rootSearch(pos, 6, 1800, false);
+      return r ? r.m : null;
+    }
+  
+    const PROMO = { 2: 'n', 3: 'b', 4: 'r', 5: 'q' };
+    const moveStr = (m) => sqName(m.f) + sqName(m.t) + (m.p ? PROMO[m.p] : '');
+    function parse(pos, str) {
+      return pos.legal().find(m => moveStr(m) === str) || null;
+    }
+  
+    // Итог партии. seen — счётчик повторений позиций {ключ: сколько раз встречалась}
+    function status(pos, seen) {
+      const moves = pos.legal();
+      if (!moves.length) return pos.inCheck() ? { over: true, winner: -pos.side, why: 'mate' } : { over: true, winner: 0, why: 'stalemate' };
+      if (pos.insufficient()) return { over: true, winner: 0, why: 'material' };
+      if (pos.half >= 100) return { over: true, winner: 0, why: 'fifty' };
+      if (seen && seen[pos.key()] >= 3) return { over: true, winner: 0, why: 'repetition' };
+      return { over: false, check: pos.inCheck(), moves };
+    }
+  
+    return { Pos, START, sqName, nameSq, think, rootSearch, moveStr, parse, status, evaluate, P, N, B, R, Q, K };
+  })();
+  /*ENGINE_END*/
 
   // ---------- Хранилище ----------
   // Внутри Telegram данные лежат в облаке Telegram (привязаны к вашему аккаунту,
@@ -308,7 +1216,7 @@
     let days = Object.keys(h.done).map(Number).sort((a, b) => a - b);
     let s;
     for (;;) { // значение в облаке ограничено ~4 КБ; при переполнении отбрасываем самые старые дни
-      s = JSON.stringify({ n: h.name, c: h.created, d: days.map(x => x.toString(36)).join(',') });
+      s = JSON.stringify({ n: h.name, c: h.created, t: h.t || 0, s: h.s || h.created, d: days.map(x => x.toString(36)).join(',') });
       if (s.length <= 3900 || !days.length) break;
       days = days.slice(Math.ceil(days.length * 0.1));
     }
@@ -319,7 +1227,8 @@
       const o = JSON.parse(s);
       const done = {};
       String(o.d || '').split(',').filter(Boolean).forEach(x => { done[parseInt(x, 36)] = true; });
-      return { id, name: String(o.n || ''), created: Number(o.c) || today(), done };
+      const created = Number(o.c) || today();
+      return { id, name: String(o.n || ''), created, t: Number(o.t) || 0, s: Number(o.s) || created, done };
     } catch (e) { return null; }
   }
 
@@ -427,42 +1336,84 @@
   const buzz = () => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); } catch (e) {} };
   const bestOverall = () => habits.reduce((m, h) => Math.max(m, bestStreak(h)), 0);
 
+  // Срок привычки: окно из t дней, начиная с дня s. Привычки без срока (созданные в прежней версии)
+  // показываются как раньше — последние 7 дней.
+  const span = (h) => h.t ? { start: h.s, len: h.t, legacy: false } : { start: today() - 6, len: 7, legacy: true };
+  const progress = (h) => { const sp = span(h); let n = 0; for (let i = 0; i < sp.len; i++) if (h.done[sp.start + i]) n++; return n; };
+  const isExpired = (h) => !!h.t && today() > h.s + h.t - 1;
+  const elapsedDays = (h) => { const sp = span(h); return Math.max(1, Math.min(sp.len, today() - sp.start + 1)); };
+  const daysLabel = (n) => n + ' ' + plural(n, 'день', 'дня', 'дней');
+
+  function cellsHTML(h, sp, got, t) {
+    if (sp.len > 31) { // длинный срок — полоса прогресса вместо клеток
+      return `<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${sp.len}" aria-valuenow="${got}"><i style="width:${Math.round(got / sp.len * 100)}%"></i></div>`;
+    }
+    const big = sp.len <= 7;
+    let style = '';
+    if (!big) { // число колонок подбираем так, чтобы в последнем ряду не оставалась одна клетка
+      const n = sp.len;
+      let cols = [7, 10, 9, 8, 6, 5].find(c => n % c === 0);
+      if (!cols) { cols = 10; for (const c of [9, 8, 7]) if (n % c > n % cols) cols = c; }
+      style = ` style="grid-template-columns:repeat(${cols},14px)"`;
+    }
+    let out = `<div class="days ${big ? 'big' : 'small'}"${style}>`;
+    for (let i = 0; i < sp.len; i++) {
+      const k = sp.start + i;
+      out += `<div class="day${k === t ? ' today' : ''}${k > t ? ' future' : ''}" title="${fmtDay(k)}"><i class="${h.done[k] ? 'on' : ''}"></i>${big ? '<span>' + wd(k) + '</span>' : ''}</div>`;
+    }
+    return out + '</div>';
+  }
+
   // ---------- Иконки ----------
   const ICON_CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   const ICON_FLAME = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 2.2c.5 3.4 3 4.9 4.6 7.4 1.5 2.3 1.4 5.5-.5 7.6-1.7 1.9-4.2 2.6-6.3 1.9-2.5-.8-4.1-3.1-3.9-5.7.1-1.3.7-2.4 1.5-3.3.1 1.2.7 2.1 1.7 2.4-.5-3.2.5-6.2 2.9-10.3z"/></svg>';
+  const ICON_RESTART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg>';
   const ICON_CLOSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
   // ---------- Отрисовка: привычки ----------
   function render() {
     const t = today();
-    const week = lastDays(7);
-    document.getElementById('today').textContent =
-      new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dateStr = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('today').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
     const done = habits.filter(h => h.done[t]).length;
     document.getElementById('sDone').textContent = habits.length ? done + '/' + habits.length : '0';
     document.getElementById('sBest').textContent = bestOverall();
-    const possible = habits.length * 7;
-    const got = habits.reduce((s, h) => s + week.filter(k => h.done[k]).length, 0);
-    document.getElementById('sWeek').textContent = possible ? Math.round(got / possible * 100) + '%' : '0%';
+    let sumDone = 0, sumElapsed = 0;
+    habits.forEach(h => { sumDone += progress(h); sumElapsed += elapsedDays(h); });
+    document.getElementById('sWeek').textContent = sumElapsed ? Math.round(sumDone / sumElapsed * 100) + '%' : '0%';
 
     const list = document.getElementById('list');
     if (!habits.length) {
-      list.innerHTML = '<div class="empty"><b>Пока нет привычек</b>Введите название в строке выше и нажмите «+».</div>';
+      list.innerHTML = '<div class="empty"><b>Пока нет привычек</b>Введите название в строке выше, выберите срок и нажмите «+».<br><button class="link-btn" type="button" data-act="tour">Как это работает</button></div>';
     } else {
       list.innerHTML = '';
       habits.forEach(h => {
-        const s = currentStreak(h);
+        const sp = span(h);
+        const ended = isExpired(h);
         const on = !!h.done[t];
+        const s = currentStreak(h);
+        const got = progress(h);
+        const left = sp.legacy ? 0 : h.s + h.t - 1 - t;
         const el = document.createElement('div');
-        el.className = 'habit' + (on ? ' done' : '');
-        el.innerHTML = `
-          <button class="check${on ? ' on' : ''}${lastToggled === h.id && on ? ' pop' : ''}" data-act="toggle" data-id="${h.id}"
-                  aria-label="Отметить выполнение" aria-pressed="${on}">${ICON_CHECK}</button>
+        el.className = 'habit' + (ended ? ' ended' : on ? ' done' : '');
+
+        let btn, meta, prog;
+        if (ended) {
+          btn = `<button class="check restart" data-act="restart" data-id="${h.id}" aria-label="Начать срок заново">${ICON_RESTART}</button>`;
+          meta = `<div class="meta">Срок ${daysLabel(h.t)} завершён</div>`;
+          prog = `<div class="prog">Выполнено ${got} из ${sp.len}. Нажмите на значок слева, чтобы начать заново.</div>`;
+        } else {
+          btn = `<button class="check${on ? ' on' : ''}${lastToggled === h.id && on ? ' pop' : ''}" data-act="toggle" data-id="${h.id}" aria-label="Отметить выполнение" aria-pressed="${on}">${ICON_CHECK}</button>`;
+          meta = `<div class="meta${s > 0 ? ' hot' : ''}">${s > 0 ? ICON_FLAME + s + ' ' + plural(s, 'день', 'дня', 'дней') + ' подряд' : 'Серия не начата'}</div>`;
+          prog = sp.legacy
+            ? `<div class="prog">${got} из 7 за последние 7 дней</div>`
+            : `<div class="prog">${got} из ${sp.len} · ${left > 0 ? 'осталось ' + daysLabel(left) : 'сегодня последний день'}</div>`;
+        }
+        el.innerHTML = `${btn}
           <div class="info">
             <div class="name"></div>
-            <div class="meta${s > 0 ? ' hot' : ''}">${s > 0 ? ICON_FLAME + s + ' ' + plural(s, 'день', 'дня', 'дней') + ' подряд' : 'Серия не начата'}</div>
-            <div class="week">${week.map(k => `<div class="day${k === t ? ' today' : ''}"><i class="${h.done[k] ? 'on' : ''}"></i><span>${wd(k)}</span></div>`).join('')}</div>
+            ${meta}${prog}${cellsHTML(h, sp, got, t)}
           </div>
           <button class="del" data-act="del" data-id="${h.id}" aria-label="Удалить привычку">${ICON_CLOSE}</button>`;
         el.querySelector('.name').textContent = h.name; // textContent — защита от вставки HTML
@@ -525,14 +1476,68 @@
                 : 'Не удалось связаться с облаком Telegram. Данные сохранены на этом устройстве.');
   }
 
+  // ---------- Выбор срока ----------
+  const PRESETS = [3, 7, 14, 21, 30];
+  const MAX_TERM = 365;
+  const TERM_KEY = 'habits_term';
+  let term = 7, customMode = false;
+  const customInput = document.getElementById('customDays');
+  const setHint = (m) => { document.getElementById('termHint').textContent = m; };
+
+  function renderChips() {
+    document.getElementById('chips').innerHTML = PRESETS.map(n =>
+      `<button type="button" class="chip" role="radio" aria-checked="${!customMode && term === n}" data-term="${n}">${daysLabel(n)}</button>`
+    ).join('') +
+      `<button type="button" class="chip" role="radio" aria-checked="${customMode}" data-term="custom">Свой срок</button>`;
+    document.getElementById('customWrap').hidden = !customMode;
+  }
+  function saveTerm() { try { localStorage.setItem(TERM_KEY, JSON.stringify({ t: term })); } catch (e) {} }
+  function initTerm() {
+    try {
+      const o = JSON.parse(localStorage.getItem(TERM_KEY));
+      if (o && Number.isInteger(o.t) && o.t >= 1 && o.t <= MAX_TERM) {
+        term = o.t;
+        customMode = !PRESETS.includes(o.t);
+        if (customMode) customInput.value = String(o.t);
+      }
+    } catch (e) {}
+    renderChips();
+  }
+  function readTerm() { // срок из выбранной кнопки или из поля «Свой срок»; null — введено неверно
+    if (!customMode) return term;
+    const raw = customInput.value.trim();
+    const n = parseInt(raw, 10);
+    return (/^\d+$/.test(raw) && n >= 1 && n <= MAX_TERM) ? n : null;
+  }
+
+  document.getElementById('chips').addEventListener('click', (e) => {
+    const b = e.target.closest('.chip');
+    if (!b) return;
+    setHint('');
+    if (b.dataset.term === 'custom') {
+      customMode = true; renderChips(); customInput.focus();
+    } else {
+      term = Number(b.dataset.term); customMode = false; saveTerm(); renderChips();
+    }
+    buzz();
+  });
+  customInput.addEventListener('input', () => { customInput.value = customInput.value.replace(/\D/g, ''); setHint(''); });
+  customInput.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const f = document.getElementById('form');
+    if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true }));
+  });
+
   // ---------- Вкладки ----------
+  const TABS = ['profile', 'habits', 'grow'];
   function showTab(name) {
-    if (name !== 'profile' && name !== 'habits') name = 'habits';
-    document.getElementById('tab-profile').hidden = name !== 'profile';
-    document.getElementById('tab-habits').hidden = name !== 'habits';
+    if (!TABS.includes(name)) name = 'habits';
+    TABS.forEach(t => { document.getElementById('tab-' + t).hidden = t !== name; });
     document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
     try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
     window.scrollTo(0, 0);
+    if (name === 'grow') renderGrow();
   }
   document.querySelector('.tabs').addEventListener('click', (e) => {
     const b = e.target.closest('.tab');
@@ -544,10 +1549,17 @@
     e.preventDefault();
     const input = document.getElementById('input');
     const name = input.value.trim();
-    if (!name) return;
+    if (!name) { input.focus(); return; }
+    const days = readTerm();
+    if (days === null) {
+      setHint('Укажите срок целым числом от 1 до ' + MAX_TERM + ' дней.');
+      customInput.focus();
+      return;
+    }
+    term = days; saveTerm();
     const h = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-      name, created: today(), done: {}
+      name, created: today(), s: today(), t: days, done: {}
     };
     habits.push(h);
     input.value = '';
@@ -558,8 +1570,15 @@
   document.getElementById('list').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-act]');
     if (!btn) return;
+    if (btn.dataset.act === 'tour') { openTour(); return; }
     const h = habits.find(x => x.id === btn.dataset.id);
     if (!h) return;
+    if (btn.dataset.act === 'restart') {
+      h.s = today(); lastToggled = null;
+      render(); buzz();
+      persistHabit(h);
+      return;
+    }
     if (btn.dataset.act === 'toggle') {
       const t = today();
       if (h.done[t]) delete h.done[t]; else h.done[t] = true;
@@ -573,15 +1592,473 @@
     }
   });
 
+  // ---------- Тема оформления ----------
+  const THEME_KEY = 'habits_theme';
+  const THEME_COLORS = { dark: '#120e33', light: '#f3f1ff' };
+  let themeMode = 'auto';
+
+  function systemTheme() {
+    if (tg && tg.colorScheme) return tg.colorScheme === 'light' ? 'light' : 'dark';
+    try { return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } catch (e) { return 'dark'; }
+  }
+  function applyTheme(mode) {
+    themeMode = (mode === 'light' || mode === 'dark') ? mode : 'auto';
+    const eff = themeMode === 'auto' ? systemTheme() : themeMode;
+    document.documentElement.setAttribute('data-theme', eff);
+    const col = THEME_COLORS[eff];
+    if (tg) {
+      tg.setHeaderColor && tg.setHeaderColor(col);
+      tg.setBackgroundColor && tg.setBackgroundColor(col);
+      tg.setBottomBarColor && tg.setBottomBarColor(col);
+    }
+    document.querySelectorAll('[data-theme-mode]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.themeMode === themeMode)));
+    try { localStorage.setItem(THEME_KEY, themeMode); } catch (e) {}
+  }
+  document.getElementById('themeSeg').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-theme-mode]');
+    if (!b) return;
+    applyTheme(b.dataset.themeMode);
+    meta.th = themeMode;
+    persistMeta();
+    buzz();
+  });
+  if (tg && tg.onEvent) tg.onEvent('themeChanged', () => { if (themeMode === 'auto') applyTheme('auto'); });
+
+  // ---------- Обучение ----------
+  const TOUR_KEY = 'habits_tour';
+  const tourEl = document.getElementById('tour');
+  const SVG_CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const SVG_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  const SVG_USER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.6 3.7-5.5 7.5-5.5s6.9 1.9 7.5 5.5"/></svg>';
+
+  const TOUR = [
+    {
+      title: 'Добро пожаловать!',
+      text: 'Здесь вы будете выстраивать полезные привычки: день за днём, шаг за шагом. Покажем, как всё устроено, это займёт минуту.',
+      art: `<div class="a0"><span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span><div class="core">${SVG_CHECK}</div></div>`
+    },
+    {
+      title: 'Создайте привычку',
+      text: 'Напишите, что хотите делать регулярно, и нажмите «+». Начните с одной простой привычки.',
+      art: `<div class="a1"><div class="m-input"><span class="typed">Пить воду</span><i class="caret"></i></div><div class="m-plus">${SVG_PLUS}</div></div>`
+    },
+    {
+      title: 'Выберите срок',
+      text: 'От 3 до 30 дней или любое своё число до 365. Срок считается со дня создания, а по его окончании вы увидите результат.',
+      art: '<div class="a2">' + [3, 7, 14, 21, 30].map((n, i) => `<span class="mc" style="animation-delay:${(i * 0.7).toFixed(1)}s">${daysLabel(n)}</span>`).join('') +
+           '<span class="mc" style="animation-delay:3.5s">Свой срок</span></div>'
+    },
+    {
+      title: 'Отмечайте каждый день',
+      text: 'Сделали дело, нажмите на кружок слева. Дни подряд складываются в серию, старайтесь её не прерывать.',
+      art: `<div class="a3"><div class="m-card"><div class="m-check">${SVG_CHECK}</div><div class="m-info"><b>Пить воду</b><div class="m-flame">${ICON_FLAME}серия растёт</div><div class="m-days"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="live"></i><i></i><i></i></div></div></div></div>`
+    },
+    {
+      title: 'Следите за прогрессом',
+      text: 'В «Профиле» собрана ваша статистика. Там же можно выбрать светлую или тёмную тему.',
+      art: `<div class="a4"><div class="m-av"><div>${SVG_USER}</div></div><div class="m-tiles"><div><b>12</b><span>отметок</span></div><div><b>5</b><span>дней серия</span></div><div><b>85%</b><span>за срок</span></div></div></div>`
+    },
+    {
+      title: 'Развивайтесь',
+      text: 'Во вкладке «Развитие» можно сыграть в шахматы против бота. Позже здесь появятся и другие игры.',
+      art: '<div class="a5">' + Array.from({ length: 16 }, (_, i) => `<i class="${(((i >> 2) + (i & 3)) % 2) ? 'dk' : ''}"></i>`).join('') + '<span class="kn">&#9822;&#xFE0E;</span></div>'
+    }
+  ];
+  let tourIdx = 0;
+
+  const isTourDone = () => {
+    if (meta.o) return true;
+    try { return localStorage.getItem(TOUR_KEY) === '1'; } catch (e) { return false; }
+  };
+  function updateHelpBtn() { document.getElementById('helpBtn').classList.toggle('new', !isTourDone()); }
+
+  function renderTour() {
+    const s = TOUR[tourIdx];
+    const stage = document.getElementById('tourStage');
+    stage.innerHTML = `<div class="art-wrap">${s.art}</div><h2>${s.title}</h2><p>${s.text}</p>`;
+    stage.classList.remove('in'); void stage.offsetWidth; stage.classList.add('in'); // заново запускаем появление
+    document.getElementById('tourDots').innerHTML = TOUR.map((_, i) => `<i class="${i === tourIdx ? 'on' : ''}"></i>`).join('');
+    document.getElementById('tourBack').classList.toggle('invisible', tourIdx === 0);
+    document.getElementById('tourNext').textContent = tourIdx === TOUR.length - 1 ? 'Начать' : 'Далее';
+    document.getElementById('tourSkip').hidden = tourIdx === TOUR.length - 1;
+  }
+  function openTour() {
+    tourIdx = 0;
+    tourEl.hidden = false;
+    document.body.classList.add('no-scroll');
+    renderTour();
+    document.getElementById('tourNext').focus({ preventScroll: true });
+  }
+  function closeTour(goHabits) {
+    tourEl.hidden = true;
+    document.body.classList.remove('no-scroll');
+    if (!meta.o) { meta.o = 1; persistMeta(); }
+    try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
+    updateHelpBtn();
+    if (goHabits) showTab('habits');
+  }
+  const tourNext = () => { if (tourIdx < TOUR.length - 1) { tourIdx++; renderTour(); buzz(); } else closeTour(true); };
+  const tourBack = () => { if (tourIdx > 0) { tourIdx--; renderTour(); buzz(); } };
+
+  document.getElementById('tourNext').addEventListener('click', tourNext);
+  document.getElementById('tourBack').addEventListener('click', tourBack);
+  document.getElementById('tourSkip').addEventListener('click', () => closeTour(false));
+  document.getElementById('helpBtn').addEventListener('click', openTour);
+  document.getElementById('openTour').addEventListener('click', openTour);
+  document.addEventListener('keydown', (e) => {
+    if (tourEl.hidden) return;
+    if (e.key === 'Escape') closeTour(false);
+    else if (e.key === 'ArrowRight') tourNext();
+    else if (e.key === 'ArrowLeft') tourBack();
+  });
+  let touchX = null;
+  tourEl.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+  tourEl.addEventListener('touchend', (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (dx < -50) tourNext(); else if (dx > 50) tourBack();
+  }, { passive: true });
+
+  function maybeAutoTour() { if (!isTourDone() && !habits.length) setTimeout(openTour, 500); }
+
+  // ---------- Шахматы ----------
+  const GLYPH = { 1: '♟', 2: '♞', 3: '♝', 4: '♜', 5: '♛', 6: '♚' };
+  const PIECE_RU = { 1: 'пешка', 2: 'конь', 3: 'слон', 4: 'ладья', 5: 'ферзь', 6: 'король' };
+  const PIECE_PTS = { 1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0 };
+  const LEVELS = [
+    { id: 1, name: 'Лёгкий', desc: 'Иногда ошибается. Подходит, чтобы освоиться в игре.' },
+    { id: 2, name: 'Средний', desc: 'Просчитывает несколько ходов вперёд и не зевает фигуры.' },
+    { id: 3, name: 'Сложный', desc: 'Думает дольше и играет внимательно. Победить будет непросто.' }
+  ];
+  const WHY_TEXT = {
+    stalemate: 'Пат. Ничья.',
+    material: 'Ничья: не хватает фигур для мата.',
+    fifty: 'Ничья по правилу 50 ходов.',
+    repetition: 'Ничья: позиция повторилась трижды.'
+  };
+  const SETUP_KEY = 'habits_chess_setup';
+
+  const game = {
+    active: false, pos: Chess.Pos.fromFEN(Chess.START), player: 1, level: 2,
+    moves: [], seen: {}, last: null, caps: [], legal: [], check: false,
+    sel: -1, targets: [], busy: false, result: null, fin: false, resigned: false, token: 0
+  };
+  let cstats = { w: 0, l: 0, d: 0 };
+  let setupLevel = 2, setupColor = 'white', setupOpen = false;
+  let growView = 'home';
+  let promoCands = null;
+
+  const pieceHTML = (p) => `<span class="pc ${p > 0 ? 'w' : 'b'}">${GLYPH[Math.abs(p)]}︎</span>`;
+  const sqLabel = (sq, p) => 'abcdefgh'[sq & 7] + (8 - (sq >> 4)) + (p ? ', ' + (p > 0 ? 'белые' : 'чёрные') + ': ' + PIECE_RU[Math.abs(p)] : '');
+  const askConfirm = (msg, cb) => {
+    if (tg && tg.showConfirm) tg.showConfirm(msg, ok => ok && cb());
+    else if (confirm(msg)) cb();
+  };
+
+  // сохранение: облако Telegram (если есть) и копия на устройстве
+  async function kvSet(k, v) {
+    try { localStorage.setItem('hk_' + k, v); } catch (e) {}
+    if (hasCloud) { const ok = await cSet(k, v); if (!ok) { syncOk = false; renderFoot(); } }
+  }
+  async function kvGet(k) {
+    if (hasCloud) { const r = await cGet([k]); if (r && typeof r[k] === 'string' && r[k]) return r[k]; }
+    try { return localStorage.getItem('hk_' + k); } catch (e) { return null; }
+  }
+  const saveGame = () => kvSet('chess', JSON.stringify({ c: game.player, l: game.level, m: game.moves, r: game.resigned ? 1 : 0, f: game.fin ? 1 : 0 }));
+  const saveStats = () => kvSet('cstat', JSON.stringify(cstats));
+
+  function applyMove(m) {
+    const pos = game.pos;
+    if (m.c) game.caps.push({ by: pos.side, piece: m.c });
+    game.moves.push(Chess.moveStr(m));
+    pos.make(m);
+    pos.stack.length = 0; // отмена хода в партии идёт через пересборку, историю не копим
+    game.last = [m.f, m.t];
+    const k = pos.key();
+    game.seen[k] = (game.seen[k] || 0) + 1;
+  }
+  function refreshStatus() {
+    const st = Chess.status(game.pos, game.seen);
+    game.legal = st.over ? [] : st.moves;
+    game.check = !!st.check;
+    game.result = game.resigned ? { over: true, winner: -game.player, why: 'resign' } : (st.over ? st : null);
+    if (game.resigned) game.legal = [];
+    game.sel = -1; game.targets = [];
+  }
+  function rebuildGame(list) {
+    game.pos = Chess.Pos.fromFEN(Chess.START);
+    game.moves = []; game.caps = []; game.last = null;
+    game.seen = {}; game.seen[game.pos.key()] = 1;
+    for (const str of list) {
+      const m = Chess.parse(game.pos, str);
+      if (!m) break;
+      applyMove(m);
+    }
+    refreshStatus();
+  }
+  function finishIfOver() {
+    if (!game.result || game.fin) return;
+    game.fin = true;
+    if (game.result.winner === game.player) cstats.w++;
+    else if (game.result.winner === 0) cstats.d++;
+    else cstats.l++;
+    saveStats();
+  }
+
+  function newGame(color, level) {
+    game.token++;
+    game.active = true; game.player = color; game.level = level;
+    game.resigned = false; game.fin = false; game.busy = false;
+    rebuildGame([]);
+    saveGame();
+    setupOpen = false;
+    renderChess();
+    maybeBot();
+  }
+  function playMove(m) {
+    applyMove(m);
+    refreshStatus();
+    finishIfOver();
+    saveGame();
+    renderChess();
+    maybeBot();
+  }
+  function maybeBot() {
+    if (!game.active || game.result || game.pos.side === game.player || game.busy) return;
+    game.busy = true;
+    const tok = game.token;
+    renderChess();
+    setTimeout(() => { // небольшая пауза, чтобы доска успела перерисоваться до расчёта
+      if (tok !== game.token) return;
+      const m = Chess.think(game.pos, game.level);
+      game.busy = false;
+      if (m) playMove(m); else { refreshStatus(); renderChess(); }
+    }, 380);
+  }
+  function undoMove() {
+    if (!game.active || game.busy || game.result) return;
+    const k = game.pos.side === game.player ? 2 : 1;
+    if (game.moves.length < k) return;
+    rebuildGame(game.moves.slice(0, -k));
+    saveGame(); renderChess(); buzz();
+  }
+  function resignGame() {
+    if (!game.active || game.busy || game.result) return;
+    askConfirm('Сдаться и засчитать поражение?', () => {
+      game.resigned = true;
+      refreshStatus(); finishIfOver(); saveGame(); renderChess();
+    });
+  }
+
+  function chooseMove(f, t) {
+    const cands = game.legal.filter(m => m.f === f && m.t === t);
+    if (!cands.length) return;
+    if (cands.length > 1) {
+      promoCands = cands;
+      document.getElementById('promoRow').innerHTML = [5, 4, 3, 2].map(pt =>
+        `<button type="button" data-p="${pt}" aria-label="${PIECE_RU[pt]}">${pieceHTML(game.player * pt)}</button>`).join('');
+      document.getElementById('promo').hidden = false;
+      return;
+    }
+    playMove(cands[0]);
+  }
+  document.getElementById('promoRow').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-p]');
+    if (!b || !promoCands) return;
+    const m = promoCands.find(x => x.p === +b.dataset.p);
+    promoCands = null;
+    document.getElementById('promo').hidden = true;
+    if (m) playMove(m);
+  });
+  document.getElementById('promo').addEventListener('click', (e) => {
+    if (e.target.id === 'promo') { promoCands = null; document.getElementById('promo').hidden = true; }
+  });
+
+  document.getElementById('board').addEventListener('click', (e) => {
+    const el = e.target.closest('.sq');
+    if (!el) return;
+    if (!game.active || game.busy || game.result || game.pos.side !== game.player) return;
+    const sq = +el.dataset.sq;
+    if (game.sel >= 0 && game.targets.includes(sq)) { chooseMove(game.sel, sq); return; }
+    const p = game.pos.b[sq];
+    if (p && (p > 0) === (game.player > 0) && game.legal.some(m => m.f === sq)) {
+      game.sel = sq;
+      game.targets = game.legal.filter(m => m.f === sq).map(m => m.t);
+      buzz();
+    } else { game.sel = -1; game.targets = []; }
+    renderBoard();
+  });
+
+  // ----- отрисовка шахмат -----
+  function renderBoard() {
+    const board = document.getElementById('board');
+    const pos = game.pos;
+    const flip = game.player === -1;
+    const last = game.last || [];
+    const checkSq = game.active && game.check ? pos.ks[pos.side === 1 ? 0 : 1] : -1;
+    let html = '';
+    for (let i = 0; i < 64; i++) {
+      let r = i >> 3, c = i & 7;
+      if (flip) { r = 7 - r; c = 7 - c; }
+      const sq = r * 16 + c;
+      const p = pos.b[sq];
+      const cls = ['sq'];
+      if ((r + c) % 2 === 1) cls.push('dk');
+      if (last.includes(sq)) cls.push('last');
+      if (sq === game.sel) cls.push('sel');
+      if (game.targets.includes(sq)) cls.push(p ? 'capt' : 'tgt');
+      if (sq === checkSq) cls.push('chk');
+      const rank = (i & 7) === 0 ? `<span class="co r">${8 - r}</span>` : '';
+      const file = (i >> 3) === 7 ? `<span class="co f">${'abcdefgh'[c]}</span>` : '';
+      html += `<button type="button" class="${cls.join(' ')}" data-sq="${sq}" aria-label="${sqLabel(sq, p)}">${rank}${file}${p ? pieceHTML(p) : ''}</button>`;
+    }
+    board.innerHTML = html;
+    const w = board.clientWidth;
+    if (w) board.style.fontSize = Math.floor(w / 8 * 1.02) + 'px';
+  }
+
+  function chessStatus() {
+    if (!game.active) return { t: 'Выберите уровень и цвет, затем начните партию.' };
+    if (game.result) {
+      const r = game.result;
+      if (r.why === 'resign') return { t: 'Вы сдались. Победил бот.', bad: true };
+      if (r.why === 'mate') return r.winner === game.player ? { t: 'Мат! Вы победили.' } : { t: 'Мат. Победил бот.', bad: true };
+      return { t: WHY_TEXT[r.why] || 'Ничья.' };
+    }
+    if (game.busy || game.pos.side !== game.player) return { t: 'Бот думает…' };
+    return { t: game.check ? 'Шах! Ваш ход.' : 'Ваш ход.' };
+  }
+
+  function capturedHTML(pieces, color) { // pieces — типы фигур, color — цвет, которым их рисуем
+    return pieces.sort((a, b) => b - a).map(t => pieceHTML(color * t)).join('');
+  }
+
+  function renderChess() {
+    const st = chessStatus();
+    const stEl = document.getElementById('chessStatus');
+    stEl.textContent = st.t;
+    stEl.classList.toggle('bad', !!st.bad);
+
+    const lvl = LEVELS.find(l => l.id === game.level) || LEVELS[1];
+    document.getElementById('botInfo').textContent = game.active ? lvl.name : '';
+    document.getElementById('youInfo').textContent = game.active ? (game.player === 1 ? 'белые' : 'чёрные') : '';
+
+    const mine = [], theirs = []; // mine — что взял я, theirs — что взял бот
+    for (const c of game.caps) (c.by === game.player ? mine : theirs).push(c.piece);
+    const adv = mine.reduce((s, t) => s + PIECE_PTS[t], 0) - theirs.reduce((s, t) => s + PIECE_PTS[t], 0);
+    document.getElementById('capBottom').innerHTML = capturedHTML(mine, -game.player) + (adv > 0 ? `<small>+${adv}</small>` : '');
+    document.getElementById('capTop').innerHTML = capturedHTML(theirs, game.player) + (adv < 0 ? `<small>+${-adv}</small>` : '');
+
+    renderBoard();
+
+    const playing = game.active && !game.result;
+    const k = game.pos.side === game.player ? 2 : 1;
+    document.getElementById('chessUndo').disabled = !(playing && !game.busy && game.moves.length >= k);
+    document.getElementById('chessResign').disabled = !(playing && !game.busy);
+    document.getElementById('chessNew').disabled = game.busy;
+
+    const showSetup = setupOpen || !game.active;
+    document.getElementById('chessSetup').hidden = !showSetup;
+    document.getElementById('chessActions').hidden = showSetup;
+    document.getElementById('setupCancel').hidden = !game.active;
+    renderSetup();
+
+    document.getElementById('cWin').textContent = cstats.w;
+    document.getElementById('cDraw').textContent = cstats.d;
+    document.getElementById('cLose').textContent = cstats.l;
+    renderChessBadge();
+  }
+
+  function renderSetup() {
+    document.getElementById('lvlChips').innerHTML = LEVELS.map(l =>
+      `<button type="button" class="chip" role="radio" aria-checked="${setupLevel === l.id}" data-lvl="${l.id}">${l.name}</button>`).join('');
+    document.getElementById('lvlDesc').textContent = (LEVELS.find(l => l.id === setupLevel) || LEVELS[1]).desc;
+    document.getElementById('clrChips').innerHTML = [['white', 'Белые'], ['black', 'Чёрные'], ['random', 'Случайно']].map(([id, name]) =>
+      `<button type="button" class="chip" role="radio" aria-checked="${setupColor === id}" data-clr="${id}">${name}</button>`).join('');
+  }
+  function saveSetup() { try { localStorage.setItem(SETUP_KEY, JSON.stringify({ l: setupLevel, c: setupColor })); } catch (e) {} }
+
+  function renderChessBadge() {
+    const el = document.getElementById('chessBadge');
+    const total = cstats.w + cstats.d + cstats.l;
+    el.textContent = (game.active && !game.result) ? 'Партия идёт, можно продолжить'
+      : total ? `Побед: ${cstats.w} · ничьих: ${cstats.d} · поражений: ${cstats.l}` : 'Сыграйте первую партию';
+  }
+
+  function renderGrow() {
+    document.getElementById('growHome').hidden = growView !== 'home';
+    document.getElementById('growChess').hidden = growView !== 'chess';
+    renderChessBadge();
+    if (growView === 'chess') renderChess();
+  }
+
+  document.getElementById('openChess').addEventListener('click', () => {
+    growView = 'chess'; setupOpen = !game.active;
+    renderGrow(); window.scrollTo(0, 0); buzz();
+  });
+  document.getElementById('chessBack').addEventListener('click', () => { growView = 'home'; setupOpen = false; renderGrow(); window.scrollTo(0, 0); });
+  document.getElementById('chessUndo').addEventListener('click', undoMove);
+  document.getElementById('chessResign').addEventListener('click', resignGame);
+  document.getElementById('chessNew').addEventListener('click', () => { setupOpen = true; renderChess(); });
+  document.getElementById('setupCancel').addEventListener('click', () => { setupOpen = false; renderChess(); });
+  document.getElementById('lvlChips').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-lvl]');
+    if (b) { setupLevel = +b.dataset.lvl; saveSetup(); renderSetup(); buzz(); }
+  });
+  document.getElementById('clrChips').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-clr]');
+    if (b) { setupColor = b.dataset.clr; saveSetup(); renderSetup(); buzz(); }
+  });
+  document.getElementById('chessStart').addEventListener('click', () => {
+    const color = setupColor === 'white' ? 1 : setupColor === 'black' ? -1 : (Math.random() < 0.5 ? 1 : -1);
+    newGame(color, setupLevel);
+    buzz();
+  });
+  window.addEventListener('resize', () => {
+    if (!document.getElementById('tab-grow').hidden && growView === 'chess') renderBoard();
+  });
+
+  async function loadChess() {
+    try {
+      const o = JSON.parse(localStorage.getItem(SETUP_KEY));
+      if (o && [1, 2, 3].includes(o.l)) setupLevel = o.l;
+      if (o && ['white', 'black', 'random'].includes(o.c)) setupColor = o.c;
+    } catch (e) {}
+    try {
+      const s = JSON.parse(await kvGet('cstat'));
+      if (s) cstats = { w: s.w | 0, l: s.l | 0, d: s.d | 0 };
+    } catch (e) {}
+    try {
+      const raw = await kvGet('chess');
+      const g = raw && JSON.parse(raw);
+      if (g && Array.isArray(g.m) && (g.c === 1 || g.c === -1)) {
+        game.active = true;
+        game.player = g.c;
+        game.level = [1, 2, 3].includes(g.l) ? g.l : 2;
+        game.resigned = !!g.r;
+        game.fin = !!g.f;
+        rebuildGame(g.m);
+        finishIfOver();
+      }
+    } catch (e) {}
+  }
+
   // ---------- Запуск ----------
   (async function start() {
     let tab = 'habits';
     try { tab = localStorage.getItem(TAB_KEY) || 'habits'; } catch (e) {}
+    let savedTheme = 'auto';
+    try { savedTheme = localStorage.getItem(THEME_KEY) || 'auto'; } catch (e) {}
+    applyTheme(savedTheme);
     showTab(tab);
+    initTerm();
     renderProfileHeader();
+    updateHelpBtn();
     render();
 
     await load();
+    if (meta.th && meta.th !== themeMode) applyTheme(meta.th);
     const now = Math.floor(Date.now() / 1000);
     prevVisit = meta.l && meta.l.length ? meta.l[meta.l.length - 1] : null;
     meta.v = (meta.v || 0) + 1;
@@ -589,7 +2066,13 @@
     render();
     renderVisit();
     renderFoot();
+    updateHelpBtn();
     persistMeta();
+
+    await loadChess();
+    renderGrow();
+    maybeBot();       // если закрыли приложение на ходе бота, он доиграет
+    maybeAutoTour();  // новым пользователям сразу показываем обучение
   })();
 </script>
 </body>
