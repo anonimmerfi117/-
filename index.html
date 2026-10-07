@@ -54,6 +54,9 @@
     --font-display: "Unbounded", "Onest", system-ui, sans-serif;
     --font-sym: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", system-ui, sans-serif;
     --tabbar-h: 78px;
+    --tg-t: 0px; --tg-b: 0px;
+    --sat: max(env(safe-area-inset-top, 0px), var(--tg-t));
+    --sab: max(env(safe-area-inset-bottom, 0px), var(--tg-b));
   }
   :root[data-theme="light"] {
     color-scheme: light;
@@ -105,7 +108,7 @@
 
   .wrap {
     max-width: 520px; margin: 0 auto;
-    padding: 24px 18px calc(var(--tabbar-h) + 36px + env(safe-area-inset-bottom));
+    padding: calc(24px + var(--sat)) 18px calc(var(--tabbar-h) + 36px + var(--sab));
   }
   [hidden] { display: none !important; }
 
@@ -268,7 +271,7 @@
   /* ---------- Нижние вкладки ---------- */
   .tabs {
     position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    bottom: calc(12px + var(--sab));
     width: calc(100% - 28px); max-width: 420px; height: var(--tabbar-h);
     padding: 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
     border-radius: 32px; background: var(--tabbar-bg);
@@ -430,7 +433,7 @@
   /* ---------- Обучение ---------- */
   .tour {
     position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow-y: auto;
-    padding: calc(14px + env(safe-area-inset-top)) 22px calc(20px + env(safe-area-inset-bottom));
+    padding: calc(14px + var(--sat)) 22px calc(20px + var(--sab));
     background:
       radial-gradient(120% 60% at 100% -10%, var(--glow-a), transparent 60%),
       radial-gradient(90% 50% at -10% 0%, var(--glow-b), transparent 55%),
@@ -512,7 +515,7 @@
   .a5 { position: relative; width: 224px; height: 224px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 20px; overflow: hidden; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.6); }
   .a5 i { background: var(--sq-light); }
   .a5 i.dk { background: var(--sq-dark); }
-  .a5 .kn { position: absolute; left: 0; top: 0; width: 56px; height: 56px; display: grid; place-items: center; font-family: var(--font-sym); font-size: 42px; line-height: 1; color: #fff; text-shadow: 0 0 2px #1a1440, 0 0 2px #1a1440; animation: hop 6s ease-in-out infinite; }
+  .a5 .kn { position: absolute; left: 0; top: 0; width: 56px; height: 56px; padding: 7px; animation: hop 6s ease-in-out infinite; }
   @keyframes hop {
     0%, 18% { transform: translate(0, 168px); }
     25%, 43% { transform: translate(56px, 56px); }
@@ -524,6 +527,136 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
   }
+  /* ---------- Каталог «Развитие» ---------- */
+  .sec-title { margin: 20px 4px 10px; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .sec-title:first-of-type { margin-top: 0; }
+  .game-card + .game-card { margin-top: 10px; }
+  .game-art svg { width: 34px; height: 34px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .game-art.g1 { background: linear-gradient(135deg, #8b7bff, #4d8dff); }
+  .game-art.g2 { background: linear-gradient(135deg, #4d8dff, #28c7d9); }
+  .game-art.g3 { background: linear-gradient(135deg, #a77bff, #ee74c8); }
+  .game-art.g4 { background: linear-gradient(135deg, #3fa9ff, #3de0b5); }
+  .game-art.g5 { background: linear-gradient(135deg, #ff7eb0, #ff9a6b); }
+  .game-card > svg.chev { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .game-card > .game-art svg { width: 34px; height: 34px; }
+  .lbl-row { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 4px 10px; font-size: 13px; color: var(--muted); }
+  .lbl-row span:first-child { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 12.5px; }
+  #growPuzzles .chips, #growBreath .chips { margin-bottom: 14px; }
+  #growBreath .setup .chips { margin-bottom: 0; }
+  .board.shake { animation: shake .4s ease; }
+  @keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+  .sq.hint { box-shadow: inset 0 0 0 3px var(--mint); animation: hintPulse 1.2s ease-in-out infinite; }
+  @keyframes hintPulse { 50% { box-shadow: inset 0 0 0 5px var(--mint); } }
+
+  /* задачи */
+  .pz-info { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 6px; }
+  .pz-info b { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .pz-info span { font-size: 13.5px; color: var(--muted); }
+  #growPuzzles .chess-status.good { color: var(--mint); }
+  #growPuzzles .chess-actions { margin-top: 14px; }
+  .pz-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+  .pz-dot { aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; transition: transform .15s, background-color .25s; }
+  .pz-dot:active { transform: scale(0.92); }
+  .pz-dot.done { background: var(--grad); border-color: transparent; color: #fff; }
+  .pz-dot.cur { outline: 2px solid var(--violet); outline-offset: 2px; }
+
+  /* угадай слово */
+  .w-grid { display: grid; gap: 7px; }
+  .w-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .w-row.shake { animation: shake .4s ease; }
+  .w-t { aspect-ratio: 1; display: grid; place-items: center; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); font-family: var(--font-display); font-size: 26px; font-weight: 600; text-transform: uppercase; color: var(--text); }
+  .w-t.fill { border-color: var(--violet); }
+  .w-t.pop { animation: tpop .14s ease-out; }
+  @keyframes tpop { 50% { transform: scale(1.12); } }
+  .w-t.rev { border-color: transparent; animation: wflip .62s both; }
+  .w-t.s2 { --fc: #2fbf8e; --fk: #04261b; }
+  .w-t.s1 { --fc: #f2c23c; --fk: #2a2000; }
+  .w-t.s0 { --fc: #5b5690; --fk: #fff; }
+  :root[data-theme="light"] .w-t.s0 { --fc: #b6b1dd; --fk: #2a2360; }
+  @keyframes wflip {
+    0% { transform: rotateX(0); background: var(--surface); color: var(--text); }
+    49% { transform: rotateX(90deg); background: var(--surface); color: var(--text); }
+    51% { transform: rotateX(90deg); background: var(--fc); color: var(--fk); }
+    100% { transform: rotateX(0); background: var(--fc); color: var(--fk); }
+  }
+  .w-t.win { animation: wwin .5s ease both; }
+  @keyframes wwin { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } }
+  .w-msg { min-height: 26px; margin: 14px 4px 10px; text-align: center; font-weight: 600; font-size: 16px; }
+  .w-msg.bad { color: var(--danger); }
+  .w-keys { display: grid; gap: 6px; width: 100%; margin-bottom: 16px; }
+  .w-kr { display: flex; gap: 5px; justify-content: center; }
+  .w-k { flex: 1 1 0; min-width: 0; height: 46px; padding: 0; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-strong); color: var(--text); font-family: var(--font-body); font-weight: 600; font-size: 16px; text-transform: uppercase; transition: background-color .3s, transform .1s; }
+  .w-k:active { transform: scale(0.92); }
+  .w-k.wide { flex: 1.6 1 0; font-size: 12.5px; }
+  .w-k.k2 { background: #2fbf8e; border-color: transparent; color: #04261b; }
+  .w-k.k1 { background: #f2c23c; border-color: transparent; color: #2a2000; }
+  .w-k.k0 { opacity: .4; }
+  .w-k svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #wMore { margin-bottom: 14px; }
+  #growWordle .btn.wide { width: 100%; }
+
+  /* дыхание */
+  .br-stage { position: relative; display: grid; place-items: center; width: min(72vw, 270px); aspect-ratio: 1; margin: 26px auto 8px; }
+  .br-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px dashed var(--line); }
+  .br-orb { width: 100%; height: 100%; border-radius: 50%; background: var(--grad); transform: scale(0.52); box-shadow: 0 0 60px -6px rgba(110, 120, 255, 0.7); opacity: .92; }
+  .br-text { position: absolute; display: grid; gap: 2px; place-items: center; text-align: center; color: #fff; pointer-events: none; }
+  .br-text b { font-family: var(--font-display); font-size: 21px; font-weight: 600; }
+  .br-text span { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 38px; }
+  .br-left { min-height: 24px; margin: 4px 4px 12px; text-align: center; color: var(--muted); font-size: 14.5px; }
+  #growBreath .btn.wide { width: 100%; margin-bottom: 16px; }
+  #brSetup.lock { opacity: .5; pointer-events: none; }
+
+  /* дневник */
+  .gr-q { font-family: var(--font-display); font-size: 16px; font-weight: 600; line-height: 1.35; margin-bottom: 14px; }
+  .gr-row { display: flex; align-items: center; gap: 10px; }
+  .gr-row + .gr-row { margin-top: 10px; }
+  .gr-n { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--grad); color: #fff; font-weight: 700; font-size: 14px; }
+  .gr-row input { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; font-size: 15.5px; outline: none; transition: border-color .2s, background-color .2s; }
+  .gr-row input:focus { border-color: var(--violet); background: var(--surface-strong); }
+  .gr-row input::placeholder { color: var(--muted); }
+  .gr-saved { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .gr-saved.ok { color: var(--mint); }
+  .gr-habits { margin: 12px 4px 0; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+  .gr-day { padding: 14px 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); }
+  .gr-day + .gr-day { margin-top: 10px; }
+  .gr-day b { display: block; margin-bottom: 6px; font-size: 13px; color: var(--violet); }
+  .gr-day ol { margin: 0; padding-left: 20px; font-size: 14.5px; line-height: 1.5; }
+  .gr-empty { padding: 18px; text-align: center; font-size: 14px; color: var(--muted); }
+  .w-t.fin { border-color: transparent; background: var(--fc); color: var(--fk); }
+
+  /* угадай слово: игра и клавиатура помещаются на один экран */
+  .w-play { display: flex; flex-direction: column; height: calc(100vh - 24px - var(--sat) - var(--tabbar-h) - 34px - var(--sab)); height: calc(100dvh - 24px - var(--sat) - var(--tabbar-h) - 34px - var(--sab)); min-height: 440px; }
+  .w-play .head { flex: none; margin-bottom: 8px; }
+  .w-play .head .sub { font-size: 13.5px; }
+  .w-gridbox { flex: 1 1 0; min-height: 0; display: flex; justify-content: center; align-items: center; }
+  .w-grid { height: 100%; max-height: 372px; aspect-ratio: 5 / 6; max-width: 100%; width: auto; margin: 0; grid-template-rows: repeat(6, 1fr); gap: 6px; }
+  .w-row { gap: 6px; }
+  .w-t { aspect-ratio: auto; min-height: 0; font-size: clamp(18px, 4.4dvh, 28px); border-radius: 11px; }
+  .w-msg { flex: none; min-height: 24px; margin: 8px 4px 8px; }
+  .w-keys { flex: none; position: relative; gap: 7px; margin-bottom: 4px; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+  .w-kr { gap: 5px; }
+  .w-k { height: clamp(44px, 6.8dvh, 56px); font-size: 19px; border-radius: 11px; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: background-color .25s, opacity .25s; }
+  .w-k:active, .w-k.tap { transform: translateY(1px) scale(0.93); box-shadow: none; }
+  .w-k.tap { animation: keytap .22s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes keytap { 0% { transform: scale(0.84); filter: brightness(1.7); } 55% { transform: scale(1.04); } 100% { transform: scale(1); filter: none; } }
+  .w-k.wide { font-size: 13px; }
+  .w-bubble { position: absolute; z-index: 5; left: 0; top: 0; min-width: 52px; height: 58px; padding: 0 10px; border-radius: 15px; background: var(--grad); color: #fff; display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 28px; text-transform: uppercase; opacity: 0; pointer-events: none; box-shadow: 0 12px 24px -8px rgba(80, 90, 255, 0.8); transform: translate(-50%, -120%); }
+  .w-bubble.show { animation: bubble .42s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes bubble { 0% { opacity: 0; transform: translate(-50%, -80%) scale(0.6); } 25% { opacity: 1; transform: translate(-50%, -125%) scale(1.08); } 70% { opacity: 1; transform: translate(-50%, -125%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -140%) scale(0.95); } }
+  .w-t.pop { animation: tpop .2s cubic-bezier(.2, .9, .3, 1.4); }
+  @keyframes tpop { 0% { transform: scale(0.8); } 60% { transform: scale(1.14); } 100% { transform: scale(1); } }
+  #growWordle .chess-stats { margin-top: 18px; }
+  .backup { margin-top: 12px; }
+  .backup .desc { margin: 0 0 14px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+  .backup .desc:last-child { margin: 12px 0 0; }
+  .backup .desc.bad { color: var(--danger); }
+  .backup .desc.ok { color: var(--mint); }
+  .bk-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .backup textarea { display: block; width: 100%; min-height: 130px; margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; resize: vertical; outline: none; -webkit-user-select: text; user-select: text; }
+  .backup textarea:focus { border-color: var(--violet); background: var(--surface-strong); }
+  .backup .btn.wide { width: 100%; margin-top: 12px; }
+  .seg.two { grid-template-columns: 1fr 1fr; }
+  .card .desc { margin: 12px 2px 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -560,10 +693,38 @@
       </div>
     </div>
 
+    <div class="card" id="fsCard" hidden>
+      <h2 class="card-title">Размер окна</h2>
+      <div class="seg two" id="fsSeg" role="radiogroup" aria-label="Размер окна">
+        <button type="button" class="seg-b" role="radio" aria-checked="false" data-fs="1">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Весь экран
+        </button>
+        <button type="button" class="seg-b" role="radio" aria-checked="false" data-fs="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2.5"/><path d="M4 9h16"/></svg>С шапкой
+        </button>
+      </div>
+      <p class="desc">В режиме «Весь экран» приложение закрывает шапку Telegram. Закрыть его можно кнопкой «Закрыть» вверху.</p>
+    </div>
+
     <button class="row-btn" id="openTour" type="button">
       <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.4 5.2 5.6.7-4.1 3.9 1.1 5.6L12 16.2 7 18.9l1.1-5.6L4 9.4l5.6-.7z"/></svg></span>
       <span><b>Как пользоваться</b><span>Короткое обучение за минуту</span></span>
     </button>
+
+    <button class="row-btn" id="openBackup" type="button" aria-expanded="false">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/></svg></span>
+      <span><b>Резервная копия</b><span>Перенос данных в другой бот или на другой телефон</span></span>
+    </button>
+    <div class="card backup" id="backupPanel" hidden>
+      <p class="desc">Копия — это текст со всеми вашими данными: привычками, шахматами, задачами, словом дня, дыханием и дневником. Создайте её здесь, а в другом боте вставьте и нажмите «Восстановить». Храните копию в надёжном месте, например в «Избранном» Telegram: в ней ваши личные записи.</p>
+      <div class="bk-actions">
+        <button class="btn" id="bkMake" type="button">Создать копию</button>
+        <button class="btn" id="bkCopy" type="button">Скопировать</button>
+      </div>
+      <textarea id="bkText" rows="6" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Здесь появится копия. Чтобы восстановить данные, вставьте сюда текст копии." aria-label="Текст резервной копии"></textarea>
+      <button class="btn primary wide" id="bkRestore" type="button">Восстановить из текста</button>
+      <p class="desc" id="bkMsg" role="status" aria-live="polite"></p>
+    </div>
 
     <p class="note" id="lastVisit"></p>
     <p class="note" id="foot"></p>
@@ -615,14 +776,54 @@
         <h1>Развитие</h1>
         <div class="sub">Тренируйте голову между делами</div>
       </header>
+
+      <div class="sec-title">Игры</div>
       <button class="game-card" id="openChess" type="button">
-        <div class="game-art" aria-hidden="true">&#9822;&#xFE0E;</div>
+        <div class="game-art g1" aria-hidden="true"><svg viewBox="0 0 45 45"><path fill="#fff" stroke="none" d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/></svg></div>
         <div class="game-info">
           <b>Шахматы</b>
-          <span>Партия против бота, три уровня сложности</span>
+          <span>Партия против бота, три уровня и шахматные часы</span>
           <em id="chessBadge"></em>
         </div>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button class="game-card" id="openPuzzles" type="button">
+        <div class="game-art g2" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></div>
+        <div class="game-info">
+          <b>Шахматные задачи</b>
+          <span>Найдите мат в 1 или в 2 хода</span>
+          <em id="pzBadge"></em>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button class="game-card" id="openWordle" type="button">
+        <div class="game-art g3" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="rgba(255,255,255,.9)" stroke="none"/></svg></div>
+        <div class="game-info">
+          <b>Угадай слово</b>
+          <span>Слово дня из пяти букв, шесть попыток</span>
+          <em id="wBadge"></em>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+
+      <div class="sec-title">Упражнения</div>
+      <button class="game-card" id="openBreath" type="button">
+        <div class="game-art g4" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7"/></svg></div>
+        <div class="game-info">
+          <b>Дыхание</b>
+          <span>Спокойствие и фокус за 1–5 минут</span>
+          <em id="brBadge"></em>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button class="game-card" id="openGratitude" type="button">
+        <div class="game-art g5" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></div>
+        <div class="game-info">
+          <b>Дневник благодарности</b>
+          <span>Три добрых момента за день</span>
+          <em id="grBadge"></em>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
       <p class="note">Скоро здесь появятся новые игры и упражнения.</p>
     </div>
@@ -630,7 +831,7 @@
     <div id="growChess" hidden>
       <header class="head">
         <div class="head-row">
-          <button class="round-btn" id="chessBack" type="button" aria-label="Назад к разделу «Развитие»">
+          <button class="round-btn" id="chessBack" data-back type="button" aria-label="Назад к разделу «Развитие»">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
           </button>
           <h1>Шахматы</h1>
@@ -672,6 +873,117 @@
         <div class="stat"><b id="cDraw">0</b><span>ничьих</span></div>
         <div class="stat"><b id="cLose">0</b><span>поражений</span></div>
       </div>
+    </div>
+
+
+    <!-- ===== Шахматные задачи ===== -->
+    <div id="growPuzzles" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" data-back type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Задачи</h1>
+          <span style="width:44px"></span>
+        </div>
+      </header>
+      <div class="chips" id="pzKinds" role="radiogroup" aria-label="Тип задачи"></div>
+      <div class="pz-info"><b id="pzTask"></b><span id="pzSide"></span></div>
+      <div class="chess-status" id="pzStatus" role="status" aria-live="polite"></div>
+      <div class="board" id="pBoard" aria-label="Шахматная доска с задачей"></div>
+      <div class="chess-actions">
+        <button class="btn" id="pzHint" type="button">Подсказка</button>
+        <button class="btn" id="pzReveal" type="button">Решение</button>
+        <button class="btn primary" id="pzNext" type="button">Дальше</button>
+      </div>
+      <div class="lbl-row"><span>Все задачи</span><span id="pzCount"></span></div>
+      <div class="pz-grid" id="pzGrid"></div>
+    </div>
+
+    <!-- ===== Угадай слово ===== -->
+    <div id="growWordle" hidden>
+      <div class="w-play">
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" data-back type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Угадай слово</h1>
+          <span style="width:44px"></span>
+        </div>
+        <div class="sub" id="wSub">Слово дня: пять букв, шесть попыток</div>
+      </header>
+      <div class="w-gridbox"><div class="w-grid" id="wGrid" aria-label="Игровое поле"></div></div>
+      <div class="w-msg" id="wMsg" role="status" aria-live="polite"></div>
+      <div class="w-keys" id="wKeys"></div>
+      <button class="btn primary wide" id="wMore" type="button" hidden>Ещё слово</button>
+      </div>
+      <div class="chess-stats">
+        <div class="stat"><b id="wsP">0</b><span>сыграно</span></div>
+        <div class="stat"><b id="wsW">0</b><span>побед</span></div>
+        <div class="stat"><b id="wsS">0</b><span>дней подряд</span></div>
+      </div>
+      <p class="note">Зелёная буква стоит на своём месте, жёлтая есть в слове, но в другом месте. Слова не проверяются по словарю, вводите любые пять букв.</p>
+    </div>
+
+    <!-- ===== Дыхание ===== -->
+    <div id="growBreath" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" data-back type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Дыхание</h1>
+          <span style="width:44px"></span>
+        </div>
+        <div class="sub">Следуйте за кругом: вдох, пауза, выдох</div>
+      </header>
+      <div class="setup" id="brSetup">
+        <div class="lbl">Упражнение</div>
+        <div class="chips" id="brTech" role="radiogroup" aria-label="Упражнение"></div>
+        <p class="desc" id="brDesc"></p>
+        <div class="lbl">Длительность</div>
+        <div class="chips" id="brDur" role="radiogroup" aria-label="Длительность"></div>
+      </div>
+      <div class="br-stage" id="brStage" aria-hidden="true">
+        <div class="br-ring"></div>
+        <div class="br-orb" id="brOrb"></div>
+        <div class="br-text"><b id="brPhase">Готовы?</b><span id="brCount"></span></div>
+      </div>
+      <div class="br-left" id="brLeft" role="status" aria-live="polite"></div>
+      <button class="btn primary wide" id="brGo" type="button">Начать</button>
+      <div class="chess-stats">
+        <div class="stat"><b id="brN">0</b><span>сеансов</span></div>
+        <div class="stat"><b id="brM">0</b><span>минут всего</span></div>
+        <div class="stat"><b id="brT">0</b><span>сегодня</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Дневник благодарности ===== -->
+    <div id="growGratitude" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" data-back type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Дневник</h1>
+          <span style="width:44px"></span>
+        </div>
+        <div class="sub">Благодарность делает день светлее</div>
+      </header>
+      <div class="setup gr-card">
+        <div class="gr-q" id="grQ"></div>
+        <div id="grInputs"></div>
+        <div class="gr-saved" id="grSaved" role="status" aria-live="polite"></div>
+      </div>
+      <div class="gr-habits" id="grHabits"></div>
+      <div class="chess-stats">
+        <div class="stat"><b id="grS">0</b><span>дней подряд</span></div>
+        <div class="stat"><b id="grA">0</b><span>записей всего</span></div>
+        <div class="stat"><b id="grD">0</b><span>дней с записями</span></div>
+      </div>
+      <div class="lbl-row"><span>История</span></div>
+      <div id="grHist"></div>
     </div>
 
   </section>
@@ -717,6 +1029,37 @@
 <script>
   const tg = window.Telegram && window.Telegram.WebApp;
   if (tg) { tg.ready(); tg.expand(); }
+  // ---------- Размер окна: максимальная высота и полный экран ----------
+  const FS_KEY = 'habits_fs';
+  const fsOK = !!(tg && tg.requestFullscreen && tg.isVersionAtLeast && tg.isVersionAtLeast('8.0') && (tg.platform === 'ios' || tg.platform === 'android'));
+  let fsPref = true;
+  try { fsPref = localStorage.getItem(FS_KEY) !== '0'; } catch (e) {}
+  const px = (v) => (Number(v) > 0 ? Number(v) : 0) + 'px';
+  function applyInsets() { // отступы для выреза и системных кнопок; под шапкой Telegram они не нужны
+    const r = document.documentElement.style;
+    if (!tg || !tg.isFullscreen) { r.setProperty('--tg-t', '0px'); r.setProperty('--tg-b', px(tg && tg.safeAreaInset && tg.safeAreaInset.bottom)); return; }
+    const a = tg.safeAreaInset || {}, c = tg.contentSafeAreaInset || {};
+    r.setProperty('--tg-t', px((a.top || 0) + (c.top || 0)));
+    r.setProperty('--tg-b', px((a.bottom || 0) + (c.bottom || 0)));
+  }
+  function syncFullscreen() {
+    if (!fsOK) return;
+    try {
+      if (fsPref && !tg.isFullscreen) tg.requestFullscreen();
+      else if (!fsPref && tg.isFullscreen) tg.exitFullscreen();
+    } catch (e) {}
+  }
+  function keepExpanded() { try { if (tg && !tg.isExpanded) tg.expand(); } catch (e) {} }
+  if (tg) {
+    try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {} // свайп вниз не сворачивает окно до половины
+    if (tg.onEvent) {
+      for (const ev of ['fullscreenChanged', 'safeAreaChanged', 'contentSafeAreaChanged']) tg.onEvent(ev, applyInsets);
+      tg.onEvent('viewportChanged', (e) => { if (!e || e.isStateStable) keepExpanded(); });
+      tg.onEvent('fullscreenFailed', () => { applyInsets(); });
+    }
+    applyInsets();
+    syncFullscreen();
+  }
 
   /*ENGINE_START*/
   const Chess = (() => {
@@ -1624,6 +1967,7 @@
   const TABS = ['profile', 'habits', 'grow'];
   function showTab(name) {
     if (!TABS.includes(name)) name = 'habits';
+    if (name !== 'grow') stopBreath();
     TABS.forEach(t => { document.getElementById('tab-' + t).hidden = t !== name; });
     document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
     try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
@@ -1681,6 +2025,18 @@
       if (tg && tg.showConfirm) tg.showConfirm('Удалить «' + h.name + '» вместе с историей?', ok => ok && doDelete());
       else if (confirm('Удалить «' + h.name + '»?')) doDelete();
     }
+  });
+
+  // переключатель «Весь экран / С шапкой»
+  function renderFsSeg() {
+    document.getElementById('fsCard').hidden = !fsOK;
+    document.querySelectorAll('[data-fs]').forEach(b => b.setAttribute('aria-checked', String((b.dataset.fs === '1') === fsPref)));
+  }
+  document.getElementById('fsSeg').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fs]'); if (!b) return;
+    fsPref = b.dataset.fs === '1';
+    try { localStorage.setItem(FS_KEY, fsPref ? '1' : '0'); } catch (err) {}
+    syncFullscreen(); applyInsets(); renderFsSeg(); buzz();
   });
 
   // ---------- Тема оформления ----------
@@ -1751,8 +2107,8 @@
     },
     {
       title: 'Развивайтесь',
-      text: 'Во вкладке «Развитие» можно сыграть в шахматы против бота. Позже здесь появятся и другие игры.',
-      art: '<div class="a5">' + Array.from({ length: 16 }, (_, i) => `<i class="${(((i >> 2) + (i & 3)) % 2) ? 'dk' : ''}"></i>`).join('') + '<span class="kn">&#9822;&#xFE0E;</span></div>'
+      text: 'Во вкладке «Развитие» вас ждут шахматы и шахматные задачи, слово дня, дыхательные упражнения и дневник благодарности.',
+      art: '<div class="a5">' + Array.from({ length: 16 }, (_, i) => `<i class="${(((i >> 2) + (i & 3)) % 2) ? 'dk' : ''}"></i>`).join('') + '<svg class="kn pc w" viewBox="0 0 45 45" aria-hidden="true"><path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/></svg></div>'
     }
   ];
   let tourIdx = 0;
@@ -2098,13 +2454,9 @@
   });
 
   // ----- отрисовка шахмат -----
-  function renderBoard() {
-    const board = document.getElementById('board');
-    const pos = game.pos;
-    const flip = game.player === -1;
-    const anim = game.anim;
-    const last = game.last || [];
-    const checkSq = game.active && game.check ? pos.ks[pos.side === 1 ? 0 : 1] : -1;
+  function paintBoard(board, st) {
+    const pos = st.pos, flip = st.flip, anim = st.anim;
+    const last = st.last || [], sel = st.sel == null ? -1 : st.sel, targets = st.targets || [], hints = st.hints || [];
     let html = '';
     for (let i = 0; i < 64; i++) {
       let r = i >> 3, c = i & 7;
@@ -2113,23 +2465,31 @@
       const p = pos.b[sq];
       const cls = ['sq'];
       if ((r + c) % 2 === 1) cls.push('dk');
-      if (last.includes(sq)) cls.push('last'); if (last.includes(sq) && anim) cls.push('fresh');
-      if (sq === game.sel) cls.push('sel');
-      if (game.targets.includes(sq)) cls.push(p ? 'capt' : 'tgt');
-      if (sq === checkSq) cls.push('chk');
+      if (last.includes(sq)) { cls.push('last'); if (anim) cls.push('fresh'); }
+      if (sq === sel) cls.push('sel');
+      if (targets.includes(sq)) cls.push(p ? 'capt' : 'tgt');
+      if (sq === st.checkSq) cls.push('chk');
+      if (hints.includes(sq)) cls.push('hint');
       const rank = (i & 7) === 0 ? `<span class="co r">${8 - r}</span>` : '';
       const file = (i >> 3) === 7 ? `<span class="co f">${'abcdefgh'[c]}</span>` : '';
       html += `<button type="button" class="${cls.join(' ')}" data-sq="${sq}" aria-label="${sqLabel(sq, p)}">${rank}${file}${p ? pieceHTML(p) : ''}</button>`;
     }
-    game.anim = null;
-    if (!anim && html === lastBoardHtml) return; // ничего не изменилось — не трогаем доску (не прерываем анимацию)
-    lastBoardHtml = html;
+    if (!anim && board._h === html) return; // ничего не изменилось — не трогаем доску (не прерываем анимацию)
+    board._h = html;
     board.innerHTML = html;
     const w = board.clientWidth;
     if (w) board.style.fontSize = Math.floor(w / 8 * 1.02) + 'px';
-    if (anim && w) animatePieces(board, anim, game.animBot, game.animCap);
+    if (anim && w) animatePieces(board, anim, st.animBot, st.animCap);
   }
-  let lastBoardHtml = '';
+  function renderBoard() {
+    const pos = game.pos;
+    const anim = game.anim; game.anim = null;
+    paintBoard(document.getElementById('board'), {
+      pos, flip: game.player === -1, last: game.last || [], sel: game.sel, targets: game.targets,
+      checkSq: game.active && game.check ? pos.ks[pos.side === 1 ? 0 : 1] : -1,
+      anim, animBot: game.animBot, animCap: game.animCap
+    });
+  }
   function animatePieces(board, anim, bot, capPiece) {
     for (const a of anim) {
       const to = board.querySelector(`.sq[data-sq="${a.t}"]`), from = board.querySelector(`.sq[data-sq="${a.f}"]`);
@@ -2257,16 +2617,12 @@
 
   function renderGrow() {
     document.getElementById('growHome').hidden = growView !== 'home';
-    document.getElementById('growChess').hidden = growView !== 'chess';
+    for (const [k, id] of Object.entries(GROW_VIEWS)) document.getElementById(id).hidden = growView !== k;
     renderChessBadge();
+    renderGrowBadges();
     if (growView === 'chess') renderChess();
   }
 
-  document.getElementById('openChess').addEventListener('click', () => {
-    growView = 'chess'; setupOpen = !game.active;
-    renderGrow(); window.scrollTo(0, 0); buzz();
-  });
-  document.getElementById('chessBack').addEventListener('click', () => { growView = 'home'; setupOpen = false; renderGrow(); window.scrollTo(0, 0); });
   document.getElementById('chessUndo').addEventListener('click', undoMove);
   document.getElementById('chessResign').addEventListener('click', resignGame);
   document.getElementById('chessNew').addEventListener('click', () => { setupOpen = true; renderChess(); });
@@ -2335,6 +2691,627 @@
     } catch (e) {}
   }
 
+
+  // =====================================================================
+  //  Развитие: шахматные задачи, «Угадай слово», дыхание, дневник
+  // =====================================================================
+  const $id = (id) => document.getElementById(id);
+  const MIN_TXT = (n) => n + ' ' + plural(n, 'минута', 'минуты', 'минут');
+  async function kvGetMany(keys) {
+    const out = {};
+    if (hasCloud) {
+      for (let i = 0; i < keys.length; i += 40) {
+        const part = keys.slice(i, i + 40);
+        const r = await cGet(part);
+        if (r && r !== true) for (const k of part) if (typeof r[k] === 'string' && r[k]) out[k] = r[k];
+      }
+    }
+    for (const k of keys) {
+      if (k in out) continue;
+      try { const v = localStorage.getItem('hk_' + k); if (v) out[k] = v; } catch (e) {}
+    }
+    return out;
+  }
+  const parseJSON = (s, d) => { try { const v = JSON.parse(s); return v == null ? d : v; } catch (e) { return d; } };
+
+  // ----- Шахматные задачи -----
+  const PUZZLES = {
+    1: ["R7/6p1/1p1pk1b1/5R2/p1np4/P7/1PK5/4r3 b - - 0 1", "r2q1rk1/1pp1b1p1/6K1/p7/5N1p/7P/PPP2PP1/R1B3NR b - - 0 1", "1Q1b2k1/5prp/1p4p1/1P1B4/8/P6P/R1P5/1K6 w - - 0 1", "r5k1/2p5/7p/1p1P4/pR3pb1/8/P2q2RP/6K1 b - - 0 1", "4k3/1R3p1N/1n6/7p/8/8/4n1PP/2q1N2K b - - 0 1", "2k5/1pp4p/p5p1/8/3P1P2/8/PPQ2PPP/2RR2K1 w - - 0 1", "8/1b4p1/1p2p1P1/8/3nnk1K/8/4r3/8 b - - 0 1", "5r2/8/2NN4/P1n1p3/2p2k2/7K/1r6/8 b - - 0 1", "r5k1/2p2p1p/p1B3p1/1pP5/7P/6P1/1Pr2q2/1R1K2NR b - - 0 1", "4Q3/1R4p1/r7/p4Pp1/P2p1kP1/3P1P1P/5K2/8 w - - 0 1", "rr6/1pN1R3/3kqQ2/7p/p2P4/8/1PP2PP1/3R1K2 w - - 0 1", "r1b2rk1/1pp2p2/p1n1pq2/6pp/PnPPpb1P/7K/NP2N1PR/R1Q2BB1 b - - 0 1", "7n/4b1pr/2qp3p/4p2R/2B1P1P1/P1BQP1kP/2P5/5RK1 w - - 0 1", "r7/4Q3/p5k1/2P2p1p/7P/PP6/3R2P1/3R2K1 w - - 0 1", "8/5k2/8/2B2P2/3N3P/p2K1PQ1/P1P4P/R7 w - - 0 1", "1k6/1pp2p2/p3p3/P1P5/4b3/4q3/8/3K1Br1 b - - 0 1", "N1Bk2r1/p4pp1/3p1b1p/8/2bP2P1/4q3/7P/3K2RR b - - 0 1", "3k4/Q7/1p2B3/1P2N3/1R6/P1q5/8/6K1 w - - 0 1", "4rk2/2p5/6Q1/4R2p/7P/P7/1BPK2P1/8 w - - 0 1", "8/p1K2p2/4p3/1r1q3p/P3k3/8/7r/8 b - - 0 1", "4r3/4bpp1/4P3/1p6/PP1k1P2/1b4p1/3q3P/R4RK1 b - - 0 1", "r4k1r/p1pp2b1/2n5/3Q1p1B/1p6/8/PPq2PKP/R1B1R3 w - - 0 1", "r4r2/1ppk1ppp/8/P2pp3/7n/R1NP1q2/1PPb1P2/6K1 b - - 0 1", "r6r/p3k2p/2pbbpp1/3np3/R2n3P/3P4/1qPK1PP1/2NQ1B1R b - - 0 1"],
+    2: ["1k6/8/2PP4/1P1KP3/3P3P/8/2R5/8 w - - 0 1", "8/2q3p1/7p/7P/2k5/3p4/6p1/1K6 b - - 0 1", "4Qb1k/1p6/2r4p/8/p3PR2/6P1/2P4P/6K1 w - - 0 1", "8/R7/8/5pp1/3K1k1p/P1P4P/5PP1/4R3 w - - 0 1", "5k2/5prp/1pQ3p1/1P1B4/5P2/P7/R1P2b1P/2K5 w - - 0 1", "8/p4pp1/1p6/4K2p/1q6/6k1/P7/8 b - - 0 1", "2r1r3/1ppk2p1/1bb1p1q1/8/3p3p/1P3P2/2PQ3P/2RR3K b - - 0 1", "8/5p2/5pbp/1pk1b3/8/4r3/8/2K5 b - - 0 1", "6k1/2N3p1/4R3/8/4Q1p1/4P2p/2P4P/3n1K2 w - - 0 1", "1r6/1p6/5b2/P2k3p/2p2p2/2p5/1r6/3K4 b - - 0 1", "8/5pp1/8/p1pr4/4k3/4q3/1K6/8 b - - 0 1", "6k1/2p2pp1/2b1p2p/p6P/8/6KR/1q6/8 b - - 0 1", "8/1p6/p1k1pb2/3n3P/5pP1/5q2/8/6K1 b - - 0 1", "2k1r2r/1p4p1/2p3q1/p4p2/Pn1pP3/1N1P1p1P/1P2Q2K/4R2R b - - 0 1", "8/3k4/1Qp2P2/8/8/6N1/2R3KP/8 w - - 0 1", "1k5r/2p5/p5p1/R2n4/4p3/4q3/2K5/8 b - - 0 1", "2rqk2r/1ppbb1p1/5p2/p2nN2p/3P4/3QB2P/PPP2PP1/3R1K1R w - - 0 1", "8/4R3/1N4k1/4Q3/8/4P3/2P1K2p/3n4 w - - 0 1", "8/2R5/4B3/7k/4N3/2P1K3/1P6/4R3 w - - 0 1", "5k1r/p1Nq3p/1p4p1/1P2Q3/1RB5/P7/2P5/6K1 w - - 0 1", "2b5/1r2n1k1/Q4pp1/1p1P2r1/3BP3/1P4p1/P3KP2/R5R1 w - - 0 1", "6k1/1p3p2/3p4/3Pb1p1/5P2/7p/r4R1P/1qrB3K b - - 0 1", "1r5r/2pnkpbp/bp6/pB2q3/P3N3/2N4Q/1PP3PP/3R1RK1 w - - 0 1", "2r5/2P5/7k/5Qp1/2BP4/P5PP/8/3RR1K1 w - - 0 1"]
+  };
+  const pz = { kind: 1, idx: 0, pos: null, me: 1, sel: -1, targets: [], legal: [], win: [], winS: new Set(), stage: 0,
+    ok: false, shown: false, hint: 0, hintFrom: -1, hintTo: -1, last: null, anim: null, animBot: false, animCap: 0,
+    busy: false, tok: 0, say: '', sayCls: '', solved: { 1: [], 2: [] } };
+  const pzMoveStr = (m) => Chess.moveStr(m);
+  function pzMates(pos) {
+    const out = [];
+    for (const m of pos.legal()) { pos.make(m); const st = Chess.status(pos, null); pos.unmake(); if (st.over && st.why === 'mate') out.push(m); }
+    return out;
+  }
+  function pzWinning(pos) { // ходы, после которых при любом ответе соперника есть мат в 1 ход
+    const win = [];
+    for (const m of pos.legal()) {
+      pos.make(m);
+      const replies = pos.legal();
+      let ok = replies.length > 0;
+      for (let i = 0; ok && i < replies.length; i++) {
+        pos.make(replies[i]);
+        if (!pzMates(pos).length) ok = false;
+        pos.unmake();
+      }
+      pos.unmake();
+      if (ok) win.push(m);
+    }
+    return win;
+  }
+  const pzLater = (ms, fn) => { const t = pz.tok; setTimeout(() => { if (t === pz.tok) fn(); }, ms); };
+  function pzSetWin(list) { pz.win = list; pz.winS = new Set(list.map(pzMoveStr)); }
+  function pzLoad() {
+    pz.tok++;
+    pz.pos = Chess.Pos.fromFEN(PUZZLES[pz.kind][pz.idx]);
+    pz.me = pz.pos.side;
+    pz.legal = pz.pos.legal();
+    pzSetWin(pz.kind === 1 ? pzMates(pz.pos) : pzWinning(pz.pos));
+    pz.stage = 0; pz.sel = -1; pz.targets = []; pz.ok = false; pz.shown = false; pz.hint = 0;
+    pz.hintFrom = pz.hintTo = -1; pz.last = null; pz.anim = null; pz.busy = false;
+    pz.say = pz.kind === 1 ? 'Найдите мат в 1 ход' : 'Найдите мат в 2 хода'; pz.sayCls = '';
+    pzRender();
+  }
+  function pzFirstOpen() {
+    const done = pz.solved[pz.kind];
+    const n = PUZZLES[pz.kind].length;
+    for (let i = 0; i < n; i++) if (!done.includes(i)) return i;
+    return 0;
+  }
+  function pzOpen() { pz.idx = pzFirstOpen(); pzLoad(); }
+  function pzPlay(m, bot) {
+    const piece = pz.pos.b[m.f];
+    const anim = [{ f: m.f, t: m.t }];
+    if (Math.abs(piece) === 6 && Math.abs(m.t - m.f) === 2) anim.push(m.t > m.f ? { f: m.f + 3, t: m.f + 1 } : { f: m.f - 4, t: m.f - 1 });
+    pz.anim = anim; pz.animBot = !!bot; pz.animCap = pz.pos.b[m.t] || 0;
+    pz.pos.make(m); pz.pos.stack.length = 0;
+    pz.last = [m.f, m.t];
+    pz.legal = pz.pos.legal();
+    pz.sel = -1; pz.targets = []; pz.hint = 0; pz.hintFrom = pz.hintTo = -1;
+  }
+  function pzSolved(byUser) {
+    pz.ok = true; pz.busy = false;
+    if (byUser) {
+      const list = pz.solved[pz.kind];
+      if (!list.includes(pz.idx)) { list.push(pz.idx); kvSet(PZ_KEY, JSON.stringify(pz.solved)); }
+      pz.say = 'Верно! Мат.'; pz.sayCls = 'good'; buzz();
+    }
+    renderGrowBadges();
+  }
+  function pzTry(f, t) {
+    const cands = pz.legal.filter(m => m.f === f && m.t === t);
+    const m = cands.find(x => !x.p || x.p === 5) || cands[0];
+    if (!m) return;
+    pz.sel = -1; pz.targets = [];
+    if (!pz.winS.has(pzMoveStr(m))) {
+      pz.say = 'Не то. Подумайте ещё раз.'; pz.sayCls = 'bad';
+      const b = $id('pBoard'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      buzz(); pzRender(); return;
+    }
+    pzPlay(m, false);
+    if (pz.kind === 1 || pz.stage === 1) { pzSolved(true); pzRender(); return; }
+    // задача на 2 хода: первый ход найден, соперник отвечает
+    pz.stage = 1; pz.busy = true; pz.say = 'Верно! Соперник отвечает…'; pz.sayCls = 'good';
+    pzRender();
+    pzLater(750, () => {
+      const replies = pz.pos.legal();
+      pzPlay(replies[Math.floor(Math.random() * replies.length)], true);
+      pzSetWin(pzMates(pz.pos));
+      pz.busy = false; pz.say = 'Теперь поставьте мат'; pz.sayCls = '';
+      pzRender();
+    });
+  }
+  function pzTap(sq) {
+    if (pz.ok || pz.busy) return;
+    if (pz.sel >= 0 && pz.targets.includes(sq)) { pzTry(pz.sel, sq); return; }
+    const p = pz.pos.b[sq];
+    if (p && (p > 0) === (pz.me > 0) && pz.legal.some(m => m.f === sq)) {
+      pz.sel = sq; pz.targets = pz.legal.filter(m => m.f === sq).map(m => m.t); buzz();
+    } else { pz.sel = -1; pz.targets = []; }
+    pzRender();
+  }
+  function pzHint() {
+    if (pz.ok || pz.busy || !pz.win.length) return;
+    const m = pz.win[0];
+    pz.hint = Math.min(2, pz.hint + 1);
+    pz.hintFrom = m.f; pz.hintTo = pz.hint >= 2 ? m.t : -1;
+    pz.sel = -1; pz.targets = [];
+    pz.say = pz.hint === 1 ? 'Подсказка: сходите этой фигурой' : 'Подсказка: вот этот ход'; pz.sayCls = '';
+    pzRender();
+  }
+  function pzReveal() {
+    if (pz.ok || pz.busy) return;
+    pz.shown = true; pz.busy = true; pz.sel = -1; pz.targets = [];
+    pz.say = 'Решение'; pz.sayCls = '';
+    const finish = () => { pz.ok = true; pz.busy = false; pz.say = 'Решение показано. Попробуйте следующую задачу.'; pz.sayCls = ''; pzRender(); };
+    const first = pz.win[0];
+    pzPlay(first, false); pzRender();
+    if (pz.kind === 1 || pz.stage === 1) { pzLater(500, finish); return; }
+    pz.stage = 1;
+    pzLater(900, () => {
+      const replies = pz.pos.legal();
+      pzPlay(replies[0], true); pzSetWin(pzMates(pz.pos)); pzRender();
+      pzLater(900, () => { pzPlay(pz.win[0], false); pzRender(); pzLater(500, finish); });
+    });
+  }
+  function pzNext() {
+    const n = PUZZLES[pz.kind].length;
+    const done = pz.solved[pz.kind];
+    let k = -1;
+    for (let i = 1; i <= n; i++) { const j = (pz.idx + i) % n; if (!done.includes(j)) { k = j; break; } }
+    pz.idx = k >= 0 ? k : (pz.idx + 1) % n;
+    pzLoad();
+  }
+  function pzRender() {
+    if (!pz.pos) return;
+    const n = PUZZLES[pz.kind].length;
+    $id('pzKinds').innerHTML = [1, 2].map(k =>
+      `<button type="button" class="chip" role="radio" aria-checked="${pz.kind === k}" data-kind="${k}">Мат в ${k} · ${pz.solved[k].length}/${PUZZLES[k].length}</button>`).join('');
+    $id('pzTask').textContent = `Задача ${pz.idx + 1} из ${n}`;
+    $id('pzSide').textContent = pz.me === 1 ? 'Ходят белые' : 'Ходят чёрные';
+    const st = $id('pzStatus');
+    if (st.dataset.k !== pz.say) { st.dataset.k = pz.say; st.textContent = pz.say; st.classList.remove('swap'); void st.offsetWidth; st.classList.add('swap'); }
+    st.classList.toggle('bad', pz.sayCls === 'bad'); st.classList.toggle('good', pz.sayCls === 'good');
+    const checkSq = pz.pos.inCheck() ? pz.pos.ks[pz.pos.side === 1 ? 0 : 1] : -1;
+    const a = pz.anim; pz.anim = null;
+    paintBoard($id('pBoard'), { pos: pz.pos, flip: pz.me === -1, last: pz.last || [], sel: pz.sel, targets: pz.targets, checkSq,
+      hints: [pz.hintFrom, pz.hintTo], anim: a, animBot: pz.animBot, animCap: pz.animCap });
+    $id('pzHint').disabled = pz.ok || pz.busy;
+    $id('pzReveal').disabled = pz.ok || pz.busy;
+    $id('pzCount').textContent = `решено ${pz.solved[pz.kind].length} из ${n}`;
+    $id('pzGrid').innerHTML = PUZZLES[pz.kind].map((_, i) =>
+      `<button type="button" class="pz-dot${pz.solved[pz.kind].includes(i) ? ' done' : ''}${i === pz.idx ? ' cur' : ''}" data-i="${i}" aria-label="Задача ${i + 1}${pz.solved[pz.kind].includes(i) ? ', решена' : ''}">${i + 1}</button>`).join('');
+  }
+  $id('pBoard').addEventListener('click', (e) => { const el = e.target.closest('.sq'); if (el) pzTap(+el.dataset.sq); });
+  $id('pzKinds').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-kind]'); if (!b || +b.dataset.kind === pz.kind) return;
+    pz.kind = +b.dataset.kind; pz.idx = pzFirstOpen(); pzLoad(); buzz();
+  });
+  $id('pzGrid').addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) { pz.idx = +b.dataset.i; pzLoad(); buzz(); } });
+  $id('pzHint').addEventListener('click', pzHint);
+  $id('pzReveal').addEventListener('click', pzReveal);
+  $id('pzNext').addEventListener('click', () => { pzNext(); buzz(); });
+
+  // ----- Угадай слово -----
+  const WORDS = 'гиена линза связь гость глина масса обувь сюжет ладья книга сплав пакет тропа сквер полка осина курок сахар терем буква парус редис навык ванна робот кубок ручка штука белка тепло моряк огонь пчела олово птица фирма мешок форма слива труба рукав судно вечер щетка стена палец озеро козел смена халва ворон канат метла батон улица индюк страх пятка столб рояль омлет какао право съезд судья класс ручей склад берег метро тонна жучок брюки вафля пирог хвост плечо адрес пятно мусор сапог шалаш такси гольф длина экран школа забор топка штраф сосна бровь кулон облик роман банка тенор поезд линия толпа тираж пилот война степь рыбка лилия бочка полюс цифра образ тайна парта обруч шайба ответ кисть зебра вишня гонка глава запас кефир холод покой ферма мороз холст ложка точка кузов номер певец принц повод завод трель мазок касса поход груша тембр уголь орден хомяк акула ветер титул текст город фильм кошка кочан нитка рычаг скала крыша сабля сосед кухня баран штамп рынок шутка почта фраза червь туфли карты забег собор танец повар кобра ткань шапка лодка пенал мечта совет трава театр штора гроза слово живот фасад мышка бегун лимон форум музей тренд олень конец носки число конус молот петух плита перец осень дымок дождь грудь слеза шарик шашки кулак рюмка мачта томат песня глаза ветка ведро обзор фокус сутки месяц фазан мысль тумба талон центр булка лавка жених шоссе вагон лейка тайга герой жираф овраг сумка садик закат голос горох укроп кукла налог ранец ясень ольха шкала шофер бобер кабан тапки успех купец ягода дрова балка фрукт гараж слава удача время силач печка щенок спорт лента ярлык ребро океан тариф носок табло шторм сцена шахта жизнь макет плеер свист замок актер схема народ мотор земля отель будни якорь старт радио маска спина фикус синяк ковер салат песок смысл весна табак стадо порог туман сетка рельс смола масло рубль тесто хобби билет арбуз серия окунь семья комар часть стиль спуск диван шорох бабка блины склон лампа финиш свеча доска автор вилка кости санки топор крыса висок набор дверь ствол сталь бетон рация чашка угорь хутор сумма сироп карта'.split(' ');
+  const ww = { pending: null, target: '', mode: 'daily', rows: [], cur: '', done: 0, busy: false, keys: {}, tok: 0, animRow: -1, winRow: -1, popIdx: -1, shakeRow: false,
+    saved: null, stats: { p: 0, w: 0, s: 0, b: 0, l: 0 }, msg: '', msgBad: false };
+  const W_ROWS = ['йцукенгшщзхъ', 'фывапролджэ', 'ячсмитьбю'];
+  const wDaily = (day) => WORDS[((day % WORDS.length) + WORDS.length) % WORDS.length];
+  function wScore(g, t) {
+    const res = [0, 0, 0, 0, 0], left = {};
+    for (let i = 0; i < 5; i++) { if (g[i] === t[i]) res[i] = 2; else left[t[i]] = (left[t[i]] || 0) + 1; }
+    for (let i = 0; i < 5; i++) if (res[i] !== 2 && left[g[i]] > 0) { res[i] = 1; left[g[i]]--; }
+    return res;
+  }
+  function wKeys() {
+    ww.keys = {};
+    ww.rows.forEach((g, r) => {
+      if (r === ww.animRow) return;
+      const s = wScore(g, ww.target);
+      for (let i = 0; i < 5; i++) ww.keys[g[i]] = Math.max(ww.keys[g[i]] === undefined ? -1 : ww.keys[g[i]], s[i]);
+    });
+  }
+  function wMsg(t, bad) { ww.msg = t || ''; ww.msgBad = !!bad; const el = $id('wMsg'); el.textContent = ww.msg; el.classList.toggle('bad', ww.msgBad); }
+  function wDone() {
+    if (ww.done === 1) wMsg(['Гениально!', 'Великолепно!', 'Отлично!', 'Здорово!', 'Неплохо!', 'Фух, успели!'][Math.min(5, ww.rows.length - 1)]);
+    else if (ww.done === 2) wMsg('Загадано слово «' + ww.target.toUpperCase() + '»');
+  }
+  function wStartDaily() {
+    const day = today();
+    ww.mode = 'daily'; ww.target = wDaily(day);
+    const s = ww.saved && ww.saved.d === day ? ww.saved : null;
+    ww.rows = s ? s.r.slice() : []; ww.done = s ? s.x : 0; ww.cur = ''; ww.busy = false; ww.animRow = -1; ww.winRow = -1; ww.tok++;
+    wKeys(); wMsg(''); wDone();
+  }
+  function wStartFree() {
+    const daily = wDaily(today());
+    let w = daily;
+    while (w === daily) w = WORDS[Math.floor(Math.random() * WORDS.length)];
+    ww.mode = 'free'; ww.target = w; ww.rows = []; ww.done = 0; ww.cur = ''; ww.busy = false; ww.animRow = -1; ww.winRow = -1; ww.tok++;
+    wKeys(); wMsg('');
+  }
+  function wOpen() {
+    if (!(ww.mode === 'free' && ww.target && ww.done === 0)) wStartDaily();
+    wRender();
+  }
+  function wSave() {
+    if (ww.mode !== 'daily') return;
+    ww.saved = { d: today(), r: ww.rows.slice(), x: ww.done };
+    kvSet('wd', JSON.stringify(ww.saved));
+  }
+  function wFinish() {
+    if (ww.mode !== 'daily') return;
+    const st = ww.stats, day = today();
+    st.p++;
+    if (ww.done === 1) { st.w++; st.s = st.l === day - 1 ? st.s + 1 : 1; st.b = Math.max(st.b, st.s); st.l = day; } else st.s = 0;
+    kvSet('ws', JSON.stringify(st));
+  }
+  function wType(ch) {
+    if (ww.done || ww.busy || ww.cur.length >= 5) return;
+    ww.cur += ch; ww.popIdx = ww.cur.length - 1; wMsg(''); wRenderGrid(); ww.popIdx = -1;
+  }
+  function wDel() { if (ww.done || ww.busy || !ww.cur) return; ww.cur = ww.cur.slice(0, -1); wMsg(''); wRenderGrid(); }
+  function wSubmit() {
+    if (ww.done || ww.busy) return;
+    if (ww.cur.length < 5) {
+      wMsg('Нужно пять букв', true); ww.shakeRow = true; wRenderGrid(); ww.shakeRow = false; buzz(); return;
+    }
+    const g = ww.cur;
+    ww.rows.push(g); ww.cur = ''; ww.animRow = ww.rows.length - 1; ww.busy = true;
+    ww.pending = { win: g === ww.target, lastTry: ww.rows.length >= 6 };
+    wMsg(''); wRender();
+    const tok = ++ww.tok;
+    setTimeout(() => { if (tok === ww.tok) wSettle(); }, 4 * 280 + 700);
+  }
+  function wSettle() { // итог хода после анимации открытия букв
+    if (!ww.busy || !ww.pending) return;
+    const { win, lastTry } = ww.pending;
+    ww.pending = null; ww.busy = false; ww.animRow = -1;
+    if (win) { ww.done = 1; ww.winRow = ww.rows.length - 1; buzz(); }
+    else if (lastTry) ww.done = 2;
+    wKeys();
+    if (ww.done) { wDone(); wFinish(); }
+    wSave(); wRender(); renderGrowBadges();
+  }
+  function wRender() { wRenderGrid(); wPaintKeys(); $id('wsP').textContent = ww.stats.p; $id('wsW').textContent = ww.stats.w; $id('wsS').textContent = ww.stats.s; }
+  function wRenderGrid() {
+    $id('wSub').textContent = ww.mode === 'daily' ? 'Слово дня: пять букв, шесть попыток' : 'Дополнительное слово: пять букв, шесть попыток';
+    let html = '';
+    for (let r = 0; r < 6; r++) {
+      const row = r < ww.rows.length ? ww.rows[r] : (r === ww.rows.length ? ww.cur : '');
+      const scored = r < ww.rows.length ? wScore(row, ww.target) : null;
+      html += `<div class="w-row${ww.shakeRow && r === ww.rows.length ? ' shake' : ''}" role="row">`;
+      for (let i = 0; i < 5; i++) {
+        const ch = row[i] || '';
+        let cls = 'w-t', style = '';
+        if (scored) {
+          cls += ' s' + scored[i];
+          if (r === ww.animRow) { cls += ' rev'; style = ` style="animation-delay:${i * 0.28}s"`; }
+          else if (r === ww.winRow) { cls += ' fin win'; style = ` style="animation-delay:${i * 0.09}s"`; }
+          else cls += ' fin';
+        } else if (ch) { cls += ' fill'; if (r === ww.rows.length && i === ww.popIdx) cls += ' pop'; }
+        html += `<div class="${cls}"${style}>${ch}</div>`;
+      }
+      html += '</div>';
+    }
+    $id('wGrid').innerHTML = html;
+  }
+  // клавиатура строится один раз: так нажатая клавиша не пересоздаётся и анимация не обрывается
+  function wBuildKeys() {
+    const key = (k) => `<button type="button" class="w-k" data-k="${k}">${k}</button>`;
+    $id('wKeys').innerHTML =
+      `<div class="w-bubble" id="wBubble" aria-hidden="true"></div>` +
+      `<div class="w-kr">${[...W_ROWS[0]].map(key).join('')}</div>` +
+      `<div class="w-kr">${[...W_ROWS[1]].map(key).join('')}</div>` +
+      `<div class="w-kr"><button type="button" class="w-k wide" data-k="enter">Ввод</button>${[...W_ROWS[2]].map(key).join('')}` +
+      `<button type="button" class="w-k wide" data-k="del" aria-label="Стереть"><svg viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M13 9.5l4 5M17 9.5l-4 5"/></svg></button></div>`;
+  }
+  function wPaintKeys() {
+    $id('wKeys').querySelectorAll('.w-k[data-k]').forEach(el => {
+      const k = el.dataset.k;
+      el.classList.remove('k0', 'k1', 'k2');
+      if (k.length === 1 && ww.keys[k] !== undefined) el.classList.add('k' + ww.keys[k]);
+    });
+    $id('wKeys').hidden = !!ww.done;       // игра окончена: вместо клавиатуры кнопка «Ещё слово»
+    $id('wMore').hidden = !ww.done;
+  }
+  function wBubble(btn) {
+    const box = $id('wKeys'), bub = $id('wBubble');
+    if (!bub) return;
+    const rb = btn.getBoundingClientRect(), rc = box.getBoundingClientRect();
+    bub.textContent = btn.dataset.k;
+    bub.style.left = (rb.left - rc.left + rb.width / 2) + 'px';
+    bub.style.top = (rb.top - rc.top) + 'px';
+    bub.classList.remove('show'); void bub.offsetWidth; bub.classList.add('show');
+  }
+  function wPress(btn) {
+    const k = btn.dataset.k;
+    btn.classList.remove('tap'); void btn.offsetWidth; btn.classList.add('tap');
+    if (k.length === 1) wBubble(btn);
+    buzz();
+    if (k === 'enter') wSubmit(); else if (k === 'del') wDel(); else wType(k);
+  }
+  wBuildKeys();
+  // реакция на касание, а не на отпускание: печатать быстро и приятно; click оставлен для клавиатуры/читалок экрана
+  let wLastDown = 0;
+  $id('wKeys').addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('.w-k[data-k]'); if (!b) return;
+    e.preventDefault(); wLastDown = Date.now(); wPress(b);
+  });
+  $id('wKeys').addEventListener('click', (e) => { // нажатие с клавиатуры или экранного диктора; клик после касания игнорируем
+    const b = e.target.closest('.w-k[data-k]');
+    if (b && Date.now() - wLastDown > 900) wPress(b);
+  });
+  $id('wMore').addEventListener('click', () => { wStartFree(); wRender(); buzz(); });
+  document.addEventListener('keydown', (e) => {
+    if (growView !== 'wordle' || $id('tab-grow').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === 'Enter') { e.preventDefault(); wSubmit(); }
+    else if (e.key === 'Backspace') { e.preventDefault(); wDel(); }
+    else { const ch = (e.key || '').toLowerCase().replace('ё', 'е'); if (/^[а-я]$/.test(ch)) wType(ch); }
+  });
+
+  // ----- Дыхание -----
+  const BR_TECH = [
+    { id: 'box', name: 'Квадрат', info: '4-4-4-4', desc: 'Вдох, пауза, выдох и пауза по четыре секунды. Помогает собраться и успокоиться.',
+      steps: [['Вдох', 4, 'in'], ['Задержка', 4, 'hold'], ['Выдох', 4, 'out'], ['Пауза', 4, 'hold']] },
+    { id: 'r478', name: '4-7-8', info: '4-7-8', desc: 'Вдох на четыре счёта, задержка на семь, медленный выдох на восемь. Хорошо расслабляет перед сном.',
+      steps: [['Вдох', 4, 'in'], ['Задержка', 7, 'hold'], ['Выдох', 8, 'out']] },
+    { id: 'calm', name: 'Спокойное', info: '5-5', desc: 'Ровный вдох и выдох по пять секунд. Снимает напряжение в течение дня.',
+      steps: [['Вдох', 5, 'in'], ['Выдох', 5, 'out']] }
+  ];
+  const BR_DURS = [1, 3, 5];
+  const br = { tech: 'box', dur: 3, running: false, tok: 0, t0: 0, i: 0, phaseEnd: 0, timer: 0, stats: { n: 0, s: 0, d: 0, t: 0 } };
+  const brFmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  function brStatsNow() { const s = br.stats; return { n: s.n, s: s.s, t: s.d === today() ? s.t : 0 }; }
+  function brRender() {
+    $id('brTech').innerHTML = BR_TECH.map(t => `<button type="button" class="chip" role="radio" aria-checked="${br.tech === t.id}" data-tech="${t.id}">${t.name} · ${t.info}</button>`).join('');
+    $id('brDur').innerHTML = BR_DURS.map(d => `<button type="button" class="chip" role="radio" aria-checked="${br.dur === d}" data-dur="${d}">${MIN_TXT(d)}</button>`).join('');
+    $id('brDesc').textContent = BR_TECH.find(t => t.id === br.tech).desc;
+    const s = brStatsNow();
+    $id('brN').textContent = s.n; $id('brM').textContent = Math.round(s.s / 60); $id('brT').textContent = s.t;
+    $id('brSetup').classList.toggle('lock', br.running);
+    $id('brGo').textContent = br.running ? 'Остановить' : 'Начать';
+  }
+  function brOrb(scale, sec) {
+    const o = $id('brOrb');
+    o.style.transition = sec ? `transform ${sec}s ease-in-out` : 'none';
+    o.style.transform = `scale(${scale})`;
+  }
+  function brPhase() {
+    const tech = BR_TECH.find(t => t.id === br.tech);
+    if ((Date.now() - br.t0) / 1000 >= br.dur * 60) { brFinish(); return; }
+    const [name, sec, kind] = tech.steps[br.i % tech.steps.length];
+    br.i++;
+    br.phaseEnd = Date.now() + sec * 1000;
+    $id('brPhase').textContent = name;
+    if (kind === 'in') brOrb(1, sec); else if (kind === 'out') brOrb(0.52, sec);
+    buzz();
+    brTick();
+  }
+  function brTick() {
+    if (!br.running) return;
+    const now = Date.now();
+    if (now >= br.phaseEnd) { brPhase(); return; }
+    $id('brCount').textContent = Math.ceil((br.phaseEnd - now) / 1000);
+    $id('brLeft').textContent = 'Осталось ' + brFmt(Math.max(0, br.dur * 60 - (now - br.t0) / 1000));
+  }
+  function brStart() {
+    br.running = true; br.tok++; br.t0 = Date.now(); br.i = 0;
+    brOrb(0.52, 0); void $id('brOrb').offsetWidth;
+    brRender();
+    brPhase();
+    clearInterval(br.timer); br.timer = setInterval(brTick, 200);
+  }
+  function brReset(text) {
+    clearInterval(br.timer); br.running = false;
+    brOrb(0.52, 0.8);
+    $id('brPhase').textContent = text || 'Готовы?'; $id('brCount').textContent = '';
+    brRender();
+  }
+  function brFinish() {
+    const sec = Math.round((Date.now() - br.t0) / 1000), day = today(), s = br.stats;
+    s.t = (s.d === day ? s.t : 0) + 1; s.d = day; s.n++; s.s += sec;
+    kvSet('br', JSON.stringify(s));
+    brReset('Готово');
+    $id('brLeft').textContent = 'Сеанс завершён. Отличная работа!';
+    buzz(); renderGrowBadges();
+  }
+  function stopBreath() { if (br.running) { brReset('Готовы?'); $id('brLeft').textContent = ''; } }
+  $id('brGo').addEventListener('click', () => { if (br.running) { stopBreath(); } else { $id('brLeft').textContent = ''; brStart(); } buzz(); });
+  $id('brTech').addEventListener('click', (e) => { const b = e.target.closest('[data-tech]'); if (b && !br.running) { br.tech = b.dataset.tech; brRender(); buzz(); } });
+  $id('brDur').addEventListener('click', (e) => { const b = e.target.closest('[data-dur]'); if (b && !br.running) { br.dur = +b.dataset.dur; brRender(); buzz(); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopBreath(); });
+
+  // ----- Дневник благодарности -----
+  const GR_PROMPTS = ['За что вы благодарны сегодня?', 'Что сегодня вас порадовало?', 'Кто или что помогло вам сегодня?',
+    'Какой маленький приятный момент вы заметили?', 'Что получилось лучше, чем вы ожидали?', 'За что вы можете поблагодарить себя?', 'Что хорошего принёс этот день?'];
+  const gr = { idx: {}, today: ['', '', ''], loaded: false, day: 0, timer: 0 };
+  const grCount = (arr) => arr.filter(s => s.trim()).length;
+  function grStreak() {
+    const t = today();
+    let d = gr.idx[t] ? t : t - 1, n = 0;
+    while (gr.idx[d]) { n++; d--; }
+    return n;
+  }
+  async function grLoadToday() {
+    const t = today();
+    const raw = await kvGet('g' + t);
+    const arr = parseJSON(raw, []);
+    gr.today = [0, 1, 2].map(i => (typeof arr[i] === 'string' ? arr[i] : ''));
+    gr.loaded = true; gr.day = t;
+  }
+  function grSave() {
+    const t = today(), arr = gr.today.map(s => s.trim());
+    kvSet('g' + t, JSON.stringify(arr));
+    const c = grCount(arr);
+    if (c) gr.idx[t] = c; else delete gr.idx[t];
+    const keys = Object.keys(gr.idx).map(Number).sort((a, b) => a - b);
+    while (keys.length > 150) delete gr.idx[keys.shift()];
+    kvSet('gi', JSON.stringify(gr.idx));
+    const el = $id('grSaved'); el.textContent = c ? 'Сохранено' : ''; el.classList.toggle('ok', !!c);
+    grRenderStats(); renderGrowBadges();
+  }
+  function grRenderStats() {
+    const days = Object.keys(gr.idx);
+    $id('grS').textContent = grStreak();
+    $id('grA').textContent = days.reduce((s, d) => s + gr.idx[d], 0);
+    $id('grD').textContent = days.length;
+    const done = habits.filter(h => h.done && h.done[today()]).length;
+    $id('grHabits').textContent = habits.length ? `Сегодня выполнено привычек: ${done} из ${habits.length}. Это тоже повод для благодарности.` : '';
+  }
+  async function grRenderHist() {
+    const t = today();
+    const days = Object.keys(gr.idx).map(Number).filter(d => d < t).sort((a, b) => b - a).slice(0, 10);
+    const box = $id('grHist');
+    if (!days.length) { box.innerHTML = '<div class="gr-empty">Здесь появятся ваши прошлые записи.</div>'; return; }
+    const data = await kvGetMany(days.map(d => 'g' + d));
+    box.textContent = '';
+    for (const d of days) {
+      const arr = parseJSON(data['g' + d], []).filter(s => typeof s === 'string' && s.trim());
+      if (!arr.length) continue;
+      const w = wd(d), title = (w.charAt(0).toUpperCase() + w.slice(1)) + ', ' + fmtDay(d);
+      const card = document.createElement('div'); card.className = 'gr-day';
+      const b = document.createElement('b'); b.textContent = title;
+      const ol = document.createElement('ol');
+      arr.forEach(s => { const li = document.createElement('li'); li.textContent = s; ol.appendChild(li); });
+      card.append(b, ol); box.appendChild(card);
+    }
+  }
+  async function grOpen() {
+    if (!gr.loaded || gr.day !== today()) await grLoadToday();
+    $id('grQ').textContent = GR_PROMPTS[today() % GR_PROMPTS.length];
+    $id('grInputs').innerHTML = [0, 1, 2].map(i =>
+      `<div class="gr-row"><span class="gr-n">${i + 1}</span><input type="text" maxlength="100" data-i="${i}" autocomplete="off" enterkeyhint="${i < 2 ? 'next' : 'done'}" placeholder="${['Например, тёплый чай', 'Например, звонок друга', 'Например, солнце за окном'][i]}" aria-label="Запись ${i + 1}"></div>`).join('');
+    $id('grInputs').querySelectorAll('input').forEach(inp => { inp.value = gr.today[+inp.dataset.i]; });
+    $id('grSaved').textContent = ''; $id('grSaved').classList.remove('ok');
+    grRenderStats(); grRenderHist();
+  }
+  $id('grInputs').addEventListener('input', (e) => {
+    const inp = e.target.closest('input[data-i]'); if (!inp) return;
+    gr.today[+inp.dataset.i] = inp.value;
+    $id('grSaved').textContent = ''; $id('grSaved').classList.remove('ok');
+    clearTimeout(gr.timer); gr.timer = setTimeout(grSave, 700);
+  });
+  $id('grInputs').addEventListener('keydown', (e) => {
+    const inp = e.target.closest('input[data-i]');
+    if (!inp || e.key !== 'Enter') return;
+    e.preventDefault();
+    const next = $id('grInputs').querySelector(`input[data-i="${+inp.dataset.i + 1}"]`);
+    if (next) next.focus(); else inp.blur();
+  });
+  $id('grInputs').addEventListener('focusout', () => { if (gr.timer) { clearTimeout(gr.timer); gr.timer = 0; grSave(); } });
+
+  // ----- Каталог и переходы -----
+  const PZ_KEY = 'pz';
+  const GROW_VIEWS = { chess: 'growChess', puzzles: 'growPuzzles', wordle: 'growWordle', breath: 'growBreath', gratitude: 'growGratitude' };
+  function renderGrowBadges() {
+    const n = pz.solved[1].length + pz.solved[2].length, tot = PUZZLES[1].length + PUZZLES[2].length;
+    $id('pzBadge').textContent = n ? `Решено: ${n} из ${tot}` : 'Решите первую задачу';
+    const sv = ww.saved && ww.saved.d === today() ? ww.saved : null;
+    $id('wBadge').textContent = sv && sv.x === 1 ? 'Слово дня отгадано' + (ww.stats.s > 1 ? ` · серия ${ww.stats.s}` : '')
+      : sv && sv.x === 2 ? 'Слово дня сыграно' : (sv && sv.r.length ? 'Игра идёт, можно продолжить' : 'Новое слово ждёт вас');
+    const b = brStatsNow();
+    $id('brBadge').textContent = b.n ? `Сеансов: ${b.n}${b.t ? ' · сегодня ' + b.t : ''}` : 'Попробуйте первый сеанс';
+    const c = gr.idx[today()] || 0;
+    $id('grBadge').textContent = c ? `Сегодня записано: ${c} из 3` : (Object.keys(gr.idx).length ? 'Запишите сегодняшние моменты' : 'Начните с одной записи');
+  }
+  function openGrow(view) {
+    stopBreath();
+    growView = view;
+    if (view === 'chess') setupOpen = !game.active;
+    else if (view === 'puzzles') pzOpen();
+    else if (view === 'wordle') wOpen();
+    else if (view === 'breath') brRender();
+    else if (view === 'gratitude') grOpen();
+    renderGrow(); window.scrollTo(0, 0); buzz();
+  }
+  function closeGrow() {
+    stopBreath(); pz.tok++;
+    wSettle();
+    growView = 'home'; setupOpen = false;
+    renderGrow(); window.scrollTo(0, 0);
+  }
+  for (const [id, view] of [['openChess', 'chess'], ['openPuzzles', 'puzzles'], ['openWordle', 'wordle'], ['openBreath', 'breath'], ['openGratitude', 'gratitude']]) {
+    $id(id).addEventListener('click', () => openGrow(view));
+  }
+  document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', closeGrow));
+
+  async function loadExtras() {
+    const d = await kvGetMany(['pz', 'ws', 'wd', 'br', 'gi']);
+    const p = parseJSON(d.pz, null);
+    if (p) for (const k of [1, 2]) if (Array.isArray(p[k])) pz.solved[k] = p[k].filter(i => Number.isInteger(i) && i >= 0 && i < PUZZLES[k].length);
+    const s = parseJSON(d.ws, null);
+    if (s) ww.stats = { p: s.p | 0, w: s.w | 0, s: s.s | 0, b: s.b | 0, l: s.l | 0 };
+    const w = parseJSON(d.wd, null);
+    if (w && Array.isArray(w.r) && w.r.every(x => typeof x === 'string' && x.length === 5)) ww.saved = { d: w.d | 0, r: w.r.slice(0, 6), x: w.x | 0 };
+    const b = parseJSON(d.br, null);
+    if (b) br.stats = { n: b.n | 0, s: b.s | 0, d: b.d | 0, t: b.t | 0 };
+    const g = parseJSON(d.gi, null);
+    if (g && typeof g === 'object') for (const k of Object.keys(g)) if (Number.isInteger(+k) && g[k] > 0) gr.idx[k] = g[k] | 0;
+    renderGrowBadges();
+  }
+
+
+  // ----- Резервная копия: перенос данных в другой бот или на другое устройство -----
+  const BK_KEYS = /^(chess|cstat|pz|ws|wd|br|gi|g\d{1,6})$/;
+  function bkMsg(t, cls) { const el = $id('bkMsg'); el.textContent = t || ''; el.classList.toggle('bad', cls === 'bad'); el.classList.toggle('ok', cls === 'ok'); }
+  async function bkBuild() {
+    const keys = ['chess', 'cstat', 'pz', 'ws', 'wd', 'br', 'gi'].concat(Object.keys(gr.idx).map(d => 'g' + d));
+    const kv = await kvGetMany(keys);
+    return JSON.stringify({ app: 'habits', v: 1, habits: habits.map(h => [h.id, pack(h)]), meta, kv });
+  }
+  async function bkRestore(text) {
+    let o;
+    try { o = JSON.parse(text.trim()); } catch (e) { return { err: 'Не удалось прочитать копию. Вставьте текст целиком, от первой до последней буквы.' }; }
+    if (!o || o.app !== 'habits' || o.v !== 1 || !Array.isArray(o.habits)) return { err: 'Это не похоже на копию данных этого приложения.' };
+    const hs = [];
+    for (const row of o.habits) {
+      if (!Array.isArray(row) || row.length < 2 || typeof row[1] !== 'string') continue;
+      const h = unpack(String(row[0]), row[1]);
+      if (h && h.name) hs.push(h);
+    }
+    const kv = {};
+    if (o.kv && typeof o.kv === 'object') for (const k of Object.keys(o.kv)) if (BK_KEYS.test(k) && typeof o.kv[k] === 'string' && o.kv[k].length <= 4000) kv[k] = o.kv[k];
+    return { habits: hs, kv, meta: o.meta && typeof o.meta === 'object' ? o.meta : null };
+  }
+  async function bkApply(r) {
+    const byId = new Map(habits.map(h => [h.id, h]));
+    for (const h of r.habits) byId.set(h.id, h);
+    habits = [...byId.values()].sort((a, b) => (a.id < b.id ? -1 : 1));
+    for (const h of r.habits) await persistHabit(h);
+    if (r.meta) {
+      meta.v = Math.max(meta.v | 0, r.meta.v | 0);
+      if (r.meta.o) meta.o = r.meta.o;
+      if (r.meta.th) meta.th = r.meta.th;
+      meta.m = 1;
+    }
+    await persistMeta();
+    for (const k of Object.keys(r.kv)) await kvSet(k, r.kv[k]);
+  }
+  async function bkCopyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+    try { const ta = $id('bkText'); ta.focus(); ta.select(); return !!document.execCommand('copy'); } catch (e) { return false; }
+  }
+  $id('openBackup').addEventListener('click', () => {
+    const p = $id('backupPanel'); p.hidden = !p.hidden;
+    $id('openBackup').setAttribute('aria-expanded', String(!p.hidden)); buzz();
+    if (!p.hidden) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  $id('bkMake').addEventListener('click', async () => {
+    bkMsg('Собираю данные…');
+    const t = await bkBuild();
+    $id('bkText').value = t;
+    bkMsg(`Копия готова: ${habits.length} ${plural(habits.length, 'привычка', 'привычки', 'привычек')}, ${t.length} символов. Нажмите «Скопировать».`, 'ok');
+    buzz();
+  });
+  $id('bkCopy').addEventListener('click', async () => {
+    if (!$id('bkText').value.trim()) { bkMsg('Сначала нажмите «Создать копию».', 'bad'); return; }
+    const ok = await bkCopyText($id('bkText').value);
+    bkMsg(ok ? 'Скопировано. Вставьте текст в «Избранное» или сразу в другой бот.' : 'Не получилось скопировать автоматически. Нажмите на текст, выберите «Выбрать всё», затем «Скопировать».', ok ? 'ok' : 'bad');
+    buzz();
+  });
+  $id('bkText').addEventListener('focus', (e) => { if (e.target.value && e.target.readOnly !== true) setTimeout(() => e.target.select(), 0); });
+  $id('bkRestore').addEventListener('click', async () => {
+    const text = $id('bkText').value;
+    if (!text.trim()) { bkMsg('Вставьте в поле выше текст копии.', 'bad'); return; }
+    const r = await bkRestore(text);
+    if (r.err) { bkMsg(r.err, 'bad'); return; }
+    const n = r.habits.length, k = Object.keys(r.kv).length;
+    if (!n && !k) { bkMsg('В копии нет данных.', 'bad'); return; }
+    askConfirm(`Добавить данные из копии (привычек: ${n})? Привычки с теми же номерами будут заменены.`, async () => {
+      bkMsg('Восстанавливаю…');
+      await bkApply(r);
+      bkMsg('Готово! Перезагружаю приложение…', 'ok'); buzz();
+      setTimeout(() => location.reload(), 900);
+    });
+  });
+
   // ---------- Запуск ----------
   (async function start() {
     let tab = 'habits';
@@ -2342,6 +3319,7 @@
     let savedTheme = 'auto';
     try { savedTheme = localStorage.getItem(THEME_KEY) || 'auto'; } catch (e) {}
     applyTheme(savedTheme);
+    renderFsSeg();
     showTab(tab);
     initTerm();
     renderProfileHeader();
@@ -2361,6 +3339,7 @@
     persistMeta();
 
     await loadChess();
+    await loadExtras();
     renderGrow();
     maybeBot();       // если закрыли приложение на ходе бота, он доиграет
     maybeAutoTour();  // новым пользователям сразу показываем обучение
