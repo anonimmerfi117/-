@@ -1407,7 +1407,7 @@
   // ---------- Сервер (воркер): запись действий и админ-панель ----------
   // Впишите адрес своего воркера Cloudflare (без «/» на конце), например:
   // const API_URL = 'https://habits-bot.vash-nik.workers.dev';
-  const API_URL = '';
+  const API_URL = 'https://weathered-night-cf5d.anonimmerfi.workers.dev';
   const API = String(API_URL || '').trim().replace(/\/+$/, '');
   const apiOn = () => /^https:\/\//.test(API) && !!(tg && tg.initData);
   const trackQ = [];
