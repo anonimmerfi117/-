@@ -383,7 +383,7 @@
   @keyframes lift { from { transform: none; } to { transform: translateY(-5%) scale(1.09); } }
   .chess-status.swap { animation: swapIn .4s cubic-bezier(.2, .8, .2, 1); }
   @keyframes swapIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-  .setup:not([hidden]), #growChess:not([hidden]), #growHome:not([hidden]) { animation: rise .45s cubic-bezier(.2, .8, .2, 1); }
+  .setup:not([hidden]), #growChess:not([hidden]), #growHome:not([hidden]), #growPuzzles:not([hidden]), #growWordle:not([hidden]), #growBreath:not([hidden]), #growGratitude:not([hidden]), #growQuiz:not([hidden]), #qzHome:not([hidden]), #qzEnd:not([hidden]) { animation: rise .5s cubic-bezier(.22, 1, .36, 1); }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .clock { margin-left: 10px; padding: 3px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; letter-spacing: .02em; transition: background-color .3s, color .3s, border-color .3s, transform .3s; }
   .clock.on { background: var(--grad); border-color: transparent; color: #fff; transform: scale(1.05); }
@@ -657,6 +657,134 @@
   .backup .btn.wide { width: 100%; margin-top: 12px; }
   .seg.two { grid-template-columns: 1fr 1fr; }
   .card .desc { margin: 12px 2px 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+
+  /* ---------- Викторина ---------- */
+  .game-art.g6 { background: linear-gradient(135deg, #ffb054, #ff6f91); }
+  .qz-hero { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 18px; margin-bottom: 4px; border-radius: 26px; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255, 176, 84, 0.18), rgba(139, 123, 255, 0.20)); }
+  .qz-hero > div:not(.qz-hero-art) { position: relative; z-index: 1; }
+  .qz-hero b { display: block; margin-bottom: 4px; font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+  .qz-hero span { font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+  .qz-hero-art { flex: none; width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; background: linear-gradient(135deg, #ffb054, #ff6f91); box-shadow: 0 12px 26px -12px rgba(255, 111, 145, 0.9); animation: qzFloat 3.2s ease-in-out infinite; }
+  .qz-hero-art svg { width: 36px; height: 36px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes qzFloat { 50% { transform: translateY(-5px) rotate(-5deg); } }
+  .qz-spark { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #ffb054; opacity: .0; animation: qzTwinkle 3s ease-in-out infinite; }
+  .qz-spark.s1 { right: 22px; top: 16px; }
+  .qz-spark.s2 { right: 56px; bottom: 14px; width: 6px; height: 6px; background: #8b7bff; animation-delay: 1s; }
+  .qz-spark.s3 { right: 12px; bottom: 34px; width: 5px; height: 5px; background: #3de0b5; animation-delay: 2s; }
+  @keyframes qzTwinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: .9; transform: scale(1); } }
+  #qzHome .setup { margin-top: 14px; }
+  #qzHome .setup .desc { margin-top: 12px; }
+  #qzHome .chess-stats { margin-top: 14px; }
+
+  .qz-top { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 10px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .qz-score { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .qz-score svg { width: 16px; height: 16px; fill: #ffb054; stroke: none; }
+  .qz-score.bump { animation: qzBump .6s cubic-bezier(.22, 1, .36, 1); }
+  @keyframes qzBump { 35% { transform: scale(1.14); } }
+  .qz-plus { position: absolute; right: 4px; top: -6px; font-weight: 800; font-size: 15px; color: #2fbf8e; pointer-events: none; opacity: 0; animation: qzPlus .95s ease-out; }
+  @keyframes qzPlus { 0% { opacity: 0; transform: translateY(6px) scale(.8); } 25% { opacity: 1; } 100% { opacity: 0; transform: translateY(-30px) scale(1.15); } }
+  .qz-steps { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-bottom: 16px; }
+  .qz-steps i { height: 6px; border-radius: 3px; background: var(--cell); transition: background-color .5s ease, transform .5s cubic-bezier(.22, 1, .36, 1); }
+  .qz-steps i.cur { background: var(--violet); transform: scaleY(1.5); }
+  .qz-steps i.ok { background: #2fbf8e; }
+  .qz-steps i.bad { background: var(--danger); }
+
+  .qz-card { padding: 20px 18px 22px; margin-bottom: 14px; border-radius: 26px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--card-shadow); }
+  .qz-card.in { animation: qzIn .5s cubic-bezier(.2, .8, .2, 1) both; }
+  .qz-card.out, .qz-opts.out, .qz-info.out { animation: qzOut .26s ease-in both; }
+  @keyframes qzIn { from { opacity: 0; transform: translateX(40px) scale(.98); } }
+  @keyframes qzOut { to { opacity: 0; transform: translateX(-40px) scale(.98); } }
+  .qz-tag { display: inline-block; margin-bottom: 12px; padding: 4px 11px; border-radius: 999px; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .03em; }
+  .qz-tag.t-p { background: linear-gradient(135deg, #8b7bff, #4d8dff); }
+  .qz-tag.t-h { background: linear-gradient(135deg, #ff9a6b, #ff6f91); }
+  .qz-tag.t-s { background: linear-gradient(135deg, #3fa9ff, #3de0b5); }
+  .qz-tag.t-a { background: linear-gradient(135deg, #a77bff, #ee74c8); }
+  .qz-tag.t-g { background: linear-gradient(135deg, #2fbf8e, #4d8dff); }
+  .qz-q { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1.3; letter-spacing: -.01em; }
+
+  .qz-opts { display: grid; gap: 10px; }
+  .qz-opt { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 10px 14px 10px 12px; border-radius: 18px; border: 1.5px solid var(--line); background: var(--surface); color: var(--text); text-align: left; font-size: 16px; font-weight: 600; line-height: 1.3; transition: background-color .4s ease, border-color .4s ease, opacity .45s ease, transform .2s ease; will-change: transform; }
+  .qz-opt:active { transform: scale(.98); }
+  .qz-opt.in { animation: qzOpt .55s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes qzOpt { from { opacity: 0; transform: translateY(10px); } }
+  .qz-l { flex: none; width: 32px; height: 32px; border-radius: 11px; display: grid; place-items: center; background: var(--cell); color: var(--muted); font-size: 14px; font-weight: 800; transition: background-color .3s, color .3s; }
+  .qz-t { flex: 1; min-width: 0; }
+  .qz-ic { flex: none; width: 22px; height: 22px; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .qz-ic path { stroke-dasharray: 24; animation: qzDraw .4s .08s ease-out both; }
+  @keyframes qzDraw { from { stroke-dashoffset: 24; } }
+  .qz-opt.ok { border-color: #2fbf8e; background: rgba(47, 191, 142, 0.16); }
+  .qz-opt.ok .qz-l { background: #2fbf8e; color: #04261b; }
+  .qz-opt.ok .qz-ic { stroke: #2fbf8e; }
+  .qz-opt.ok.pick { animation: qzPop .6s cubic-bezier(.22, 1, .36, 1); }
+  .qz-opt.ok.reveal { animation: qzGlow 1.1s ease-out; }
+  @keyframes qzPop { 35% { transform: scale(1.025); } }
+  @keyframes qzGlow { 0% { box-shadow: 0 0 0 0 rgba(47, 191, 142, 0.55); } 100% { box-shadow: 0 0 0 14px rgba(47, 191, 142, 0); } }
+  .qz-opt.bad { border-color: var(--danger); background: rgba(255, 90, 120, 0.14); animation: qzNudge .55s cubic-bezier(.36, .07, .19, .97); }
+  @keyframes qzNudge { 15% { transform: translateX(-6px); } 35% { transform: translateX(5px); } 55% { transform: translateX(-3px); } 75% { transform: translateX(1.5px); } }
+  .qz-opt.bad .qz-l { background: var(--danger); color: #fff; }
+  .qz-opt.bad .qz-ic { stroke: var(--danger); }
+  .qz-opt.dim { opacity: .42; }
+  .qz-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 8; pointer-events: none; }
+  .qz-burst i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 2px; background: var(--c); opacity: 0; animation: qzBurst .9s cubic-bezier(.15, .7, .3, 1) forwards; animation-delay: var(--d, 0s); }
+  .qz-burst i.round { border-radius: 50%; }
+  @keyframes qzBurst { 0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); } 100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(.5); } }
+
+  .qz-after { display: flow-root; }
+  .qz-after.show > * { animation: qzRise .6s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-after.show > :nth-child(2) { animation-delay: .07s; }
+  .qz-after.show > :nth-child(3) { animation-delay: .14s; }
+  @keyframes qzRise { from { opacity: 0; transform: translateY(10px); } }
+  .qz-verdict { min-height: 24px; margin: 14px 4px 0; font-size: 16px; font-weight: 700; }
+  .qz-verdict.ok { color: #2fbf8e; }
+  .qz-verdict.bad { color: var(--danger); }
+  :root[data-theme="light"] .qz-verdict.ok { color: #13946f; }
+  .qz-verdict.in { animation: swapIn .4s cubic-bezier(.2, .8, .2, 1); }
+
+  .qz-info { margin-top: 12px; padding: 16px; border-radius: 22px; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(139, 123, 255, 0.18), rgba(77, 141, 255, 0.10)); scroll-margin-bottom: calc(var(--tabbar-h) + 40px + var(--sab)); }
+  .qz-info.in { animation: qzInfo .55s cubic-bezier(.2, .8, .2, 1) both; transform-origin: top center; }
+  .qz-info.in .qz-ip { animation: qzText .5s .22s ease-out both; }
+  @keyframes qzInfo { from { opacity: 0; transform: translateY(16px) scale(.96); } }
+  @keyframes qzText { from { opacity: 0; transform: translateY(6px); } }
+  .qz-info-h { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .qz-info-ic { flex: none; width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: var(--grad); }
+  .qz-info-ic svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .qz-it { display: block; font-family: var(--font-display); font-size: 16px; font-weight: 600; line-height: 1.25; }
+  .qz-is { display: block; margin-top: 2px; font-size: 12.5px; color: var(--muted); }
+  .qz-ip { margin: 0; font-size: 15px; line-height: 1.55; }
+  .qz-next { width: 100%; margin-top: 14px; scroll-margin-bottom: calc(var(--tabbar-h) + 40px + var(--sab)); }
+  .qz-next.in { animation: qzOpt .4s cubic-bezier(.2, .8, .2, 1) both; }
+
+  .qz-end { position: relative; text-align: center; }
+  .qz-ring { position: relative; width: 184px; height: 184px; margin: 4px auto 16px; }
+  .qz-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .qz-ring circle { fill: none; stroke-width: 13; stroke-linecap: round; }
+  .qz-ring .bg { stroke: var(--cell); }
+  .qz-ring .fg { stroke: url(#qzGrad); transition: stroke-dashoffset 1.6s cubic-bezier(.22, 1, .36, 1); }
+  .qz-ring-n { position: absolute; inset: 0; display: grid; place-content: center; }
+  .qz-ring-n b { font-family: var(--font-display); font-size: 50px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .qz-ring-n span { margin-top: 4px; font-size: 14px; color: var(--muted); }
+  .qz-ring.pop { animation: qzRingPop .9s 1.15s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes qzRingPop { 40% { transform: scale(1.045); } }
+  .qz-end h2 { margin: 0 0 6px; font-family: var(--font-display); font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+  .qz-end p { margin: 0 auto; max-width: 32ch; font-size: 15px; line-height: 1.45; color: var(--muted); }
+  .qz-end.in h2 { animation: qzOpt .65s .35s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-end.in p { animation: qzOpt .65s .45s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-end.in .qz-end-actions { animation: qzOpt .65s .55s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-end-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0 6px; }
+  .qz-rv { margin-top: 10px; padding: 14px 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); animation: qzOpt .6s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-rv summary { display: flex; align-items: flex-start; gap: 10px; list-style: none; cursor: pointer; font-size: 15px; font-weight: 600; line-height: 1.35; }
+  .qz-rv summary::-webkit-details-marker { display: none; }
+  .qz-rv summary .n { flex: none; width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; background: var(--danger); color: #fff; font-size: 12px; font-weight: 800; }
+  .qz-rv summary .q { flex: 1; }
+  .qz-rv summary svg { flex: none; width: 20px; height: 20px; margin-top: 2px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s; }
+  .qz-rv[open] summary svg { transform: rotate(90deg); }
+  .qz-rv .ans { display: grid; gap: 3px; margin: 8px 0 0 34px; font-size: 13.5px; }
+  .qz-rv .ans .no { color: var(--danger); }
+  .qz-rv .ans .yes { color: #2fbf8e; }
+  :root[data-theme="light"] .qz-rv .ans .yes { color: #13946f; }
+  .qz-rv .more { margin: 10px 0 0 34px; font-size: 14.5px; line-height: 1.5; }
+  .qz-rv .more { transition: opacity .35s ease; }
+  .qz-allok { margin-top: 10px; padding: 18px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); text-align: center; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -802,6 +930,16 @@
           <b>Угадай слово</b>
           <span>Слово дня из пяти букв, шесть попыток</span>
           <em id="wBadge"></em>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+
+      <button class="game-card" id="openQuiz" type="button">
+        <div class="game-art g6" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><path d="M12 17h.01"/></svg></div>
+        <div class="game-info">
+          <b>Викторина</b>
+          <span>Люди, история, наука, искусство и география</span>
+          <em id="qzBadge"></em>
         </div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
@@ -956,6 +1094,74 @@
         <div class="stat"><b id="brN">0</b><span>сеансов</span></div>
         <div class="stat"><b id="brM">0</b><span>минут всего</span></div>
         <div class="stat"><b id="brT">0</b><span>сегодня</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Викторина ===== -->
+    <div id="growQuiz" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" data-back type="button" aria-label="Назад к разделу «Развитие»">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Викторина</h1>
+          <span style="width:44px"></span>
+        </div>
+      </header>
+
+      <div id="qzHome">
+        <div class="qz-hero">
+          <div class="qz-hero-art" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><path d="M12 17h.01"/></svg>
+          </div>
+          <div><b>Проверьте эрудицию</b><span>Ошиблись — не страшно: покажем короткую справку, чтобы ответ запомнился.</span></div>
+          <i class="qz-spark s1"></i><i class="qz-spark s2"></i><i class="qz-spark s3"></i>
+        </div>
+        <div class="setup">
+          <div class="lbl">Тема</div>
+          <div class="chips" id="qzCats" role="radiogroup" aria-label="Тема викторины"></div>
+          <p class="desc" id="qzCatInfo"></p>
+          <button class="btn primary wide" id="qzStart" type="button">Начать раунд</button>
+        </div>
+        <div class="chess-stats">
+          <div class="stat"><b id="qzR">0</b><span>раундов</span></div>
+          <div class="stat"><b id="qzB">0</b><span>лучший результат</span></div>
+          <div class="stat"><b id="qzP">—</b><span>верных ответов</span></div>
+        </div>
+      </div>
+
+      <div id="qzPlay" hidden>
+        <div class="qz-top"><span id="qzNum"></span><span class="qz-score" id="qzScore" aria-label="Счёт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.4 5.2 5.6.7-4.1 3.9 1.1 5.6L12 16.2 7 18.9l1.1-5.6L4 9.4l5.6-.7z"/></svg><b id="qzScoreN">0</b></span></div>
+        <div class="qz-steps" id="qzSteps" aria-hidden="true"></div>
+        <div id="qzStage">
+          <div class="qz-card" id="qzCard"></div>
+          <div class="qz-opts" id="qzOpts"></div>
+          <div class="qz-after" id="qzAfter" hidden>
+            <div class="qz-verdict" id="qzVerdict" role="status" aria-live="polite"></div>
+            <div class="qz-info" id="qzInfo" hidden></div>
+            <button class="btn primary wide qz-next" id="qzNext" type="button">Дальше</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="qzEnd" hidden>
+        <div class="qz-end">
+          <div class="qz-ring" id="qzRing">
+            <svg viewBox="0 0 180 180" aria-hidden="true">
+              <defs><linearGradient id="qzGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b7bff"/><stop offset="1" stop-color="#3de0b5"/></linearGradient></defs>
+              <circle class="bg" cx="90" cy="90" r="78"/>
+              <circle class="fg" id="qzRingFg" cx="90" cy="90" r="78"/>
+            </svg>
+            <div class="qz-ring-n"><b id="qzEndN">0</b><span id="qzEndOf">из 10</span></div>
+          </div>
+          <h2 id="qzEndT"></h2>
+          <p id="qzEndS"></p>
+          <div class="qz-end-actions">
+            <button class="btn" id="qzMenu" type="button">Сменить тему</button>
+            <button class="btn primary" id="qzAgain" type="button">Ещё раунд</button>
+          </div>
+        </div>
+        <div id="qzReview"></div>
       </div>
     </div>
 
@@ -2107,7 +2313,7 @@
     },
     {
       title: 'Развивайтесь',
-      text: 'Во вкладке «Развитие» вас ждут шахматы и шахматные задачи, слово дня, дыхательные упражнения и дневник благодарности.',
+      text: 'Во вкладке «Развитие» вас ждут шахматы и шахматные задачи, слово дня, викторина, дыхательные упражнения и дневник благодарности.',
       art: '<div class="a5">' + Array.from({ length: 16 }, (_, i) => `<i class="${(((i >> 2) + (i & 3)) % 2) ? 'dk' : ''}"></i>`).join('') + '<svg class="kn pc w" viewBox="0 0 45 45" aria-hidden="true"><path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/></svg></div>'
     }
   ];
@@ -3187,9 +3393,436 @@
   });
   $id('grInputs').addEventListener('focusout', () => { if (gr.timer) { clearTimeout(gr.timer); gr.timer = 0; grSave(); } });
 
+  // Вопросы викторины. a[0] — правильный ответ (варианты перемешиваются при показе).
+  // t — заголовок справки, s — подзаголовок, i — текст справки, который показывается при ошибке.
+  const QZ_CATS = [
+    { id: 'all', name: 'Все темы' },
+    { id: 'p', name: 'Люди' },
+    { id: 'h', name: 'История' },
+    { id: 's', name: 'Наука' },
+    { id: 'a', name: 'Искусство' },
+    { id: 'g', name: 'География' }
+  ];
+  const QZ = [
+    // ---------- Люди ----------
+    { id: 'p1', c: 'p', q: 'Кто первым из людей полетел в космос?', a: ['Юрий Гагарин', 'Алексей Леонов', 'Герман Титов', 'Нил Армстронг'],
+      t: 'Юрий Гагарин', s: '1934–1968, лётчик-космонавт',
+      i: '12 апреля 1961 года на корабле «Восток-1» Гагарин облетел Землю за 108 минут. До отряда космонавтов он был военным лётчиком. Его «Поехали!» стало символом начала космической эпохи.' },
+    { id: 'p2', c: 'p', q: 'Кто создал периодическую систему химических элементов?', a: ['Дмитрий Менделеев', 'Михаил Ломоносов', 'Александр Бутлеров', 'Александр Попов'],
+      t: 'Дмитрий Менделеев', s: '1834–1907, химик',
+      i: 'Менделеев представил свою таблицу в 1869 году. Он оставил в ней пустые клетки и заранее описал свойства ещё не открытых элементов, например галлия и германия. Позже их нашли, и предсказания подтвердились.' },
+    { id: 'p3', c: 'p', q: 'Кто написал роман «Война и мир»?', a: ['Лев Толстой', 'Фёдор Достоевский', 'Иван Тургенев', 'Антон Чехов'],
+      t: 'Лев Толстой', s: '1828–1910, писатель',
+      i: 'Толстой работал над «Войной и миром» около шести лет, с 1863 по 1869 год. В романе более 500 персонажей, а в центре — эпоха войн с Наполеоном. Писатель жил и работал в усадьбе Ясная Поляна под Тулой.' },
+    { id: 'p4', c: 'p', q: 'Кто открыл пенициллин?', a: ['Александр Флеминг', 'Луи Пастер', 'Роберт Кох', 'Эдвард Дженнер'],
+      t: 'Александр Флеминг', s: '1881–1955, микробиолог',
+      i: 'В 1928 году Флеминг заметил, что плесень в чашке с бактериями уничтожила их вокруг себя. Так был открыт первый антибиотик. Лекарство стали массово выпускать в 1940-х, и в 1945 году Флеминг получил Нобелевскую премию.' },
+    { id: 'p5', c: 'p', q: 'Кто стал первой женщиной в космосе?', a: ['Валентина Терешкова', 'Светлана Савицкая', 'Салли Райд', 'Елена Кондакова'],
+      t: 'Валентина Терешкова', s: 'родилась в 1937 году',
+      i: 'Терешкова полетела в космос 16 июня 1963 года на корабле «Восток-6» и провела на орбите почти трое суток. До этого она работала на текстильном комбинате и занималась парашютным спортом.' },
+    { id: 'p6', c: 'p', q: 'Кто автор теории относительности?', a: ['Альберт Эйнштейн', 'Исаак Ньютон', 'Нильс Бор', 'Макс Планк'],
+      t: 'Альберт Эйнштейн', s: '1879–1955, физик',
+      i: 'Специальную теорию относительности Эйнштейн опубликовал в 1905 году, общую — в 1915-м. Интересно, что Нобелевскую премию он получил не за неё, а за объяснение фотоэффекта.' },
+    { id: 'p7', c: 'p', q: 'Кто написал роман в стихах «Евгений Онегин»?', a: ['Александр Пушкин', 'Михаил Лермонтов', 'Александр Грибоедов', 'Николай Гоголь'],
+      t: 'Александр Пушкин', s: '1799–1837, поэт',
+      i: 'Пушкин писал «Евгения Онегина» больше семи лет. Критик Белинский назвал роман «энциклопедией русской жизни». Поэт погиб в 37 лет после дуэли с Жоржем Дантесом.' },
+    { id: 'p8', c: 'p', q: 'Кто получил первый патент на телефон в 1876 году?', a: ['Александр Белл', 'Томас Эдисон', 'Никола Тесла', 'Александр Попов'],
+      t: 'Александр Грэхем Белл', s: '1847–1922, изобретатель',
+      i: 'Белл родился в Шотландии и работал в США учителем глухих детей. Интерес к звуку и речи привёл его к телефону: патент он получил в 1876 году. Эдисон позже улучшил микрофон, а Попов известен работами по радио.' },
+    { id: 'p9', c: 'p', q: 'Кто первым в истории получил Нобелевскую премию дважды?', a: ['Мария Склодовская-Кюри', 'Альберт Эйнштейн', 'Лайнус Полинг', 'Нильс Бор'],
+      t: 'Мария Склодовская-Кюри', s: '1867–1934, физик и химик',
+      i: 'Кюри получила премию по физике в 1903 году и по химии в 1911-м. Она открыла элементы полоний и радий и стала первой женщиной-нобелиатом. Полоний назван в честь её родины, Польши.' },
+    { id: 'p10', c: 'p', q: 'Кто расписал потолок Сикстинской капеллы в Ватикане?', a: ['Микеланджело', 'Леонардо да Винчи', 'Рафаэль', 'Сандро Боттичелли'],
+      t: 'Микеланджело Буонарроти', s: '1475–1564, скульптор и художник',
+      i: 'Микеланджело расписывал потолок с 1508 по 1512 год, самая известная сцена — «Сотворение Адама». Себя он считал прежде всего скульптором: его мраморный «Давид» — одна из самых знаменитых статуй в мире.' },
+    { id: 'p11', c: 'p', q: 'Кто основал Санкт-Петербург?', a: ['Пётр I', 'Екатерина II', 'Иван Грозный', 'Александр I'],
+      t: 'Пётр I', s: '1672–1725, первый российский император',
+      i: 'Город заложен в 1703 году с Петропавловской крепости в устье Невы. Вскоре Пётр перенёс сюда столицу. Он строил флот, открыл первые светские школы и в 1721 году принял титул императора.' },
+    { id: 'p12', c: 'p', q: 'Кто написал музыку к балету «Лебединое озеро»?', a: ['Пётр Чайковский', 'Николай Римский-Корсаков', 'Модест Мусоргский', 'Михаил Глинка'],
+      t: 'Пётр Чайковский', s: '1840–1893, композитор',
+      i: 'Премьера «Лебединого озера» прошла в Большом театре в 1877 году. Чайковский также написал балеты «Щелкунчик» и «Спящая красавица» и оперы «Евгений Онегин» и «Пиковая дама».' },
+
+    // ---------- История ----------
+    { id: 'h1', c: 'h', q: 'В каком году началась Вторая мировая война?', a: ['1939', '1941', '1938', '1914'],
+      t: '1 сентября 1939 года', s: 'начало Второй мировой войны',
+      i: 'Война началась с нападения Германии на Польшу. 1941 год — это нападение Германии на СССР и начало Великой Отечественной войны. Вторая мировая закончилась 2 сентября 1945 года капитуляцией Японии.' },
+    { id: 'h2', c: 'h', q: 'Какое сражение стало крупнейшим в Отечественной войне 1812 года?', a: ['Бородинское', 'Полтавское', 'Куликовская битва', 'Ледовое побоище'],
+      t: 'Бородинское сражение', s: '26 августа (7 сентября) 1812 года',
+      i: 'Русской армией командовал Михаил Кутузов, французской — Наполеон. Битва шла около 125 километров от Москвы. Ей посвящено стихотворение Лермонтова «Бородино».' },
+    { id: 'h3', c: 'h', q: 'Где правил фараон Тутанхамон?', a: ['В Древнем Египте', 'В Месопотамии', 'В Персии', 'В Древней Греции'],
+      t: 'Тутанхамон', s: 'XIV век до н. э.',
+      i: 'Тутанхамон взошёл на трон ребёнком и умер совсем молодым, примерно в 19 лет. Знаменит он потому, что его гробницу нашли почти нетронутой: в 1922 году её открыл археолог Говард Картер. Среди сокровищ была золотая маска.' },
+    { id: 'h4', c: 'h', q: 'В каком году пала Берлинская стена?', a: ['1989', '1991', '1961', '1985'],
+      t: '9 ноября 1989 года', s: 'падение Берлинской стены',
+      i: 'Стену построили в 1961 году, и почти 30 лет она разделяла Восточный и Западный Берлин. В ноябре 1989-го границу открыли, люди начали разбирать стену сами. Германия объединилась 3 октября 1990 года.' },
+    { id: 'h5', c: 'h', q: 'Кто стал первым императором Рима?', a: ['Октавиан Август', 'Юлий Цезарь', 'Нерон', 'Марк Аврелий'],
+      t: 'Октавиан Август', s: '63 до н. э. – 14 н. э.',
+      i: 'Юлий Цезарь императором не был: он был диктатором и погиб в 44 году до н. э. Его приёмный сын Октавиан в 27 году до н. э. получил титул «Август» и правил больше 40 лет. В его честь назван месяц август.' },
+    { id: 'h6', c: 'h', q: 'Что произошло 20 июля 1969 года?', a: ['Люди впервые сели на Луну', 'Запустили первый спутник', 'Гагарин полетел в космос', 'Открыли Берлинскую стену'],
+      t: 'Высадка на Луну', s: 'миссия «Аполлон-11»',
+      i: 'Нил Армстронг и Базз Олдрин посадили модуль на Луну, а Майкл Коллинз ждал их на орбите. Армстронг первым ступил на поверхность и сказал: «Это маленький шаг для человека, но огромный скачок для человечества».' },
+    { id: 'h7', c: 'h', q: 'В каком году, по летописи, князь Владимир крестил Русь?', a: ['988', '862', '1147', '1240'],
+      t: '988 год', s: 'крещение Руси',
+      i: 'Князь Владимир Святославич принял христианство из Византии. Другие даты тоже важны: 862 год — призвание Рюрика, 1147 год — первое упоминание Москвы, 1240 год — взятие Киева войском Батыя.' },
+    { id: 'h8', c: 'h', q: 'Какая страна запустила первый искусственный спутник Земли?', a: ['СССР', 'США', 'Китай', 'Франция'],
+      t: '«Спутник-1»', s: '4 октября 1957 года',
+      i: 'Спутник был металлическим шаром диаметром 58 сантиметров с четырьмя антеннами. Он передавал простой сигнал «бип-бип», который ловили радиолюбители по всему миру. С этого запуска началась космическая эра.' },
+    { id: 'h9', c: 'h', q: 'Какой лайнер затонул в 1912 году после столкновения с айсбергом?', a: ['«Титаник»', '«Лузитания»', '«Британник»', '«Олимпик»'],
+      t: '«Титаник»', s: 'ночь на 15 апреля 1912 года',
+      i: 'Лайнер шёл в свой первый рейс из Англии в Нью-Йорк. Спасательных шлюпок хватало не всем, и погибли более 1500 человек. После катастрофы изменили правила безопасности на море. Обломки нашли на дне в 1985 году.' },
+    { id: 'h10', c: 'h', q: 'Какой город был столицей Византийской империи?', a: ['Константинополь', 'Рим', 'Афины', 'Александрия'],
+      t: 'Константинополь', s: 'ныне Стамбул',
+      i: 'Император Константин основал город в 330 году на месте греческого Византия. Больше тысячи лет он был одним из крупнейших городов мира. В 1453 году его взяли османы, и со временем он стал Стамбулом.' },
+    { id: 'h11', c: 'h', q: 'Когда жил Чингисхан?', a: ['В XII–XIII веках', 'В X веке', 'В XV веке', 'В XVII веке'],
+      t: 'Чингисхан', s: 'около 1162–1227',
+      i: 'Настоящее имя Чингисхана — Темучин. Он объединил монгольские племена и в 1206 году был провозглашён великим ханом. Его завоевания положили начало одной из крупнейших империй в истории.' },
+    { id: 'h12', c: 'h', q: 'Кто возглавил русское войско в Куликовской битве 1380 года?', a: ['Дмитрий Донской', 'Александр Невский', 'Иван III', 'Ярослав Мудрый'],
+      t: 'Дмитрий Донской', s: '1350–1389, великий князь московский',
+      i: 'Битва с войском Мамая прошла на Куликовом поле у Дона, отсюда прозвище князя — Донской. Александр Невский жил раньше: он известен победами на Неве в 1240 году и на Чудском озере в 1242-м.' },
+
+    // ---------- Наука ----------
+    { id: 's1', c: 's', q: 'Какая планета самая большая в Солнечной системе?', a: ['Юпитер', 'Сатурн', 'Нептун', 'Земля'],
+      t: 'Юпитер', s: 'газовый гигант',
+      i: 'Юпитер тяжелее всех остальных планет вместе взятых. У него десятки спутников, а крупнейший из них, Ганимед, больше планеты Меркурий. Большое Красное Пятно на Юпитере — гигантский шторм, больше Земли.' },
+    { id: 's2', c: 's', q: 'Какой химический символ у золота?', a: ['Au', 'Ag', 'Gd', 'Go'],
+      t: 'Au — золото', s: 'от латинского aurum',
+      i: 'Символы элементов часто берут из латыни. Ag — это серебро, от argentum. Золото почти не окисляется, поэтому древние золотые украшения и сегодня блестят.' },
+    { id: 's3', c: 's', q: 'Сколько костей в скелете взрослого человека?', a: ['206', '186', '256', '300'],
+      t: '206 костей', s: 'у взрослого человека',
+      i: 'У новорождённого костей около 300, но с возрастом часть из них срастается. Самая маленькая кость — стремечко в среднем ухе, самая длинная — бедренная.' },
+    { id: 's4', c: 's', q: 'Какой газ растения поглощают при фотосинтезе?', a: ['Углекислый газ', 'Кислород', 'Азот', 'Водород'],
+      t: 'Фотосинтез', s: 'как растения питаются светом',
+      i: 'Используя энергию света, растения превращают углекислый газ и воду в сахара, а кислород выделяют. Этот процесс идёт в хлоропластах, а зелёный цвет листьям даёт пигмент хлорофилл.' },
+    { id: 's5', c: 's', q: 'Какова скорость света в вакууме, если округлить?', a: ['300 000 км/с', '30 000 км/с', '3 000 000 км/с', '1 000 км/с'],
+      t: 'Около 300 000 км/с', s: 'точнее, 299 792 км/с',
+      i: 'Быстрее света в природе ничто не движется. От Солнца до Земли свет идёт примерно 8 минут 20 секунд, а от Луны — чуть больше секунды.' },
+    { id: 's6', c: 's', q: 'Какая планета ближе всех к Солнцу?', a: ['Меркурий', 'Венера', 'Марс', 'Земля'],
+      t: 'Меркурий', s: 'самая маленькая планета',
+      i: 'Год на Меркурии длится всего 88 земных суток. При этом самая горячая планета — не он, а Венера: её плотная атмосфера удерживает тепло, как парник.' },
+    { id: 's7', c: 's', q: 'При какой температуре кипит вода на уровне моря?', a: ['100 °C', '90 °C', '120 °C', '80 °C'],
+      t: '100 °C', s: 'при нормальном давлении',
+      i: 'Чем выше в горах, тем ниже давление и тем раньше закипает вода. На вершине Эвереста она кипит примерно при 70 °C, поэтому еда там варится гораздо дольше.' },
+    { id: 's8', c: 's', q: 'Какое животное — самое крупное из когда-либо живших на Земле?', a: ['Синий кит', 'Африканский слон', 'Кашалот', 'Китовая акула'],
+      t: 'Синий кит', s: 'до 30 метров в длину',
+      i: 'Синий кит может весить больше 150 тонн — это тяжелее любого известного динозавра. При этом питается он крошечными рачками, крилем, отфильтровывая их из воды.' },
+    { id: 's9', c: 's', q: 'Сколько хромосом в обычной клетке человека?', a: ['46', '23', '48', '44'],
+      t: '46 хромосом', s: '23 пары',
+      i: 'Одну хромосому из каждой пары мы получаем от матери, другую — от отца. В половых клетках хромосом вдвое меньше, 23. У шимпанзе хромосом 48.' },
+    { id: 's10', c: 's', q: 'Какой орган человека самый большой?', a: ['Кожа', 'Печень', 'Лёгкие', 'Мозг'],
+      t: 'Кожа', s: 'около 2 м² у взрослого',
+      i: 'Кожа защищает тело от микробов, помогает держать температуру и даёт осязание. Из внутренних органов самый крупный — печень.' },
+    { id: 's11', c: 's', q: 'Кто в 1953 году описал структуру ДНК — двойную спираль?', a: ['Уотсон и Крик', 'Грегор Мендель', 'Чарльз Дарвин', 'Луи Пастер'],
+      t: 'Джеймс Уотсон и Фрэнсис Крик', s: '1953 год',
+      i: 'Учёные опирались на рентгеновские снимки Розалинд Франклин. В 1962 году Уотсон, Крик и Морис Уилкинс получили за открытие Нобелевскую премию. Мендель, Дарвин и Пастер жили раньше, в XIX веке.' },
+    { id: 's12', c: 's', q: 'В чём измеряют силу электрического тока?', a: ['В амперах', 'В вольтах', 'В омах', 'В ваттах'],
+      t: 'Ампер', s: 'в честь Андре-Мари Ампера',
+      i: 'Все эти единицы названы в честь учёных: вольт измеряет напряжение (Алессандро Вольта), ом — сопротивление (Георг Ом), ватт — мощность (Джеймс Уатт).' },
+
+    // ---------- Искусство ----------
+    { id: 'a1', c: 'a', q: 'Кто написал «Мону Лизу»?', a: ['Леонардо да Винчи', 'Рафаэль', 'Микеланджело', 'Тициан'],
+      t: 'Леонардо да Винчи', s: '1452–1519',
+      i: 'Леонардо работал над портретом много лет, начав около 1503 года. Сегодня картина хранится в Лувре. Кроме живописи он занимался анатомией, инженерией и придумывал летательные машины.' },
+    { id: 'a2', c: 'a', q: 'Кто автор картины «Чёрный квадрат»?', a: ['Казимир Малевич', 'Василий Кандинский', 'Марк Шагал', 'Илья Репин'],
+      t: 'Казимир Малевич', s: '1879–1935, художник',
+      i: 'Малевич показал «Чёрный квадрат» в 1915 году как символ нового направления — супрематизма. Он считал, что искусство может обходиться без изображения предметов. Позже художник написал ещё несколько версий квадрата.' },
+    { id: 'a3', c: 'a', q: 'Кто написал роман «Преступление и наказание»?', a: ['Фёдор Достоевский', 'Лев Толстой', 'Николай Гоголь', 'Михаил Булгаков'],
+      t: 'Фёдор Достоевский', s: '1821–1881, писатель',
+      i: 'Роман вышел в 1866 году. В молодости Достоевского приговорили к смертной казни, которую в последний момент заменили каторгой. Его романы «Идиот» и «Братья Карамазовы» читают по всему миру.' },
+    { id: 'a4', c: 'a', q: 'Кто написал роман «Мастер и Маргарита»?', a: ['Михаил Булгаков', 'Борис Пастернак', 'Владимир Набоков', 'Андрей Платонов'],
+      t: 'Михаил Булгаков', s: '1891–1940, писатель',
+      i: 'Булгаков работал над романом больше десяти лет, до самой смерти. Напечатали его только в 1966–1967 годах, и то с сокращениями. До литературы Булгаков работал врачом.' },
+    { id: 'a5', c: 'a', q: 'Какой композитор продолжал сочинять, почти полностью потеряв слух?', a: ['Людвиг ван Бетховен', 'Вольфганг Моцарт', 'Иоганн Себастьян Бах', 'Антонио Вивальди'],
+      t: 'Людвиг ван Бетховен', s: '1770–1827, композитор',
+      i: 'Бетховен начал терять слух ещё молодым, около 30 лет. Девятую симфонию с «Одой к радости» он написал, будучи почти глухим. Сегодня эта мелодия — гимн Европейского союза.' },
+    { id: 'a6', c: 'a', q: 'Кто написал картину «Звёздная ночь»?', a: ['Винсент ван Гог', 'Клод Моне', 'Поль Гоген', 'Поль Сезанн'],
+      t: 'Винсент ван Гог', s: '1853–1890, художник',
+      i: '«Звёздную ночь» ван Гог написал в 1889 году, глядя из окна лечебницы во Франции. При жизни его картины почти не покупали, а мировая слава пришла уже после смерти.' },
+    { id: 'a7', c: 'a', q: 'Кто автор «Ревизора» и «Мёртвых душ»?', a: ['Николай Гоголь', 'Александр Островский', 'Михаил Салтыков-Щедрин', 'Антон Чехов'],
+      t: 'Николай Гоголь', s: '1809–1852, писатель',
+      i: 'Гоголь родился в Полтавской губернии и прославился «Вечерами на хуторе близ Диканьки». Второй том «Мёртвых душ» он сжёг незадолго до смерти, до нас дошли лишь черновые главы.' },
+    { id: 'a8', c: 'a', q: 'Кто автор картины «Утро в сосновом лесу» с медведями?', a: ['Иван Шишкин', 'Исаак Левитан', 'Иван Айвазовский', 'Виктор Васнецов'],
+      t: 'Иван Шишкин', s: '1832–1898, художник',
+      i: 'Медведей на этой картине написал другой художник, Константин Савицкий. Но коллекционер Павел Третьяков, купивший полотно, стёр его подпись, и автором считается только Шишкин.' },
+    { id: 'a9', c: 'a', q: 'Кто написал трагедию «Гамлет»?', a: ['Уильям Шекспир', 'Иоганн Гёте', 'Данте Алигьери', 'Жан-Батист Мольер'],
+      t: 'Уильям Шекспир', s: '1564–1616, драматург',
+      i: '«Гамлет» написан около 1600 года, и фраза «Быть или не быть» оттуда. Шекспир написал больше 35 пьес и более 150 сонетов. Он родился в городе Стратфорд-на-Эйвоне.' },
+    { id: 'a10', c: 'a', q: 'Кто написал «Маленького принца»?', a: ['Антуан де Сент-Экзюпери', 'Жюль Верн', 'Виктор Гюго', 'Альбер Камю'],
+      t: 'Антуан де Сент-Экзюпери', s: '1900–1944, писатель и лётчик',
+      i: 'Сказка вышла в 1943 году, иллюстрации к ней нарисовал сам автор. Сент-Экзюпери был лётчиком и в 1944 году не вернулся из разведывательного полёта над Средиземным морем.' },
+    { id: 'a11', c: 'a', q: 'Кто написал картину «Девятый вал»?', a: ['Иван Айвазовский', 'Иван Шишкин', 'Илья Репин', 'Василий Суриков'],
+      t: 'Иван Айвазовский', s: '1817–1900, художник-маринист',
+      i: '«Девятый вал» написан в 1850 году и хранится в Русском музее. Айвазовский писал море по памяти, без натуры, и создал около 6000 картин. Большую часть жизни он прожил в Феодосии.' },
+    { id: 'a12', c: 'a', q: 'Кто написал оперу «Волшебная флейта»?', a: ['Вольфганг Амадей Моцарт', 'Джузеппе Верди', 'Рихард Вагнер', 'Джоаккино Россини'],
+      t: 'Вольфганг Амадей Моцарт', s: '1756–1791, композитор',
+      i: '«Волшебная флейта» — одна из последних работ Моцарта, премьера прошла в 1791 году, незадолго до его смерти. Сочинять он начал в пять лет, а за короткую жизнь создал более 600 произведений.' },
+
+    // ---------- География ----------
+    { id: 'g1', c: 'g', q: 'Какое озеро самое глубокое в мире?', a: ['Байкал', 'Танганьика', 'Каспийское море', 'Верхнее'],
+      t: 'Байкал', s: 'глубина около 1642 м',
+      i: 'В Байкале примерно пятая часть всей пресной воды в озёрах и реках планеты. Озеру около 25 миллионов лет, в нём живут виды, которых больше нигде нет, например байкальская нерпа.' },
+    { id: 'g2', c: 'g', q: 'Какая гора самая высокая в мире?', a: ['Эверест', 'К2', 'Эльбрус', 'Килиманджаро'],
+      t: 'Эверест', s: 'около 8849 м',
+      i: 'Эверест стоит на границе Непала и Китая. Впервые на вершину поднялись в 1953 году новозеландец Эдмунд Хиллари и шерп Тенцинг Норгей. Эльбрус — высшая точка Европы и России.' },
+    { id: 'g3', c: 'g', q: 'Какой город — столица Австралии?', a: ['Канберра', 'Сидней', 'Мельбурн', 'Перт'],
+      t: 'Канберра', s: 'столица Австралии',
+      i: 'Сидней и Мельбурн долго спорили, кто будет столицей. В итоге решили построить новый город между ними. Канберру начали строить в 1913 году, а парламент переехал туда в 1927-м.' },
+    { id: 'g4', c: 'g', q: 'Какой океан самый большой?', a: ['Тихий', 'Атлантический', 'Индийский', 'Северный Ледовитый'],
+      t: 'Тихий океан', s: 'крупнейший на планете',
+      i: 'Тихий океан больше всей суши Земли вместе взятой. В нём находится Марианская впадина глубиной почти 11 километров. Название дал Магеллан: во время его плавания океан был спокоен.' },
+    { id: 'g5', c: 'g', q: 'Какая страна самая большая по площади?', a: ['Россия', 'Канада', 'Китай', 'США'],
+      t: 'Россия', s: 'около 17,1 млн км²',
+      i: 'Россия занимает больше десятой части всей суши планеты и раскинулась на 11 часовых поясов. На втором месте по площади Канада.' },
+    { id: 'g6', c: 'g', q: 'Какая жаркая пустыня самая большая?', a: ['Сахара', 'Гоби', 'Калахари', 'Атакама'],
+      t: 'Сахара', s: 'около 9 млн км²',
+      i: 'Сахара занимает большую часть севера Африки и по площади почти сравнима с США. Если считать и холодные пустыни, самая большая — Антарктида: осадков там выпадает очень мало.' },
+    { id: 'g7', c: 'g', q: 'Какой водопад самый высокий в мире?', a: ['Анхель', 'Виктория', 'Ниагарский', 'Игуасу'],
+      t: 'Анхель', s: 'Венесуэла, около 979 м',
+      i: 'Вода Анхеля падает с плоской горы почти на километр. Водопад назван в честь американского лётчика Джимми Энджела, который пролетал над ним в 1930-х. Ниагарский и Виктория гораздо ниже, но шире.' },
+    { id: 'g8', c: 'g', q: 'Сколько материков на Земле по российской традиции?', a: ['6', '5', '7', '4'],
+      t: 'Шесть материков', s: 'по российской традиции',
+      i: 'Это Евразия, Африка, Северная Америка, Южная Америка, Австралия и Антарктида. Во многих других странах считают семь, разделяя Евразию на Европу и Азию.' },
+    { id: 'g9', c: 'g', q: 'Какое из этих морей самое солёное?', a: ['Мёртвое', 'Чёрное', 'Балтийское', 'Средиземное'],
+      t: 'Мёртвое море', s: 'на самом деле солёное озеро',
+      i: 'Вода в Мёртвом море почти в 10 раз солонее океанской, поэтому в ней можно лежать, не утопая. Его берега — самое низкое место на суше, больше 400 метров ниже уровня моря.' },
+    { id: 'g10', c: 'g', q: 'Какой город — столица Канады?', a: ['Оттава', 'Торонто', 'Монреаль', 'Ванкувер'],
+      t: 'Оттава', s: 'столица Канады',
+      i: 'Оттаву выбрала королева Виктория в 1857 году. Город стоит между англоязычной и франкоязычной частями страны, и это был компромисс между ними. Торонто крупнее, но столицей не является.' },
+    { id: 'g11', c: 'g', q: 'Какой пролив разделяет Азию и Северную Америку?', a: ['Берингов', 'Гибралтарский', 'Ла-Манш', 'Босфор'],
+      t: 'Берингов пролив', s: 'ширина около 86 км',
+      i: 'Пролив назван в честь мореплавателя Витуса Беринга, датчанина на русской службе. Посреди пролива лежат острова Диомида: между ними всего несколько километров и проходит линия перемены дат.' },
+    { id: 'g12', c: 'g', q: 'Какое озеро самое большое по площади?', a: ['Каспийское море', 'Байкал', 'Верхнее', 'Виктория'],
+      t: 'Каспийское море', s: 'около 371 тыс. км²',
+      i: 'Каспий называют морем из-за размера и солоноватой воды, но по сути это озеро: оно не соединено с океаном. Байкал — самое глубокое озеро, а Верхнее — крупнейшее пресное по площади.' }
+  ];
+
+  const QZ_LEN = 10;
+  const QZ_TAG = { p: 'Люди', h: 'История', s: 'Наука', a: 'Искусство', g: 'География' };
+  const QZ_RIGHT = ['Верно!', 'Точно!', 'Отлично!', 'Так держать!', 'В яблочко!'];
+  const QZ_ICON_OK = '<svg class="qz-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const QZ_ICON_NO = '<svg class="qz-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+  const QZ_BOOK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>';
+  const QZ_CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+  const qz = { cat: 'all', round: [], i: 0, score: 0, res: [], opts: [], locked: false, playing: false, tok: 0,
+    stats: { r: 0, b: 0, c: 0, a: 0, s: [] } };
+  const qzEsc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+  const qzHap = (t) => { try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(t); } catch (e) {} };
+  const qzShuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  const qzAnim = (el, cls) => { el.classList.remove('in', 'out', cls); void el.offsetWidth; el.classList.add(cls); };
+  const qzLater = (ms, fn) => { const t = qz.tok; setTimeout(() => { if (t === qz.tok) fn(); }, ms); };
+  function qzPane(name) { for (const id of ['qzHome', 'qzPlay', 'qzEnd']) $id(id).hidden = id !== name; }
+  function qzPick(cat) { // сначала вопросы, которых ещё не было в последних раундах
+    const pool = QZ.filter(q => cat === 'all' || q.c === cat);
+    const seen = new Set(qz.stats.s);
+    return qzShuffle(pool.filter(q => !seen.has(q.id))).concat(qzShuffle(pool.filter(q => seen.has(q.id)))).slice(0, QZ_LEN);
+  }
+
+  function qzHome() {
+    qzPane('qzHome');
+    $id('qzCats').innerHTML = QZ_CATS.map(c => `<button type="button" class="chip" role="radio" aria-checked="${qz.cat === c.id}" data-cat="${c.id}">${c.name}</button>`).join('');
+    const n = qz.cat === 'all' ? QZ.length : QZ.filter(q => q.c === qz.cat).length;
+    $id('qzCatInfo').textContent = `В раунде ${QZ_LEN} вопросов, всего в теме — ${n}. Вопросы, которых вы ещё не видели, попадаются первыми.`;
+    const st = qz.stats;
+    $id('qzR').textContent = st.r;
+    $id('qzB').textContent = st.r ? `${st.b}/${QZ_LEN}` : '0';
+    $id('qzP').textContent = st.a ? Math.round(st.c / st.a * 100) + '%' : '—';
+  }
+  function qzOpen() { if (qz.playing) qzPane('qzPlay'); else qzHome(); }
+
+  const QZ_EASE = 'cubic-bezier(.22, 1, .36, 1)';
+  const qzReduce = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+  function qzMove(el, frames, opt) { // плавная анимация; если анимации отключены или не поддерживаются — сразу конечное состояние
+    if (!el.animate || qzReduce()) return Promise.resolve();
+    return el.animate(frames, Object.assign({ easing: QZ_EASE }, opt)).finished.catch(() => {});
+  }
+  const qzStop = (el) => { if (el.getAnimations) el.getAnimations().forEach(x => x.cancel()); };
+  function qzStart() {
+    qz.tok++; qz.moving = false;
+    qz.round = qzPick(qz.cat); qz.i = 0; qz.score = 0; qz.res = []; qz.playing = true;
+    $id('qzScoreN').textContent = '0';
+    $id('qzSteps').innerHTML = qz.round.map(() => '<i></i>').join('');
+    qzPane('qzPlay'); window.scrollTo(0, 0);
+    const stage = $id('qzStage'); qzStop(stage);
+    qzShow();
+    qzMove(stage, [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 560 });
+  }
+  function qzShow() {
+    const q = qz.round[qz.i];
+    qz.locked = false;
+    qz.opts = qzShuffle(q.a);
+    $id('qzNum').textContent = `Вопрос ${qz.i + 1} из ${qz.round.length}`;
+    [...$id('qzSteps').children].forEach((el, k) => el.classList.toggle('cur', k === qz.i));
+    $id('qzCard').innerHTML = `<span class="qz-tag t-${q.c}">${QZ_TAG[q.c]}</span><div class="qz-q">${qzEsc(q.q)}</div>`;
+    $id('qzOpts').innerHTML = qz.opts.map((o, k) =>
+      `<button type="button" class="qz-opt in" style="animation-delay:${110 + k * 60}ms" data-i="${k}"><span class="qz-l">${'АБВГ'[k]}</span><span class="qz-t">${qzEsc(o)}</span></button>`).join('');
+    const after = $id('qzAfter'); qzStop(after); after.hidden = true; after.classList.remove('show'); after.style.overflow = '';
+    const v = $id('qzVerdict'); v.textContent = ''; v.className = 'qz-verdict';
+    const info = $id('qzInfo'); info.hidden = true; info.innerHTML = '';
+  }
+  function qzBurst(el, n, spread) {
+    const b = document.createElement('span'); b.className = 'qz-burst';
+    const cols = ['#8b7bff', '#4d8dff', '#3de0b5', '#ffb054', '#ff6f91', '#ffd84d'];
+    for (let k = 0; k < n; k++) {
+      const i = document.createElement('i');
+      const ang = Math.random() * Math.PI * 2, dist = spread * (0.45 + Math.random() * 0.55);
+      i.style.setProperty('--x', Math.round(Math.cos(ang) * dist) + 'px');
+      i.style.setProperty('--y', Math.round(Math.sin(ang) * dist * 0.75 - 10) + 'px');
+      i.style.setProperty('--r', Math.round(Math.random() * 540 - 270) + 'deg');
+      i.style.setProperty('--c', cols[k % cols.length]);
+      i.style.setProperty('--d', (Math.random() * 0.12).toFixed(2) + 's');
+      if (k % 3 === 0) i.className = 'round';
+      b.appendChild(i);
+    }
+    el.appendChild(b);
+    setTimeout(() => b.remove(), 1300);
+  }
+  // после ответа: итог, справка и кнопка плавно раскрываются по высоте, без скачков страницы
+  function qzOpenAfter(wrong, q) {
+    const after = $id('qzAfter'), v = $id('qzVerdict'), info = $id('qzInfo'), nb = $id('qzNext');
+    v.className = 'qz-verdict ' + (wrong ? 'bad' : 'ok');
+    v.textContent = wrong ? 'Не совсем. Вот что стоит знать:' : QZ_RIGHT[Math.floor(Math.random() * QZ_RIGHT.length)];
+    if (wrong) {
+      info.innerHTML = `<div class="qz-info-h"><span class="qz-info-ic">${QZ_BOOK}</span><div><b class="qz-it">${qzEsc(q.t)}</b><span class="qz-is">${qzEsc(q.s)}</span></div></div><p class="qz-ip">${qzEsc(q.i)}</p>`;
+      info.hidden = false;
+    } else { info.hidden = true; info.innerHTML = ''; }
+    nb.textContent = qz.i + 1 >= qz.round.length ? 'Посмотреть результат' : 'Следующий вопрос';
+    after.hidden = false;
+    after.classList.remove('show'); void after.offsetWidth; after.classList.add('show');
+    const h = after.offsetHeight;
+    after.style.overflow = 'hidden';
+    const tok = qz.tok;
+    qzMove(after, [{ height: '0px' }, { height: h + 'px' }], { duration: wrong ? 650 : 480 }).then(() => {
+      after.style.overflow = '';
+      if (tok !== qz.tok || !qz.playing) return;
+      const r = nb.getBoundingClientRect(), bar = document.querySelector('.tabs').getBoundingClientRect();
+      if (r.bottom > bar.top - 12) window.scrollBy({ top: r.bottom - bar.top + 24, behavior: 'smooth' });
+    });
+  }
+  function qzAnswer(btn) {
+    if (qz.locked || !qz.playing) return;
+    qz.locked = true;
+    const q = qz.round[qz.i], k = +btn.dataset.i, right = qz.opts[k] === q.a[0];
+    const all = [...$id('qzOpts').querySelectorAll('.qz-opt')];
+    const ci = qz.opts.indexOf(q.a[0]);
+    all.forEach(b => { b.classList.remove('in'); b.style.animationDelay = ''; b.setAttribute('aria-disabled', 'true'); });
+    qz.res.push({ q, pick: qz.opts[k], ok: right });
+    const seg = $id('qzSteps').children[qz.i];
+    seg.classList.remove('cur'); seg.classList.add(right ? 'ok' : 'bad');
+    if (right) {
+      qz.score++;
+      btn.classList.add('ok', 'pick'); btn.insertAdjacentHTML('beforeend', QZ_ICON_OK);
+      all.forEach(b => { if (b !== btn) b.classList.add('dim'); });
+      const sc = $id('qzScore');
+      $id('qzScoreN').textContent = qz.score;
+      qzAnim(sc, 'bump');
+      const plus = document.createElement('span'); plus.className = 'qz-plus'; plus.textContent = '+1';
+      sc.appendChild(plus); setTimeout(() => plus.remove(), 1000);
+      qzBurst(btn, 16, 110);
+      qzHap('success');
+      qzLater(280, () => qzOpenAfter(false, q));
+    } else {
+      btn.classList.add('bad'); btn.insertAdjacentHTML('beforeend', QZ_ICON_NO);
+      qzHap('error');
+      qzLater(340, () => {
+        all[ci].classList.add('ok', 'reveal'); all[ci].insertAdjacentHTML('beforeend', QZ_ICON_OK);
+        all.forEach((b, j) => { if (j !== ci && b !== btn) b.classList.add('dim'); });
+      });
+      qzLater(560, () => qzOpenAfter(true, q));
+    }
+  }
+  function qzNextQ() {
+    if (!qz.locked || !qz.playing || qz.moving) return;
+    qz.moving = true; buzz();
+    const stage = $id('qzStage'), tok = qz.tok, last = qz.i + 1 >= qz.round.length;
+    qzMove(stage, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: last ? 'translateY(-10px)' : 'translateX(-24px)' }],
+      { duration: 280, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' }).then(() => {
+      if (tok !== qz.tok) return;
+      qz.moving = false;
+      if (last) { qzStop(stage); qzFinish(); return; }
+      qz.i++; window.scrollTo(0, 0); qzShow();
+      qzStop(stage);
+      qzMove(stage, [{ opacity: 0, transform: 'translateX(24px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
+    });
+  }
+  // плавное раскрытие пунктов разбора ошибок
+  $id('qzReview').addEventListener('click', (e) => {
+    const sm = e.target.closest('.qz-rv summary'); if (!sm) return;
+    const d = sm.parentElement;
+    if (!d.animate || qzReduce()) return;
+    e.preventDefault();
+    qzStop(d);
+    const from = d.offsetHeight;
+    d.style.overflow = 'hidden';
+    if (d.open) {
+      const to = sm.offsetHeight + parseFloat(getComputedStyle(d).paddingTop) + parseFloat(getComputedStyle(d).paddingBottom) + 2;
+      d.querySelectorAll('.ans, .more').forEach(x => x.style.opacity = '0');
+      d.animate([{ height: from + 'px' }, { height: to + 'px' }], { duration: 380, easing: QZ_EASE }).finished.then(() => {
+        d.open = false; d.style.overflow = ''; d.querySelectorAll('.ans, .more').forEach(x => x.style.opacity = '');
+      }).catch(() => {});
+    } else {
+      d.open = true;
+      const to = d.offsetHeight;
+      d.animate([{ height: from + 'px' }, { height: to + 'px' }], { duration: 480, easing: QZ_EASE }).finished.then(() => { d.style.overflow = ''; }).catch(() => {});
+    }
+  });
+  function qzFinish() {
+    qz.tok++; qz.playing = false;
+    const st = qz.stats, len = qz.round.length;
+    st.r++; st.b = Math.max(st.b, qz.score); st.c += qz.score; st.a += len;
+    const ids = qz.round.map(q => q.id);
+    st.s = st.s.filter(id => !ids.includes(id)).concat(ids).slice(-40);
+    kvSet('qz', JSON.stringify(st));
+    renderGrowBadges();
+    qzPane('qzEnd'); window.scrollTo(0, 0);
+    const sc = qz.score, f = sc / len;
+    const [title, sub] = sc === len ? ['Идеально!', 'Ни одной ошибки. Вы настоящий эрудит.']
+      : f >= 0.8 ? ['Отлично!', 'Почти без ошибок. Загляните в разбор ниже.']
+      : f >= 0.6 ? ['Хороший результат', 'Ещё немного, и будет отлично.']
+      : f >= 0.4 ? ['Неплохо', 'Разбор ошибок ниже поможет запомнить ответы.']
+      : ['Начало положено', 'Каждая ошибка — повод узнать новое. Разбор ниже.'];
+    $id('qzEndT').textContent = title; $id('qzEndS').textContent = sub;
+    $id('qzEndOf').textContent = 'из ' + len;
+    qzAnim(document.querySelector('.qz-end'), 'in');
+    // кольцо результата и счётчик
+    const fg = $id('qzRingFg'), C = 2 * Math.PI * 78;
+    fg.style.transition = 'none'; fg.style.strokeDasharray = C; fg.style.strokeDashoffset = C;
+    void fg.getBoundingClientRect();
+    requestAnimationFrame(() => { fg.style.transition = ''; fg.style.strokeDashoffset = C * (1 - f); });
+    const nEl = $id('qzEndN'), t0 = performance.now(), dur = 1300, tok = qz.tok;
+    nEl.textContent = '0';
+    const step = (now) => {
+      if (tok !== qz.tok) return;
+      const x = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - x, 3);
+      nEl.textContent = Math.round(sc * e);
+      if (x < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    const ring = $id('qzRing'); ring.classList.remove('pop');
+    if (f >= 0.7) { void ring.offsetWidth; ring.classList.add('pop'); qzLater(1250, () => { qzBurst(ring, 34, 170); qzHap('success'); }); }
+    // разбор ошибок
+    const wrong = qz.res.filter(r => !r.ok);
+    const box = $id('qzReview');
+    if (!wrong.length) { box.innerHTML = '<div class="lbl-row"><span>Разбор</span></div><div class="qz-allok">Все ответы верные. Попробуйте другую тему!</div>'; return; }
+    box.innerHTML = `<div class="lbl-row"><span>Разбор ошибок</span><span>${wrong.length} из ${len}</span></div>` + wrong.map((r, k) => `
+      <details class="qz-rv" style="animation-delay:${600 + k * 90}ms">
+        <summary><span class="n">${k + 1}</span><span class="q">${qzEsc(r.q.q)}</span>${QZ_CHEV}</summary>
+        <div class="ans"><span class="no">Ваш ответ: ${qzEsc(r.pick)}</span><span class="yes">Правильно: ${qzEsc(r.q.a[0])}</span></div>
+        <p class="more">${qzEsc(r.q.i)}</p>
+      </details>`).join('');
+  }
+
+  $id('qzCats').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cat]'); if (!b) return;
+    qz.cat = b.dataset.cat; qzHome(); buzz();
+  });
+  $id('qzStart').addEventListener('click', () => { qzStart(); buzz(); });
+  $id('qzOpts').addEventListener('click', (e) => { const b = e.target.closest('.qz-opt'); if (b) qzAnswer(b); });
+  $id('qzNext').addEventListener('click', qzNextQ);
+  $id('qzAgain').addEventListener('click', () => { qzStart(); buzz(); });
+  $id('qzMenu').addEventListener('click', () => { qzHome(); window.scrollTo(0, 0); buzz(); });
+
   // ----- Каталог и переходы -----
   const PZ_KEY = 'pz';
-  const GROW_VIEWS = { chess: 'growChess', puzzles: 'growPuzzles', wordle: 'growWordle', breath: 'growBreath', gratitude: 'growGratitude' };
+  const GROW_VIEWS = { chess: 'growChess', puzzles: 'growPuzzles', wordle: 'growWordle', breath: 'growBreath', gratitude: 'growGratitude', quiz: 'growQuiz' };
   function renderGrowBadges() {
     const n = pz.solved[1].length + pz.solved[2].length, tot = PUZZLES[1].length + PUZZLES[2].length;
     $id('pzBadge').textContent = n ? `Решено: ${n} из ${tot}` : 'Решите первую задачу';
@@ -3200,6 +3833,8 @@
     $id('brBadge').textContent = b.n ? `Сеансов: ${b.n}${b.t ? ' · сегодня ' + b.t : ''}` : 'Попробуйте первый сеанс';
     const c = gr.idx[today()] || 0;
     $id('grBadge').textContent = c ? `Сегодня записано: ${c} из 3` : (Object.keys(gr.idx).length ? 'Запишите сегодняшние моменты' : 'Начните с одной записи');
+    const q = qz.stats;
+    $id('qzBadge').textContent = qz.playing ? `Раунд идёт: вопрос ${qz.i + 1} из ${qz.round.length}` : q.r ? `Лучший результат: ${q.b} из ${QZ_LEN} · раундов: ${q.r}` : 'Проверьте свою эрудицию';
   }
   function openGrow(view) {
     stopBreath();
@@ -3209,21 +3844,22 @@
     else if (view === 'wordle') wOpen();
     else if (view === 'breath') brRender();
     else if (view === 'gratitude') grOpen();
+    else if (view === 'quiz') qzOpen();
     renderGrow(); window.scrollTo(0, 0); buzz();
   }
   function closeGrow() {
     stopBreath(); pz.tok++;
     wSettle();
     growView = 'home'; setupOpen = false;
-    renderGrow(); window.scrollTo(0, 0);
+    renderGrow(); renderGrowBadges(); window.scrollTo(0, 0);
   }
-  for (const [id, view] of [['openChess', 'chess'], ['openPuzzles', 'puzzles'], ['openWordle', 'wordle'], ['openBreath', 'breath'], ['openGratitude', 'gratitude']]) {
+  for (const [id, view] of [['openChess', 'chess'], ['openPuzzles', 'puzzles'], ['openWordle', 'wordle'], ['openBreath', 'breath'], ['openGratitude', 'gratitude'], ['openQuiz', 'quiz']]) {
     $id(id).addEventListener('click', () => openGrow(view));
   }
   document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', closeGrow));
 
   async function loadExtras() {
-    const d = await kvGetMany(['pz', 'ws', 'wd', 'br', 'gi']);
+    const d = await kvGetMany(['pz', 'ws', 'wd', 'br', 'gi', 'qz']);
     const p = parseJSON(d.pz, null);
     if (p) for (const k of [1, 2]) if (Array.isArray(p[k])) pz.solved[k] = p[k].filter(i => Number.isInteger(i) && i >= 0 && i < PUZZLES[k].length);
     const s = parseJSON(d.ws, null);
@@ -3234,15 +3870,17 @@
     if (b) br.stats = { n: b.n | 0, s: b.s | 0, d: b.d | 0, t: b.t | 0 };
     const g = parseJSON(d.gi, null);
     if (g && typeof g === 'object') for (const k of Object.keys(g)) if (Number.isInteger(+k) && g[k] > 0) gr.idx[k] = g[k] | 0;
+    const qs = parseJSON(d.qz, null);
+    if (qs) qz.stats = { r: qs.r | 0, b: Math.min(QZ_LEN, qs.b | 0), c: qs.c | 0, a: qs.a | 0, s: Array.isArray(qs.s) ? qs.s.filter(x => typeof x === 'string').slice(-40) : [] };
     renderGrowBadges();
   }
 
 
   // ----- Резервная копия: перенос данных в другой бот или на другое устройство -----
-  const BK_KEYS = /^(chess|cstat|pz|ws|wd|br|gi|g\d{1,6})$/;
+  const BK_KEYS = /^(chess|cstat|pz|ws|wd|br|gi|qz|g\d{1,6})$/;
   function bkMsg(t, cls) { const el = $id('bkMsg'); el.textContent = t || ''; el.classList.toggle('bad', cls === 'bad'); el.classList.toggle('ok', cls === 'ok'); }
   async function bkBuild() {
-    const keys = ['chess', 'cstat', 'pz', 'ws', 'wd', 'br', 'gi'].concat(Object.keys(gr.idx).map(d => 'g' + d));
+    const keys = ['chess', 'cstat', 'pz', 'ws', 'wd', 'br', 'gi', 'qz'].concat(Object.keys(gr.idx).map(d => 'g' + d));
     const kv = await kvGetMany(keys);
     return JSON.stringify({ app: 'habits', v: 1, habits: habits.map(h => [h.id, pack(h)]), meta, kv });
   }
