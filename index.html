@@ -733,6 +733,17 @@
   .qz-after.show > * { animation: qzRise .6s cubic-bezier(.22, 1, .36, 1) both; }
   .qz-after.show > :nth-child(2) { animation-delay: .07s; }
   .qz-after.show > :nth-child(3) { animation-delay: .14s; }
+  .qz-after.show > :nth-child(4) { animation-delay: .2s; }
+  .qz-memo { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 8px 14px 8px 8px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 600; text-align: left; transition: background-color .3s ease, border-color .3s ease, transform .2s ease; }
+  .qz-memo:active { transform: scale(.98); }
+  .qz-memo[aria-expanded="true"] { border-color: var(--violet); background: var(--surface-strong); }
+  .qz-memo .ic { flex: none; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--grad); }
+  .qz-memo .ic svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .qz-memo .tx { flex: 1; }
+  .qz-memo .chev { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+  .qz-memo[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .qz-info.pop .qz-info-h { animation: qzText .5s .08s cubic-bezier(.22, 1, .36, 1) both; }
+  .qz-info.pop .qz-ip { animation: qzText .55s .16s cubic-bezier(.22, 1, .36, 1) both; }
   @keyframes qzRise { from { opacity: 0; transform: translateY(10px); } }
   .qz-verdict { min-height: 24px; margin: 14px 4px 0; font-size: 16px; font-weight: 700; }
   .qz-verdict.ok { color: #2fbf8e; }
@@ -1138,6 +1149,11 @@
           <div class="qz-opts" id="qzOpts"></div>
           <div class="qz-after" id="qzAfter" hidden>
             <div class="qz-verdict" id="qzVerdict" role="status" aria-live="polite"></div>
+            <button class="qz-memo" id="qzMemo" type="button" aria-expanded="false" aria-controls="qzInfo" hidden>
+              <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg></span>
+              <span class="tx">Памятка</span>
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
             <div class="qz-info" id="qzInfo" hidden></div>
             <button class="btn primary wide qz-next" id="qzNext" type="button">Дальше</button>
           </div>
@@ -3656,7 +3672,8 @@
       `<button type="button" class="qz-opt in" style="animation-delay:${110 + k * 60}ms" data-i="${k}"><span class="qz-l">${'АБВГ'[k]}</span><span class="qz-t">${qzEsc(o)}</span></button>`).join('');
     const after = $id('qzAfter'); qzStop(after); after.hidden = true; after.classList.remove('show'); after.style.overflow = '';
     const v = $id('qzVerdict'); v.textContent = ''; v.className = 'qz-verdict';
-    const info = $id('qzInfo'); info.hidden = true; info.innerHTML = '';
+    const info = $id('qzInfo'); qzStop(info); info.hidden = true; info.innerHTML = ''; info.classList.remove('pop'); info.style.overflow = '';
+    $id('qzMemo').hidden = true;
   }
   function qzBurst(el, n, spread) {
     const b = document.createElement('span'); b.className = 'qz-burst';
@@ -3680,10 +3697,12 @@
     const after = $id('qzAfter'), v = $id('qzVerdict'), info = $id('qzInfo'), nb = $id('qzNext');
     v.className = 'qz-verdict ' + (wrong ? 'bad' : 'ok');
     v.textContent = wrong ? 'Не совсем. Вот что стоит знать:' : QZ_RIGHT[Math.floor(Math.random() * QZ_RIGHT.length)];
-    if (wrong) {
-      info.innerHTML = `<div class="qz-info-h"><span class="qz-info-ic">${QZ_BOOK}</span><div><b class="qz-it">${qzEsc(q.t)}</b><span class="qz-is">${qzEsc(q.s)}</span></div></div><p class="qz-ip">${qzEsc(q.i)}</p>`;
-      info.hidden = false;
-    } else { info.hidden = true; info.innerHTML = ''; }
+    // справка готова всегда: при ошибке открыта сразу, при верном ответе — по кнопке «Памятка»
+    info.innerHTML = `<div class="qz-info-h"><span class="qz-info-ic">${QZ_BOOK}</span><div><b class="qz-it">${qzEsc(q.t)}</b><span class="qz-is">${qzEsc(q.s)}</span></div></div><p class="qz-ip">${qzEsc(q.i)}</p>`;
+    info.classList.remove('pop'); qzStop(info); info.style.overflow = '';
+    info.hidden = !wrong;
+    const memo = $id('qzMemo');
+    memo.hidden = wrong; memo.setAttribute('aria-expanded', 'false'); memo.querySelector('.tx').textContent = 'Памятка';
     nb.textContent = qz.i + 1 >= qz.round.length ? 'Посмотреть результат' : 'Следующий вопрос';
     after.hidden = false;
     after.classList.remove('show'); void after.offsetWidth; after.classList.add('show');
@@ -3693,10 +3712,36 @@
     qzMove(after, [{ height: '0px' }, { height: h + 'px' }], { duration: wrong ? 650 : 480 }).then(() => {
       after.style.overflow = '';
       if (tok !== qz.tok || !qz.playing) return;
-      const r = nb.getBoundingClientRect(), bar = document.querySelector('.tabs').getBoundingClientRect();
-      if (r.bottom > bar.top - 12) window.scrollBy({ top: r.bottom - bar.top + 24, behavior: 'smooth' });
+      qzEnsureVisible(nb);
     });
   }
+  function qzEnsureVisible(el) { // мягко докрутить, чтобы элемент не прятался под нижней панелью
+    const r = el.getBoundingClientRect(), bar = document.querySelector('.tabs').getBoundingClientRect();
+    if (r.bottom > bar.top - 12) window.scrollBy({ top: r.bottom - bar.top + 24, behavior: 'smooth' });
+  }
+  function qzToggleMemo() {
+    const info = $id('qzInfo'), memo = $id('qzMemo');
+    if (!info.innerHTML) return;
+    const opening = memo.getAttribute('aria-expanded') !== 'true'; // состояние берём с кнопки: так быстрые нажатия не путают анимацию
+    memo.setAttribute('aria-expanded', String(opening));
+    memo.querySelector('.tx').textContent = opening ? 'Скрыть памятку' : 'Памятка';
+    const cur = info.hidden ? 0 : info.getBoundingClientRect().height; // продолжаем с текущей высоты, если анимация не закончилась
+    qzStop(info);
+    info.hidden = false;
+    if (opening && !cur) { info.classList.remove('pop'); void info.offsetWidth; info.classList.add('pop'); }
+    const full = info.offsetHeight;
+    const k = full ? cur / full : 0;
+    info.style.overflow = 'hidden';
+    if (opening) {
+      qzMove(info, [{ height: cur + 'px', marginTop: (12 * k) + 'px', opacity: k }, { height: full + 'px', marginTop: '12px', opacity: 1 }], { duration: 560 * (1 - k) + 120 })
+        .then(() => { if (memo.getAttribute('aria-expanded') === 'true') { info.style.overflow = ''; qzEnsureVisible($id('qzNext')); } });
+    } else {
+      qzMove(info, [{ height: cur + 'px', marginTop: (12 * k) + 'px', opacity: k }, { height: '0px', marginTop: '0px', opacity: 0 }], { duration: 400 * k + 80, fill: 'forwards' })
+        .then(() => { if (memo.getAttribute('aria-expanded') === 'false') { info.hidden = true; qzStop(info); info.style.overflow = ''; } });
+    }
+    buzz();
+  }
+  $id('qzMemo').addEventListener('click', qzToggleMemo);
   function qzAnswer(btn) {
     if (qz.locked || !qz.playing) return;
     qz.locked = true;
