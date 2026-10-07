@@ -273,7 +273,7 @@
     position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
     bottom: calc(12px + var(--sab));
     width: calc(100% - 28px); max-width: 420px; height: var(--tabbar-h);
-    padding: 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    padding: 8px; display: grid; grid-template-columns: repeat(var(--tab-n, 3), 1fr); gap: 6px;
     border-radius: 32px; background: var(--tabbar-bg);
     border: 1px solid var(--line);
     -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
@@ -796,6 +796,86 @@
   .qz-rv .more { margin: 10px 0 0 34px; font-size: 14.5px; line-height: 1.5; }
   .qz-rv .more { transition: opacity .35s ease; }
   .qz-allok { margin-top: 10px; padding: 18px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); text-align: center; color: var(--muted); }
+
+  /* ---------- Админ ---------- */
+  .tabs.four .tab { font-size: 12px; }
+  .tabs.four .tab svg { width: 24px; height: 24px; }
+  #admMain:not([hidden]), #admUser:not([hidden]) { animation: rise .5s cubic-bezier(.22, 1, .36, 1); }
+  #admRefresh.spin svg { animation: admSpin .8s linear infinite; }
+  @keyframes admSpin { to { transform: rotate(360deg); } }
+  .adm-seg { margin: 4px 0 14px; }
+  .adm-search { position: relative; margin-bottom: 12px; }
+  .adm-search svg { position: absolute; left: 16px; top: 50%; width: 20px; height: 20px; margin-top: -10px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+  .adm-search input { width: 100%; height: 48px; padding: 0 16px 0 46px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; font-size: 16px; outline: none; -webkit-appearance: none; appearance: none; }
+  .adm-search input:focus { border-color: var(--violet); background: var(--surface-strong); }
+  .adm-search input::placeholder { color: var(--muted); }
+
+  .adm-av { position: relative; flex: none; width: 46px; height: 46px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--grad); color: #fff; font-weight: 700; font-size: 16px; }
+  .adm-av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .adm-av.sm { width: 34px; height: 34px; font-size: 13px; }
+  .adm-av.lg { width: 84px; height: 84px; font-size: 30px; box-shadow: 0 14px 36px -14px rgba(105, 110, 255, 0.85); }
+
+  .adm-u { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: 22px; border: 1px solid var(--line); background: var(--surface); text-align: left; color: var(--text); box-shadow: var(--card-shadow); transition: transform .2s ease, background-color .3s ease; animation: qzOpt .5s cubic-bezier(.22, 1, .36, 1) both; }
+  .adm-u + .adm-u { margin-top: 8px; }
+  .adm-u:active { transform: scale(.98); }
+  .adm-u .who { flex: 1; min-width: 0; }
+  .adm-u .who b { display: block; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-u .who > span { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-u .cnt { flex: none; text-align: right; font-size: 12px; color: var(--muted); }
+  .adm-u .cnt b { display: block; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .adm-chip { display: inline-block; padding: 2px 8px; margin-left: 6px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 2px; color: #fff; background: var(--grad); }
+  .adm-chip.owner { background: linear-gradient(135deg, #ffb054, #ff6f91); }
+  .adm-online { position: absolute; right: 1px; bottom: 1px; width: 12px; height: 12px; border-radius: 50%; background: #2fbf8e; border: 2px solid var(--ink); }
+
+  .adm-day { margin: 18px 4px 8px; font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .adm-day:first-child { margin-top: 4px; }
+  .adm-ev { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); animation: qzOpt .45s cubic-bezier(.22, 1, .36, 1) both; }
+  .adm-ev + .adm-ev { margin-top: 6px; }
+  .adm-ev .ic { flex: none; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; }
+  .adm-ev .ic svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .adm-ev .ic.g-app { background: linear-gradient(135deg, #8b7bff, #4d8dff); }
+  .adm-ev .ic.g-habit { background: linear-gradient(135deg, #2fbf8e, #3de0b5); }
+  .adm-ev .ic.g-game { background: linear-gradient(135deg, #ffb054, #ff6f91); }
+  .adm-ev .ic.g-mind { background: linear-gradient(135deg, #3fa9ff, #a77bff); }
+  .adm-ev .ic.g-set { background: linear-gradient(135deg, #8a86b5, #5d5893); }
+  .adm-ev .tx { flex: 1; min-width: 0; }
+  .adm-ev .tx b { display: block; font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .adm-ev .tx .by .adm-av { width: 22px; height: 22px; font-size: 10px; }
+  .adm-ev .tx > span:not(.by) { display: block; margin-top: 2px; font-size: 13.5px; line-height: 1.35; color: var(--muted); word-break: break-word; }
+  .adm-ev .tx .by { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--text); }
+  .adm-ev time { flex: none; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .adm-ev.click { cursor: pointer; text-align: left; width: 100%; color: var(--text); }
+
+  .adm-prof { text-align: center; padding: 4px 0 6px; }
+  .adm-prof .adm-av { margin: 0 auto 12px; }
+  .adm-prof h2 { margin: 0 8px 4px; font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -.02em; word-break: break-word; }
+  .adm-prof .nk { font-size: 14px; color: var(--muted); }
+  .adm-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0 12px; }
+  .adm-info div { padding: 12px 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); }
+  .adm-info b { display: block; font-size: 15px; font-weight: 600; word-break: break-all; }
+  .adm-info span { font-size: 12px; color: var(--muted); }
+  .adm-act { width: 100%; margin-bottom: 6px; }
+  .adm-act.danger { border-color: var(--danger); color: var(--danger); background: transparent; }
+
+  .adm-grant { margin: 0 0 12px; }
+  .adm-grant-row { display: flex; gap: 8px; }
+  .adm-grant-row input { flex: 1; min-width: 0; height: 48px; padding: 0 16px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; font-size: 16px; outline: none; }
+  .adm-grant-row input:focus { border-color: var(--violet); background: var(--surface-strong); }
+  .adm-grant-row .btn { flex: none; }
+  .adm-a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); animation: qzOpt .45s cubic-bezier(.22, 1, .36, 1) both; }
+  .adm-a + .adm-a { margin-top: 8px; }
+  .adm-a .who { flex: 1; min-width: 0; }
+  .adm-a .who b { display: block; font-size: 15.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-a .who > span { font-size: 12.5px; color: var(--muted); }
+  .adm-a .btn { flex: none; height: 38px; padding: 0 14px; font-size: 13.5px; }
+
+  .adm-more { width: 100%; margin-top: 12px; }
+  .adm-empty, .adm-err { padding: 26px 18px; border-radius: 22px; border: 1.5px dashed var(--line); text-align: center; color: var(--muted); line-height: 1.5; }
+  .adm-err { border-style: solid; border-color: var(--danger); color: var(--text); }
+  .adm-err .btn { margin-top: 12px; }
+  .adm-sk { height: 70px; border-radius: 22px; background: linear-gradient(90deg, var(--surface) 0%, var(--surface-strong) 50%, var(--surface) 100%); background-size: 200% 100%; animation: admSk 1.3s ease-in-out infinite; }
+  .adm-sk + .adm-sk { margin-top: 8px; }
+  @keyframes admSk { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 </style>
 </head>
 <body>
@@ -905,6 +985,74 @@
     </div>
 
     <div id="list"></div>
+  </section>
+
+  <!-- ===== Вкладка «Админ» (только владелец и админы) ===== -->
+  <section id="tab-admin" hidden>
+    <div id="admMain">
+      <header class="head">
+        <div class="head-row">
+          <h1>Админ</h1>
+          <button class="round-btn" id="admRefresh" type="button" aria-label="Обновить">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg>
+          </button>
+        </div>
+        <div class="sub" id="admRole"></div>
+      </header>
+
+      <div class="summary">
+        <div class="stat"><b id="admS1">—</b><span>всего<br>пользователей</span></div>
+        <div class="stat"><b id="admS2">—</b><span>активны<br>за 24 часа</span></div>
+        <div class="stat"><b id="admS3">—</b><span>действий<br>за 24 часа</span></div>
+      </div>
+
+      <div class="seg adm-seg" id="admSeg" role="tablist" aria-label="Разделы админ-панели">
+        <button type="button" class="seg-b" role="tab" data-av="users" aria-checked="true">Люди</button>
+        <button type="button" class="seg-b" role="tab" data-av="feed" aria-checked="false">Лента</button>
+        <button type="button" class="seg-b" role="tab" data-av="admins" aria-checked="false">Админы</button>
+      </div>
+
+      <div id="admUsersPane">
+        <div class="adm-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>
+          <input id="admQ" type="search" placeholder="Имя, @ник или ID" autocomplete="off" aria-label="Поиск пользователя">
+        </div>
+        <div id="admUsers"></div>
+        <button class="btn wide adm-more" id="admUsersMore" type="button" hidden>Показать ещё</button>
+      </div>
+
+      <div id="admFeedPane" hidden>
+        <div id="admFeed"></div>
+        <button class="btn wide adm-more" id="admFeedMore" type="button" hidden>Показать ещё</button>
+      </div>
+
+      <div id="admAdminsPane" hidden>
+        <div class="card adm-grant" id="admGrant" hidden>
+          <h2 class="card-title">Выдать права админа</h2>
+          <div class="adm-grant-row">
+            <input id="admGrantId" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="15" placeholder="Telegram ID" autocomplete="off" aria-label="Telegram ID нового админа">
+            <button class="btn primary" id="admGrantBtn" type="button">Выдать</button>
+          </div>
+          <p class="desc">ID человек узнаёт командой /id в боте. Ещё проще — откройте его карточку во вкладке «Люди» и нажмите «Сделать админом».</p>
+        </div>
+        <div id="admAdmins"></div>
+      </div>
+    </div>
+
+    <div id="admUser" hidden>
+      <header class="head">
+        <div class="head-row">
+          <button class="round-btn" id="admBack" type="button" aria-label="Назад к списку">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <h1>Пользователь</h1>
+          <span style="width:44px"></span>
+        </div>
+      </header>
+      <div id="admUserBody"></div>
+      <button class="btn wide adm-more" id="admEvMore" type="button" hidden>Показать ещё</button>
+    </div>
+    <p class="note" id="admMsg" role="status" aria-live="polite"></p>
   </section>
 
   <!-- ===== Вкладка «Развитие» ===== -->
@@ -1225,6 +1373,10 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
     <span>Развитие</span>
   </button>
+  <button class="tab" role="tab" data-tab="admin" aria-selected="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.4-4.6"/></svg>
+    <span>Админ</span>
+  </button>
 </nav>
 
 <!-- Обучение -->
@@ -1251,6 +1403,43 @@
 <script>
   const tg = window.Telegram && window.Telegram.WebApp;
   if (tg) { tg.ready(); tg.expand(); }
+
+  // ---------- Сервер (воркер): запись действий и админ-панель ----------
+  // Впишите адрес своего воркера Cloudflare (без «/» на конце), например:
+  // const API_URL = 'https://habits-bot.vash-nik.workers.dev';
+  const API_URL = '';
+  const API = String(API_URL || '').trim().replace(/\/+$/, '');
+  const apiOn = () => /^https:\/\//.test(API) && !!(tg && tg.initData);
+  const trackQ = [];
+  let trackTimer = 0;
+  function flushTrack() {
+    clearTimeout(trackTimer);
+    if (!trackQ.length || !apiOn()) return Promise.resolve();
+    const events = trackQ.splice(0, 40);
+    const body = JSON.stringify({ initData: tg.initData, p: tg.platform || '', events });
+    let job = Promise.resolve();
+    try {
+      job = fetch(API + '/api/log', { method: 'POST', headers: { 'content-type': 'text/plain' }, body, keepalive: true })
+        .catch(() => { if (trackQ.length < 120) trackQ.unshift(...events); }); // нет сети — попробуем позже
+    } catch (e) {}
+    if (trackQ.length) trackTimer = setTimeout(flushTrack, 1500);
+    return job;
+  }
+  function track(a, d) { // действие пользователя для админ-панели; отправляется пачками
+    if (!apiOn()) return;
+    trackQ.push({ a, d: d == null ? '' : JSON.stringify(d).slice(0, 280), t: Date.now() });
+    clearTimeout(trackTimer);
+    if (trackQ.length >= 30) flushTrack(); else trackTimer = setTimeout(flushTrack, 2500);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushTrack(); });
+  window.addEventListener('pagehide', flushTrack);
+  async function api(path, data) {
+    const r = await fetch(API + path, { method: 'POST', headers: { 'content-type': 'text/plain' }, body: JSON.stringify(Object.assign({ initData: tg.initData }, data || {})) });
+    let j = {};
+    try { j = await r.json(); } catch (e) {}
+    if (!r.ok) { const err = new Error(j.error || 'http_' + r.status); err.code = j.error || r.status; throw err; }
+    return j;
+  }
   // ---------- Размер окна: максимальная высота и полный экран ----------
   const FS_KEY = 'habits_fs';
   const fsOK = !!(tg && tg.requestFullscreen && tg.isVersionAtLeast && tg.isVersionAtLeast('8.0') && (tg.platform === 'ios' || tg.platform === 'android'));
@@ -2187,7 +2376,9 @@
 
   // ---------- Вкладки ----------
   const TABS = ['profile', 'habits', 'grow'];
+  let admWanted = false; // приложение закрыли на вкладке «Админ» — вернём туда после проверки прав
   function showTab(name) {
+    if (name === 'admin' && !TABS.includes('admin')) admWanted = true;
     if (!TABS.includes(name)) name = 'habits';
     if (name !== 'grow') stopBreath();
     TABS.forEach(t => { document.getElementById('tab-' + t).hidden = t !== name; });
@@ -2195,10 +2386,11 @@
     try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
     window.scrollTo(0, 0);
     if (name === 'grow') renderGrow();
+    if (name === 'admin') admShow();
   }
   document.querySelector('.tabs').addEventListener('click', (e) => {
     const b = e.target.closest('.tab');
-    if (b) { showTab(b.dataset.tab); buzz(); }
+    if (b) { showTab(b.dataset.tab); buzz(); track('tab', { x: b.dataset.tab }); }
   });
 
   // ---------- Действия ----------
@@ -2222,6 +2414,7 @@
     input.value = '';
     render(); buzz();
     persistHabit(h);
+    track('habit_add', { n: name, t: days });
   });
 
   document.getElementById('list').addEventListener('click', (e) => {
@@ -2234,6 +2427,7 @@
       h.s = today(); lastToggled = null;
       render(); buzz();
       persistHabit(h);
+      track('habit_restart', { n: h.name });
       return;
     }
     if (btn.dataset.act === 'toggle') {
@@ -2242,8 +2436,9 @@
       lastToggled = h.id;
       render(); buzz();
       persistHabit(h);
+      track(h.done[t] ? 'habit_done' : 'habit_undo', { n: h.name });
     } else if (btn.dataset.act === 'del') {
-      const doDelete = () => { habits = habits.filter(x => x.id !== h.id); render(); persistRemove(h.id); };
+      const doDelete = () => { habits = habits.filter(x => x.id !== h.id); render(); persistRemove(h.id); track('habit_del', { n: h.name }); };
       if (tg && tg.showConfirm) tg.showConfirm('Удалить «' + h.name + '» вместе с историей?', ok => ok && doDelete());
       else if (confirm('Удалить «' + h.name + '»?')) doDelete();
     }
@@ -2257,6 +2452,7 @@
   document.getElementById('fsSeg').addEventListener('click', (e) => {
     const b = e.target.closest('[data-fs]'); if (!b) return;
     fsPref = b.dataset.fs === '1';
+    track('fs', { x: fsPref ? 'on' : 'off' });
     try { localStorage.setItem(FS_KEY, fsPref ? '1' : '0'); } catch (err) {}
     syncFullscreen(); applyInsets(); renderFsSeg(); buzz();
   });
@@ -2288,6 +2484,7 @@
     if (!b) return;
     applyTheme(b.dataset.themeMode);
     meta.th = themeMode;
+    track('theme', { x: themeMode });
     persistMeta();
     buzz();
   });
@@ -2352,6 +2549,7 @@
     document.getElementById('tourSkip').hidden = tourIdx === TOUR.length - 1;
   }
   function openTour() {
+    track('tour_open');
     tourIdx = 0;
     tourEl.hidden = false;
     document.body.classList.add('no-scroll');
@@ -2364,7 +2562,7 @@
     if (!meta.o) { meta.o = 1; persistMeta(); }
     try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
     updateHelpBtn();
-    if (goHabits) showTab('habits');
+    if (goHabits) { showTab('habits'); track('tour_done'); }
   }
   const tourNext = () => { if (tourIdx < TOUR.length - 1) { tourIdx++; renderTour(); buzz(); } else closeTour(true); };
   const tourBack = () => { if (tourIdx > 0) { tourIdx--; renderTour(); buzz(); } };
@@ -2546,6 +2744,7 @@
     else if (game.result.winner === 0) cstats.d++;
     else cstats.l++;
     saveStats();
+    track('chess_end', { r: game.result.winner === game.player ? 'win' : game.result.winner === 0 ? 'draw' : 'lose', y: game.result.why, n: game.moves.length });
   }
 
   function newGame(color, level, minutes) {
@@ -2553,6 +2752,7 @@
     game.active = true; game.player = color; game.level = level;
     game.resigned = false; game.fin = false; game.busy = false; game.flag = null;
     game.tc = (minutes | 0) * 60000; game.tms = { p: game.tc, b: game.tc }; game.ts = Date.now();
+    track('chess_start', { l: level, c: color, m: minutes | 0 });
     rebuildGame([]);
     saveGame();
     setupOpen = false;
@@ -3002,6 +3202,7 @@
       const list = pz.solved[pz.kind];
       if (!list.includes(pz.idx)) { list.push(pz.idx); kvSet(PZ_KEY, JSON.stringify(pz.solved)); }
       pz.say = 'Верно! Мат.'; pz.sayCls = 'good'; buzz();
+      track('puzzle', { k: pz.kind, i: pz.idx + 1 });
     }
     renderGrowBadges();
   }
@@ -3153,6 +3354,7 @@
     st.p++;
     if (ww.done === 1) { st.w++; st.s = st.l === day - 1 ? st.s + 1 : 1; st.b = Math.max(st.b, st.s); st.l = day; } else st.s = 0;
     kvSet('ws', JSON.stringify(st));
+    track('word', { w: ww.done === 1, n: ww.rows.length });
   }
   function wType(ch) {
     if (ww.done || ww.busy || ww.cur.length >= 5) return;
@@ -3320,6 +3522,7 @@
     const sec = Math.round((Date.now() - br.t0) / 1000), day = today(), s = br.stats;
     s.t = (s.d === day ? s.t : 0) + 1; s.d = day; s.n++; s.s += sec;
     kvSet('br', JSON.stringify(s));
+    track('breath', { x: br.tech, m: br.dur });
     brReset('Готово');
     $id('brLeft').textContent = 'Сеанс завершён. Отличная работа!';
     buzz(); renderGrowBadges();
@@ -3353,6 +3556,7 @@
     kvSet('g' + t, JSON.stringify(arr));
     const c = grCount(arr);
     if (c) gr.idx[t] = c; else delete gr.idx[t];
+    if (c && gr.trk !== t + ':' + c) { gr.trk = t + ':' + c; track('diary', { c }); } // только число записей, без текста
     const keys = Object.keys(gr.idx).map(Number).sort((a, b) => a - b);
     while (keys.length > 150) delete gr.idx[keys.shift()];
     kvSet('gi', JSON.stringify(gr.idx));
@@ -3816,6 +4020,7 @@
     const ids = qz.round.map(q => q.id);
     st.s = st.s.filter(id => !ids.includes(id)).concat(ids).slice(-40);
     kvSet('qz', JSON.stringify(st));
+    track('quiz', { s: qz.score, n: len, c: qz.cat });
     renderGrowBadges();
     qzPane('qzEnd'); window.scrollTo(0, 0);
     const sc = qz.score, f = sc / len;
@@ -3882,6 +4087,7 @@
     $id('qzBadge').textContent = qz.playing ? `Раунд идёт: вопрос ${qz.i + 1} из ${qz.round.length}` : q.r ? `Лучший результат: ${q.b} из ${QZ_LEN} · раундов: ${q.r}` : 'Проверьте свою эрудицию';
   }
   function openGrow(view) {
+    track('grow', { x: view });
     stopBreath();
     growView = view;
     if (view === 'chess') setupOpen = !game.active;
@@ -3969,6 +4175,7 @@
   $id('bkMake').addEventListener('click', async () => {
     bkMsg('Собираю данные…');
     const t = await bkBuild();
+    track('backup_make');
     $id('bkText').value = t;
     bkMsg(`Копия готова: ${habits.length} ${plural(habits.length, 'привычка', 'привычки', 'привычек')}, ${t.length} символов. Нажмите «Скопировать».`, 'ok');
     buzz();
@@ -3990,9 +4197,289 @@
     askConfirm(`Добавить данные из копии (привычек: ${n})? Привычки с теми же номерами будут заменены.`, async () => {
       bkMsg('Восстанавливаю…');
       await bkApply(r);
+      track('backup_restore', { n }); flushTrack();
       bkMsg('Готово! Перезагружаю приложение…', 'ok'); buzz();
       setTimeout(() => location.reload(), 900);
     });
+  });
+
+
+  // =====================================================================
+  //  Админ-панель (права проверяет сервер при каждом запросе)
+  // =====================================================================
+  const adm = { role: null, view: 'users', q: '', users: [], usersMore: false, feed: [], feedMore: false,
+    uid: null, user: null, events: [], evMore: false, loadedAt: 0, tok: 0, qTimer: 0 };
+  const admEsc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+  const admName = (u) => [u.first_name, u.last_name].filter(Boolean).join(' ') || (u.username ? '@' + u.username : 'ID ' + u.id);
+  const admIni = (u) => ((u.first_name || '')[0] || '') + ((u.last_name || '')[0] || '') || (u.username || '?')[0];
+  function admAv(u, size) {
+    const img = u.photo_url && /^https:\/\//.test(u.photo_url) ? `<img src="${admEsc(u.photo_url)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : '';
+    const on = size !== 'sm' && u.last_seen && Date.now() - u.last_seen < 5 * 60e3 ? '<i class="adm-online" title="Сейчас в приложении"></i>' : '';
+    return `<span class="adm-av${size ? ' ' + size : ''}">${admEsc(admIni(u).toUpperCase())}${img}${on}</span>`;
+  }
+  const admChip = (role) => role === 'owner' ? '<span class="adm-chip owner">Владелец</span>' : role === 'admin' ? '<span class="adm-chip">Админ</span>' : '';
+  const admHM = (d) => d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  function admWhen(ts) {
+    const d = new Date(ts), now = new Date(), s = (now - d) / 1000;
+    if (s < 60) return 'только что';
+    if (s < 3600) return Math.floor(s / 60) + ' мин назад';
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === now.toDateString()) return 'сегодня в ' + admHM(d);
+    if (d.toDateString() === y.toDateString()) return 'вчера в ' + admHM(d);
+    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ' в ' + admHM(d);
+  }
+  function admDay(ts) {
+    const d = new Date(ts), now = new Date(), y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === now.toDateString()) return 'Сегодня';
+    if (d.toDateString() === y.toDateString()) return 'Вчера';
+    return d.toLocaleDateString('ru-RU', d.getFullYear() === now.getFullYear() ? { day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  const ADM_IC = {
+    app: '<svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M11 17.5h2"/></svg>',
+    habit: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.4l2.6 2.6 4.8-5.2"/></svg>',
+    game: '<svg viewBox="0 0 24 24"><path d="M7 20h10M9 20v-3l-2-2.5c0-4 2.5-7.5 6-9l1.5-1.5L16 6c2 2 2.5 5 1.5 8.5L15 17v3"/></svg>',
+    mind: '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+    set: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.3 3h-4l-.4 2.6a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.6h4l.4-2.6a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>'
+  };
+  const ADM_TAB = { profile: 'Профиль', habits: 'Привычки', grow: 'Развитие', admin: 'Админ' };
+  const ADM_GROW = { chess: 'Шахматы', puzzles: 'Шахматные задачи', wordle: 'Угадай слово', breath: 'Дыхание', gratitude: 'Дневник благодарности', quiz: 'Викторина' };
+  const ADM_WHY = { mate: 'мат', resign: 'сдача', time: 'закончилось время', timeins: 'время, мало фигур', stalemate: 'пат', material: 'мало фигур', fifty: 'правило 50 ходов', repetition: 'повторение' };
+  const q2 = (n) => '«' + (n || '') + '»';
+  const ADM_ACT = {
+    open: ['app', 'Открытие приложения', d => d.v ? `Заход №${d.v}` : ''],
+    tab: ['app', 'Переход во вкладку', d => ADM_TAB[d.x] || ''],
+    habit_add: ['habit', 'Новая привычка', d => `${q2(d.n)}${d.t ? ' · ' + daysLabel(d.t) : ''}`],
+    habit_done: ['habit', 'Отметка привычки', d => q2(d.n)],
+    habit_undo: ['habit', 'Отметка снята', d => q2(d.n)],
+    habit_del: ['habit', 'Привычка удалена', d => q2(d.n)],
+    habit_restart: ['habit', 'Срок начат заново', d => q2(d.n)],
+    theme: ['set', 'Смена темы', d => ({ auto: 'Авто', light: 'Светлая', dark: 'Тёмная' })[d.x] || ''],
+    fs: ['set', 'Размер окна', d => d.x === 'on' ? 'Весь экран' : 'С шапкой'],
+    tour_open: ['app', 'Обучение открыто', () => ''],
+    tour_done: ['app', 'Обучение пройдено', () => ''],
+    grow: ['app', 'Переход в раздел', d => ADM_GROW[d.x] || ''],
+    chess_start: ['game', 'Новая партия в шахматы', d => [['', 'лёгкий', 'средний', 'сложный'][d.l] || '', d.c === -1 ? 'чёрные' : 'белые', d.m ? d.m + ' мин' : 'без времени'].filter(Boolean).join(' · ')],
+    chess_end: ['game', 'Партия окончена', d => [({ win: 'Победа', lose: 'Поражение', draw: 'Ничья' })[d.r] || '', ADM_WHY[d.y] || '', d.n ? 'ходов: ' + d.n : ''].filter(Boolean).join(' · ')],
+    puzzle: ['game', 'Решена шахматная задача', d => `Мат в ${d.k} · задача №${d.i}`],
+    word: ['game', 'Игра «Угадай слово»', d => d.w ? `Угадано с ${d.n}-й попытки` : 'Не угадано'],
+    quiz: ['game', 'Викторина пройдена', d => `${d.s} из ${d.n} · ${(QZ_CATS.find(c => c.id === d.c) || {}).name || 'Все темы'}`],
+    breath: ['mind', 'Дыхательное упражнение', d => `${({ box: 'Квадрат', r478: '4-7-8', calm: 'Спокойное' })[d.x] || ''} · ${d.m} мин`],
+    diary: ['mind', 'Запись в дневнике благодарности', d => `Записей за день: ${d.c}`],
+    backup_make: ['set', 'Создана резервная копия', () => ''],
+    backup_restore: ['set', 'Данные восстановлены из копии', d => d.n != null ? `Привычек: ${d.n}` : '']
+  };
+  function admEv(e) {
+    const def = ADM_ACT[e.action] || ['app', e.action, () => ''];
+    let d = {};
+    try { d = e.detail ? JSON.parse(e.detail) : {}; } catch (err) { d = {}; }
+    let sub = '';
+    try { sub = def[2](d || {}); } catch (err) { sub = ''; }
+    return { g: def[0], title: def[1], sub };
+  }
+  function admEvHTML(e, withUser, k) {
+    const x = admEv(e);
+    const by = withUser ? `<span class="by">${admAv({ id: e.user_id, first_name: e.first_name, last_name: e.last_name, username: e.username, photo_url: e.photo_url }, 'sm')}${admEsc(admName({ id: e.user_id, first_name: e.first_name, last_name: e.last_name, username: e.username }))}</span>` : '';
+    const tag = withUser ? 'button type="button" data-uid="' + e.user_id + '"' : 'div';
+    return `<${tag} class="adm-ev${withUser ? ' click' : ''}" style="animation-delay:${Math.min(k, 12) * 35}ms"><span class="ic g-${x.g}">${ADM_IC[x.g]}</span><span class="tx">${by}<b>${admEsc(x.title)}</b>${x.sub ? `<span>${admEsc(x.sub)}</span>` : ''}</span><time>${admHM(new Date(e.ts))}</time></${withUser ? 'button' : 'div'}>`;
+  }
+  function admTimeline(list, withUser) {
+    let html = '', last = '';
+    list.forEach((e, k) => {
+      const day = admDay(e.ts);
+      if (day !== last) { html += `<div class="adm-day">${admEsc(day)}</div>`; last = day; }
+      html += admEvHTML(e, withUser, k);
+    });
+    return html;
+  }
+  const admSkel = (n) => Array.from({ length: n }, () => '<div class="adm-sk"></div>').join('');
+  function admErr(err) {
+    const code = err && err.code;
+    const t = code === 'no_db' ? 'К воркеру не подключена база D1. Подключите её в Cloudflare (Settings → Bindings, имя DB).'
+      : code === 'auth' ? 'Данные входа устарели. Закройте приложение и откройте заново.'
+      : code === 'forbidden' ? 'У вас больше нет прав администратора.'
+      : 'Не удалось связаться с сервером. Проверьте интернет.';
+    return `<div class="adm-err">${admEsc(t)}<br><button class="btn" type="button" data-retry>Повторить</button></div>`;
+  }
+  function admMsg(t) { const el = $id('admMsg'); el.textContent = t || ''; if (t) setTimeout(() => { if (el.textContent === t) el.textContent = ''; }, 4000); }
+
+  async function admInit() {
+    if (!apiOn()) return;
+    let r;
+    try { r = await api('/api/me'); } catch (e) { return; }
+    if (r.role !== 'owner' && r.role !== 'admin') return;
+    adm.role = r.role;
+    if (!TABS.includes('admin')) TABS.push('admin');
+    const tabBtn = document.querySelector('.tab[data-tab="admin"]');
+    tabBtn.hidden = false;
+    const bar = document.querySelector('.tabs'); bar.classList.add('four'); bar.style.setProperty('--tab-n', 4);
+    $id('admRole').textContent = r.role === 'owner' ? 'Вы — владелец бота' : 'Вы — администратор';
+    if (admWanted) { admWanted = false; showTab('admin'); }
+  }
+  function admShow() {
+    if (!adm.role) return;
+    if (!adm.loadedAt || Date.now() - adm.loadedAt > 30000) admReload();
+  }
+  async function admReload() {
+    adm.loadedAt = Date.now();
+    const btn = $id('admRefresh'); btn.classList.add('spin');
+    await flushTrack(); // свои свежие действия — сначала на сервер, чтобы они сразу были видны
+    const jobs = [admSummary(), adm.uid ? admLoadUser(false) : admLoadView(false)];
+    await Promise.all(jobs);
+    btn.classList.remove('spin');
+  }
+  async function admSummary() {
+    try {
+      const r = await api('/api/admin/summary');
+      $id('admS1').textContent = r.users; $id('admS2').textContent = r.active24; $id('admS3').textContent = r.events24;
+      if (r.role && r.role !== adm.role) { adm.role = r.role; $id('admRole').textContent = r.role === 'owner' ? 'Вы — владелец бота' : 'Вы — администратор'; }
+    } catch (e) { if (e.code === 'forbidden') admLost(); }
+  }
+  function admLost() { // права сняли, пока приложение было открыто
+    adm.role = null; TABS.splice(TABS.indexOf('admin'), 1);
+    document.querySelector('.tab[data-tab="admin"]').hidden = true;
+    const bar = document.querySelector('.tabs'); bar.classList.remove('four'); bar.style.removeProperty('--tab-n');
+    showTab('profile');
+  }
+  function admSetView(v) {
+    adm.view = v;
+    document.querySelectorAll('#admSeg [data-av]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.av === v)));
+    $id('admUsersPane').hidden = v !== 'users'; $id('admFeedPane').hidden = v !== 'feed'; $id('admAdminsPane').hidden = v !== 'admins';
+    admLoadView(false);
+  }
+  async function admLoadView(more) {
+    const tok = ++adm.tok;
+    try {
+      if (adm.view === 'users') {
+        if (!more) { $id('admUsers').innerHTML = admSkel(4); $id('admUsersMore').hidden = true; }
+        const r = await api('/api/admin/users', { q: adm.q, offset: more ? adm.users.length : 0 });
+        if (tok !== adm.tok) return;
+        adm.users = more ? adm.users.concat(r.users) : r.users; adm.usersMore = r.more;
+        admRenderUsers();
+      } else if (adm.view === 'feed') {
+        if (!more) { $id('admFeed').innerHTML = admSkel(5); $id('admFeedMore').hidden = true; }
+        const r = await api('/api/admin/feed', { before: more && adm.feed.length ? adm.feed[adm.feed.length - 1].ts : 0 });
+        if (tok !== adm.tok) return;
+        adm.feed = more ? adm.feed.concat(r.events) : r.events; adm.feedMore = r.more;
+        $id('admFeed').innerHTML = adm.feed.length ? admTimeline(adm.feed, true) : '<div class="adm-empty">Пока никто ничего не сделал. Действия появятся, как только пользователи откроют приложение.</div>';
+        $id('admFeedMore').hidden = !adm.feedMore;
+      } else {
+        $id('admGrant').hidden = adm.role !== 'owner';
+        $id('admAdmins').innerHTML = admSkel(2);
+        const r = await api('/api/admin/admins');
+        if (tok !== adm.tok) return;
+        admRenderAdmins(r);
+      }
+    } catch (e) {
+      if (tok !== adm.tok) return;
+      if (e.code === 'forbidden') { admLost(); return; }
+      const box = adm.view === 'users' ? $id('admUsers') : adm.view === 'feed' ? $id('admFeed') : $id('admAdmins');
+      box.innerHTML = admErr(e);
+    }
+  }
+  function admRenderUsers() {
+    const box = $id('admUsers');
+    if (!adm.users.length) {
+      box.innerHTML = `<div class="adm-empty">${adm.q ? 'Никого не нашли. Попробуйте другое имя или ID.' : 'Пока никого нет. Пользователи появятся после первого открытия приложения.'}</div>`;
+    } else {
+      box.innerHTML = adm.users.map((u, k) => `<button type="button" class="adm-u" data-uid="${u.id}" style="animation-delay:${Math.min(k, 12) * 35}ms">${admAv(u)}<span class="who"><b>${admEsc(admName(u))}${admChip(u.role)}</b><span>${u.username ? '@' + admEsc(u.username) + ' · ' : ''}${admEsc(admWhen(u.last_seen))}</span></span><span class="cnt"><b>${u.events}</b>${plural(u.events, 'действие', 'действия', 'действий')}</span></button>`).join('');
+    }
+    $id('admUsersMore').hidden = !adm.usersMore;
+  }
+  function admRenderAdmins(r) {
+    const owner = adm.role === 'owner';
+    let html = '';
+    if (r.owner) html += `<div class="adm-a">${admAv(r.owner, 'sm')}<span class="who"><b>${admEsc(admName(r.owner))}${admChip('owner')}</b><span>ID ${r.owner.id}</span></span></div>`;
+    html += r.admins.map(a => `<div class="adm-a">${admAv(a, 'sm')}<span class="who"><b>${admEsc(admName(a))}</b><span>${a.first_name || a.username ? 'ID ' + a.id + ' · ' : ''}админ с ${admEsc(new Date(a.added_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }))}${a.first_name || a.username ? '' : ' · ещё не заходил в приложение'}</span></span>${owner ? `<button class="btn" type="button" data-revoke="${a.id}">Снять</button>` : ''}</div>`).join('');
+    if (!r.admins.length) html += `<div class="adm-empty" style="margin-top:8px">${owner ? 'Других админов пока нет.' : 'Других админов нет.'}</div>`;
+    if (!owner) html += '<p class="note">Выдавать и снимать права может только владелец бота.</p>';
+    $id('admAdmins').innerHTML = html;
+  }
+  async function admOpenUser(id) {
+    adm.uid = id; adm.user = null; adm.events = [];
+    $id('admMain').hidden = true; $id('admUser').hidden = false; window.scrollTo(0, 0);
+    await admLoadUser(false);
+  }
+  async function admLoadUser(more) {
+    const tok = ++adm.tok, body = $id('admUserBody');
+    if (!more) { body.innerHTML = '<div class="adm-sk" style="height:180px"></div>' + admSkel(3); $id('admEvMore').hidden = true; }
+    try {
+      const r = await api('/api/admin/user', { id: adm.uid, before: more && adm.events.length ? adm.events[adm.events.length - 1].ts : 0 });
+      if (tok !== adm.tok) return;
+      adm.user = r.user; adm.events = more ? adm.events.concat(r.events) : r.events; adm.evMore = r.more;
+      admRenderUser();
+    } catch (e) {
+      if (tok !== adm.tok) return;
+      if (e.code === 'forbidden') { admLost(); return; }
+      body.innerHTML = e.code === 'not_found' ? '<div class="adm-empty">Пользователь не найден.</div>' : admErr(e);
+    }
+  }
+  function admRenderUser() {
+    const u = adm.user;
+    const fmt = (ts) => ts ? new Date(ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+    const PLAT = { ios: 'iPhone', android: 'Android', tdesktop: 'Компьютер', macos: 'Mac', weba: 'Браузер', webk: 'Браузер', web: 'Браузер' };
+    let act = '';
+    if (adm.role === 'owner' && u.role !== 'owner') {
+      act = u.role === 'admin'
+        ? `<button class="btn adm-act danger" type="button" data-revoke="${u.id}">Снять права админа</button>`
+        : `<button class="btn primary adm-act" type="button" data-grant="${u.id}">Сделать админом</button>`;
+    }
+    $id('admUserBody').innerHTML = `
+      <div class="adm-prof">${admAv(u, 'lg')}<h2>${admEsc(admName(u))}${admChip(u.role)}</h2><div class="nk">${u.username ? '@' + admEsc(u.username) : 'без ника'}</div></div>
+      <div class="adm-info">
+        <div><b>${u.id}</b><span>Telegram ID</span></div>
+        <div><b>${u.events}</b><span>действий всего</span></div>
+        <div><b>${admEsc(fmt(u.first_seen))}</b><span>первый заход</span></div>
+        <div><b>${admEsc(admWhen(u.last_seen))}</b><span>последний раз</span></div>
+        <div><b>${admEsc(PLAT[u.platform] || u.platform || '—')}</b><span>устройство</span></div>
+        <div><b>${admEsc(u.role === 'owner' ? 'Владелец' : u.role === 'admin' ? 'Админ' : 'Пользователь')}</b><span>роль</span></div>
+      </div>
+      ${act}
+      ${adm.events.length ? admTimeline(adm.events, false) : '<div class="adm-empty">Действий пока нет.</div>'}`;
+    $id('admEvMore').hidden = !adm.evMore;
+  }
+  function admCloseUser() {
+    adm.uid = null; adm.tok++;
+    $id('admUser').hidden = true; $id('admMain').hidden = false; window.scrollTo(0, 0);
+    if (adm.view === 'users') admLoadView(false);
+  }
+  function admGrant(id, give) {
+    const u = adm.user && adm.user.id === id ? adm.user : adm.users.find(x => x.id === id);
+    const who = u ? admName(u) : 'ID ' + id;
+    askConfirm(give ? `Выдать права администратора: ${who}? Он сможет видеть действия всех пользователей.` : `Снять права администратора: ${who}?`, async () => {
+      try {
+        await api(give ? '/api/admin/grant' : '/api/admin/revoke', { id });
+        admMsg(give ? 'Права выданы. Человек получит сообщение от бота.' : 'Права сняты.');
+        buzz();
+        if (adm.uid) admLoadUser(false); else admLoadView(false);
+      } catch (e) {
+        admMsg(e.code === 'owner_only' ? 'Только владелец может менять права.' : e.code === 'is_owner' ? 'Это владелец бота.' : 'Не получилось. Попробуйте ещё раз.');
+      }
+    });
+  }
+
+  $id('admSeg').addEventListener('click', (e) => { const b = e.target.closest('[data-av]'); if (b && b.dataset.av !== adm.view) { admSetView(b.dataset.av); buzz(); } });
+  $id('admRefresh').addEventListener('click', () => { admReload(); buzz(); });
+  $id('admQ').addEventListener('input', () => {
+    clearTimeout(adm.qTimer);
+    adm.qTimer = setTimeout(() => { adm.q = $id('admQ').value.trim(); admLoadView(false); }, 350);
+  });
+  $id('admUsersMore').addEventListener('click', () => admLoadView(true));
+  $id('admFeedMore').addEventListener('click', () => admLoadView(true));
+  $id('admEvMore').addEventListener('click', () => admLoadUser(true));
+  $id('admBack').addEventListener('click', admCloseUser);
+  $id('tab-admin').addEventListener('click', (e) => {
+    const u = e.target.closest('[data-uid]');
+    if (u) { admOpenUser(Number(u.dataset.uid)); buzz(); return; }
+    const g = e.target.closest('[data-grant]'); if (g) { admGrant(Number(g.dataset.grant), true); return; }
+    const r = e.target.closest('[data-revoke]'); if (r) { admGrant(Number(r.dataset.revoke), false); return; }
+    if (e.target.closest('[data-retry]')) admReload();
+  });
+  $id('tab-admin').addEventListener('error', (e) => { if (e.target.tagName === 'IMG') e.target.remove(); }, true);
+  $id('admGrantId').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, ''); });
+  $id('admGrantBtn').addEventListener('click', () => {
+    const id = Number($id('admGrantId').value);
+    if (!Number.isSafeInteger(id) || id <= 0) { admMsg('Введите числовой Telegram ID.'); return; }
+    admGrant(id, true); $id('admGrantId').value = '';
   });
 
   // ---------- Запуск ----------
@@ -4020,6 +4507,8 @@
     renderFoot();
     updateHelpBtn();
     persistMeta();
+    track('open', { v: meta.v });
+    admInit();
 
     await loadChess();
     await loadExtras();
