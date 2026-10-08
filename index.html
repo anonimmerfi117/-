@@ -524,6 +524,45 @@
     100% { transform: translate(0, 168px); }
   }
 
+
+  /* обучение: новые иллюстрации */
+  .a6 { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; max-width: 100%; padding: 8px; border-radius: 30px; background: var(--tabbar-bg); border: 1px solid var(--line); box-shadow: 0 18px 40px -16px var(--tabbar-shadow); }
+  .a6 .hl { position: absolute; left: 8px; top: 8px; bottom: 8px; width: calc((100% - 16px) / 3); border-radius: 22px; background: var(--grad); animation: tabSlide 6s cubic-bezier(.22, 1, .36, 1) infinite; }
+  @keyframes tabSlide { 0%, 28% { transform: translateX(0); } 33%, 61% { transform: translateX(100%); } 66%, 94% { transform: translateX(200%); } 100% { transform: translateX(0); } }
+  .a6 .t { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; font-size: 12.5px; font-weight: 600; color: var(--muted); animation: tabOn 6s infinite; }
+  .a6 .t:nth-of-type(1) { animation-delay: 0s; }
+  .a6 .t:nth-of-type(2) { animation-delay: 2s; }
+  .a6 .t:nth-of-type(3) { animation-delay: 4s; }
+  @keyframes tabOn { 0%, 28% { color: #fff; } 33%, 100% { color: var(--muted); } }
+  .a6 .t svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+  .a7 { display: grid; grid-template-columns: repeat(2, 100px); gap: 14px; }
+  .a7 .g { width: 100px; height: 100px; border-radius: 28px; display: grid; place-items: center; box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.55); animation: tileBob 3.2s ease-in-out infinite; }
+  .a7 .g:nth-child(2) { animation-delay: .4s; }
+  .a7 .g:nth-child(3) { animation-delay: .8s; }
+  .a7 .g:nth-child(4) { animation-delay: 1.2s; }
+  @keyframes tileBob { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.04); } }
+  .a7 .g1 { background: linear-gradient(135deg, #8b7bff, #4d8dff); }
+  .a7 .g2 { background: linear-gradient(135deg, #4d8dff, #28c7d9); }
+  .a7 .g3 { background: linear-gradient(135deg, #a77bff, #ee74c8); }
+  .a7 .g4 { background: linear-gradient(135deg, #ffb054, #ff6f91); }
+  .a7 svg { width: 50px; height: 50px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .a7 svg.fill { fill: #fff; stroke: none; }
+
+  .a8 { position: relative; width: 230px; height: 220px; display: grid; place-items: center; }
+  .a8 .orb { width: 160px; height: 160px; border-radius: 50%; background: linear-gradient(135deg, #3fa9ff, #3de0b5); box-shadow: 0 0 60px -8px rgba(61, 224, 181, 0.6); transform: scale(.62); animation: brOrb 6s ease-in-out infinite; }
+  @keyframes brOrb { 0%, 100% { transform: scale(.62); } 45%, 55% { transform: scale(1); } }
+  .a8 b { position: absolute; font-family: var(--font-display); font-size: 19px; font-weight: 600; color: #fff; opacity: 0; }
+  .a8 .in { opacity: 1; animation: brIn 6s ease-in-out infinite; }
+  .a8 .out { animation: brOut 6s ease-in-out infinite; }
+  @keyframes brIn { 0%, 42% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes brOut { 0%, 46% { opacity: 0; } 54%, 92% { opacity: 1; } 100% { opacity: 0; } }
+  .a8 .heart { position: absolute; right: 0; top: 6px; width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; background: linear-gradient(135deg, #ff7eb0, #ff9a6b); box-shadow: 0 12px 26px -12px rgba(255, 111, 145, 0.9); animation: bob 3s ease-in-out infinite; }
+  .a8 .heart svg { width: 30px; height: 30px; fill: #fff; stroke: none; }
+
+  .a9 .m-tiles i { display: grid; place-items: center; height: 28px; margin-bottom: 4px; }
+  .a9 .m-tiles svg { width: 24px; height: 24px; fill: none; stroke: var(--text); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
   }
@@ -2497,11 +2536,19 @@
   const SVG_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
   const SVG_USER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.6 3.7-5.5 7.5-5.5s6.9 1.9 7.5 5.5"/></svg>';
 
+  const SVG_TAB_P = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.6-3.6 3.7-5.5 7.5-5.5s6.9 1.9 7.5 5.5"/></svg>';
+  const SVG_TAB_H = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7.8 12.4l3 3 5.4-6"/></svg>';
+  const SVG_TAB_G = '<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>';
   const TOUR = [
     {
       title: 'Добро пожаловать!',
-      text: 'Здесь вы будете выстраивать полезные привычки: день за днём, шаг за шагом. Покажем, как всё устроено: это займёт минуту.',
+      text: 'Здесь вы будете выстраивать полезные привычки и тренировать голову. Покажем, как всё устроено: это займёт минуту.',
       art: `<div class="a0"><span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span><div class="core">${SVG_CHECK}</div></div>`
+    },
+    {
+      title: 'Три вкладки',
+      text: 'Внизу экрана — «Профиль», «Привычки» и «Развитие». Переключайтесь между ними одним касанием.',
+      art: `<div class="a6"><i class="hl"></i><span class="t">${SVG_TAB_P}Профиль</span><span class="t">${SVG_TAB_H}Привычки</span><span class="t">${SVG_TAB_G}Развитие</span></div>`
     },
     {
       title: 'Создайте привычку',
@@ -2520,14 +2567,26 @@
       art: `<div class="a3"><div class="m-card"><div class="m-check">${SVG_CHECK}</div><div class="m-info"><b>Пить воду</b><div class="m-flame">${ICON_FLAME}серия растёт</div><div class="m-days"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="live"></i><i></i><i></i></div></div></div></div>`
     },
     {
-      title: 'Следите за прогрессом',
-      text: 'В «Профиле» собрана ваша статистика. Там же можно выбрать светлую или тёмную тему.',
-      art: `<div class="a4"><div class="m-av"><div>${SVG_USER}</div></div><div class="m-tiles"><div><b>12</b><span>отметок</span></div><div><b>5</b><span>дней в серии</span></div><div><b>85%</b><span>за срок</span></div></div></div>`
+      title: 'Тренируйте голову',
+      text: 'В «Развитии» — шахматы против бота, шахматные задачи, слово дня и викторина. Ошиблись в викторине? Покажем короткую справку.',
+      art: '<div class="a7">' +
+        '<span class="g g1"><svg viewBox="0 0 45 45" class="fill"><path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/></svg></span>' +
+        '<span class="g g2"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span>' +
+        '<span class="g g3"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="#fff" stroke="none"/></svg></span>' +
+        '<span class="g g4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><path d="M12 17h.01"/></svg></span></div>'
     },
     {
-      title: 'Развивайтесь',
-      text: 'Во вкладке «Развитие» вас ждут шахматы и шахматные задачи, слово дня, викторина, дыхательные упражнения и дневник благодарности.',
-      art: '<div class="a5">' + Array.from({ length: 16 }, (_, i) => `<i class="${(((i >> 2) + (i & 3)) % 2) ? 'dk' : ''}"></i>`).join('') + '<svg class="kn pc w" viewBox="0 0 45 45" aria-hidden="true"><path d="M12.5 41c0-9 2-15 8-20c-3 0-5 1.5-7 4.5l-3.5-2.5c2.5-6 7-12 14-13.5l1.5-4l3.5 4c6 3 8 11 7 20c-.5 5-1 8-1.5 11.5z"/></svg></div>'
+      title: 'Минутка для себя',
+      text: 'Дыхательные упражнения помогут успокоиться за пару минут, а дневник благодарности — замечать хорошее каждый день.',
+      art: '<div class="a8"><span class="orb"></span><b class="in">Вдох</b><b class="out">Выдох</b><span class="heart"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span></div>'
+    },
+    {
+      title: 'Всё под рукой',
+      text: 'В «Профиле» — ваша статистика, светлая или тёмная тема, размер окна и резервная копия. Обучение всегда можно открыть снова кнопкой «?».',
+      art: `<div class="a4 a9"><div class="m-av"><div>${SVG_USER}</div></div><div class="m-tiles">` +
+        '<div><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></i><span>тема</span></div>' +
+        '<div><i><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></i><span>окно</span></div>' +
+        '<div><i><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/></svg></i><span>копия</span></div></div></div>'
     }
   ];
   let tourIdx = 0;
